@@ -3,9 +3,8 @@ package pt.ipleiria.careline.api;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.bll.PersonBLL;
 import pt.ipleiria.careline.dto.PersonDTO;
-import pt.ipleiria.careline.entities.Person;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @RequestMapping("api/v1/person")
 @RestController
@@ -18,7 +17,7 @@ public class PersonAPI {
     }
 
     @GetMapping
-    public List<Person> getPersons() {
+    public ArrayList<PersonDTO> getPersons() {
         return personBLL.getPersons();
     }
 

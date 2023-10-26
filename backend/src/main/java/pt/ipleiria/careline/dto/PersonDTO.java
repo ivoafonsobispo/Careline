@@ -11,6 +11,9 @@ public class PersonDTO {
         this.age = age;
     }
 
+    public PersonDTO() {
+    }
+
     public String getName() {
         return name;
     }
