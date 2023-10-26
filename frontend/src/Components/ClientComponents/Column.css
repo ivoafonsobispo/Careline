@@ -1,0 +1,6 @@
+.App-client-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 46%;
+  max-width: 46%;
+}

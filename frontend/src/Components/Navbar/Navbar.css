@@ -1,0 +1,11 @@
+.App-side-bar {
+    display: flex;
+    flex-direction: column;
+    min-width: 5%;
+    max-width: 5%;
+    background-color: hsl(195, 78%, 46%);
+    color: white;
+    padding: 1%;
+    box-sizing: border-box;
+    gap: 2%;
+  }
