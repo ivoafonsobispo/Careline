@@ -1,0 +1,5 @@
+.App-vertical-bar {
+    width: fit-content;
+    border-left: 2px solid black;
+    height: auto;
+  }

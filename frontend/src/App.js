@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 import logo from './logo.svg';
 import './App.css';
+=======
+import './App.css';
+import Navbar from './Components/Navbar/Navbar';
+import Header from './Components/Header/Header';
+import ClientLeftColumn from './Components/ClientComponents/LeftColumn';
+import ClientRightColumn from './Components/ClientComponents/RightColumn';
+import VerticalBar from './VerticalBar';
+>>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 
 function App() {
   return (
     <div className="App">
+<<<<<<< HEAD
       <div className='App-side-bar'>
         <div>A</div>
         <div>B</div>
@@ -29,6 +39,16 @@ function App() {
             <hr></hr>
             <div className='App-client-datalist'></div>
           </div>
+=======
+      <Navbar />
+
+      <div className='App-body'>
+        <Header /> 
+        <div className='App-content'>
+          <ClientLeftColumn />
+          <VerticalBar />
+          <ClientRightColumn />
+>>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
         </div>
       </div>
     </div>

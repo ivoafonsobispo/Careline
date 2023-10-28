@@ -1,12 +1,18 @@
+<<<<<<< HEAD
 html, body, #root, .App {
   height: 100%
 }
 
 .App {
+=======
+.App {
+  height: 100%;
+>>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
   display: flex;
   flex-direction: row;
 }
 
+<<<<<<< HEAD
 .App-side-bar {
   display: flex;
   flex-direction: column;
@@ -32,11 +38,20 @@ html, body, #root, .App {
 
 .App-header-logo {
   margin-left: auto;
+=======
+.App-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 92%;
+  max-width: 92%;
+  margin: 20px;
+>>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 }
 
 .App-content {
   display: flex;
   flex-direction: row;
+<<<<<<< HEAD
 }
 
 .App-client-column {
@@ -50,6 +65,9 @@ html, body, #root, .App {
   height: inherit;
   position: absolute;
   left: 50%;
+=======
+  height: 90%;
+>>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 }
 
 .App-client-human-layout {
@@ -66,10 +84,13 @@ html, body, #root, .App {
 
 }
 
+<<<<<<< HEAD
 .App-client-datalist {
 
 }
 
+=======
+>>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;

@@ -1,0 +1,14 @@
+.App-header {
+  display: flex;
+  flex-direction: row;
+  min-height: 10%;
+  max-height: 10%;
+}
+
+.App-header-name {
+  margin-right: auto;
+}
+  
+.App-header-logo {
+  margin-left: auto;
+}
