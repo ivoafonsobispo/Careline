@@ -1,3 +1,10 @@
 .App-client-datalist {
+    height: 50%;
+    padding: 20px;
+    flex-grow: 1;
+}
 
+.App-client-horizontal-bar{
+    width: 95%;
+    border-left: 2px solid black;
 }

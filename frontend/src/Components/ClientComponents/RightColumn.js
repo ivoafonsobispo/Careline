@@ -1,14 +1,12 @@
 import './Column.css'
 import './RightColumn.css'
 
-function ClientRightColumn() {
+export default function ClientRightColumn() {
     return (
         <div className='App-client-column'>
-            <div className='App-client-datalist'></div>
-            <hr></hr>
-            <div className='App-client-datalist'></div>
+            <div className='App-client-datalist'>Lista Dados</div>
+            <hr className='App-client-horizontal-bar'></hr>
+            <div className='App-client-datalist'>Lista Diagnósticos</div>
         </div>
     );
 }
-
-export default ClientRightColumn;

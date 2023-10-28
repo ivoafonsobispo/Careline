@@ -1,11 +1,63 @@
-.App-side-bar {
-    display: flex;
-    flex-direction: column;
-    min-width: 5%;
-    max-width: 5%;
-    background-color: hsl(195, 78%, 46%);
-    color: white;
-    padding: 1%;
-    box-sizing: border-box;
-    gap: 2%;
+nav {
+  background-color: #f05959;
+  min-width: 80px;
+  color: white;
+  overflow: hidden;
+  transition: max-height 1s;
+  text-align: center;
+}
+
+nav ul {
+  margin: 0px 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+  width: 100%;
+}
+
+nav li {
+  height: 60px;
+  line-height: 60px;
+  width: 100%;
+  margin: 0 auto 20px auto;
+}
+
+
+.selected {
+  background: linear-gradient(90deg, rgba(247,167,167,1) 0%, rgba(240,89,89,1) 100%);
+}
+
+
+.App-navbar-logo {
+
+}
+
+
+.App-navbar-button {
+
+}
+
+@media (min-width: 601px) {
+  nav {
+    max-height: initial !important;
   }
+}
+
+@media (max-width: 600px) {
+
+  nav {
+    max-height: 0;
+  }
+
+  nav li {
+    height: 30px;
+    line-height: 30px;
+    margin: 0 auto 10px auto;
+  }
+
+  #menuIcon {
+    display: block;
+  }
+ 
+}

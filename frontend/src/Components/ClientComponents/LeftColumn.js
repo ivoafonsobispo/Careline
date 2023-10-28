@@ -1,7 +1,7 @@
 import './Column.css'
 import './LeftColumn.css'
 
-function ClientLeftColumn() {
+export default function ClientLeftColumn() {
     return (
         <div className='App-client-column'>
           <div className='App-client-human-layout'>Human Layout</div>
@@ -12,5 +12,3 @@ function ClientLeftColumn() {
         </div>
     );
 }
-
-export default ClientLeftColumn;

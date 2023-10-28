@@ -5,13 +5,22 @@ import ClientLeftColumn from './Components/ClientComponents/LeftColumn';
 import ClientRightColumn from './Components/ClientComponents/RightColumn';
 import VerticalBar from './VerticalBar';
 
-function App() {
+import {useState} from 'react';
+
+export default function App() {
+  const [isToggleActive, setIsActive] = useState(false);
+
+  const toggleNavbar = () => {
+    setIsActive(!isToggleActive);
+    
+  }
+
   return (
-    <div className="App">
-      <Navbar />
+    <div className='App'>
+      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar}/> 
 
       <div className='App-body'>
-        <Header /> 
+        <Navbar isActive={isToggleActive} />
         <div className='App-content'>
           <ClientLeftColumn />
           <VerticalBar />
@@ -22,4 +31,3 @@ function App() {
   );
 }
 
-export default App;

@@ -1,13 +1,17 @@
 import './Navbar.css'
 
-function Navbar() {
+export default function Navbar({isActive}) {
+
     return(
-        <div className='App-side-bar'>
-            <div>A</div>
-            <div>B</div>
-            <div>C</div>
-        </div>
+        <nav style={{ 'maxHeight': isActive ? '200px': '0px'}}>
+            <ul>
+                <li className='selected'>
+                    <i className='fas fa-info-circle'></i>
+                    <span>A</span>
+                </li>
+                <li>B</li>
+                <li>C</li>
+            </ul>
+        </nav>
     );
 }
-
-export default Navbar;
