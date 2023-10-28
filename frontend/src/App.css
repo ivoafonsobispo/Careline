@@ -1,73 +1,21 @@
-<<<<<<< HEAD
-html, body, #root, .App {
-  height: 100%
-}
-
-.App {
-=======
 .App {
   height: 100%;
->>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
   display: flex;
   flex-direction: row;
 }
 
-<<<<<<< HEAD
-.App-side-bar {
-  display: flex;
-  flex-direction: column;
-  min-width: 20%;
-  max-width: 20%;
-}
-
-.App-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.App-header {
-  display: flex;
-  flex-direction: row;
-  min-height: 20%;
-  max-height: 20%;
-}
-
-.App-header-name {
-  margin-right: auto;
-}
-
-.App-header-logo {
-  margin-left: auto;
-=======
 .App-body {
   display: flex;
   flex-direction: column;
   min-width: 92%;
   max-width: 92%;
   margin: 20px;
->>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 }
 
 .App-content {
   display: flex;
   flex-direction: row;
-<<<<<<< HEAD
-}
-
-.App-client-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.App-divider-bar {
-  width: fit-content;
-  border-left: 2px solid black;
-  height: inherit;
-  position: absolute;
-  left: 50%;
-=======
   height: 90%;
->>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 }
 
 .App-client-human-layout {
@@ -84,13 +32,6 @@ html, body, #root, .App {
 
 }
 
-<<<<<<< HEAD
-.App-client-datalist {
-
-}
-
-=======
->>>>>>> 687fd8c4c2eb82b30f6d338123edc32273c1c29f
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;
