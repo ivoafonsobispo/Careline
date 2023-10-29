@@ -8,21 +8,21 @@
     height: 60px;
     width: 60px;
     background-color: white;
-    border: 2px solid #f05959;
+    border: 2px solid var(--basecolor);
     border-radius: 10%;
 }
 
 .App-client-measure-button:hover{
     height: 60px;
     width: 60px;
-    background-color: #f05959;
-    border: 2px solid #f05959;
+    background-color: var(--basecolor);
+    border: 2px solid var(--basecolor);
     border-radius: 10%;
 }
 
 
 .bootstrap-icon {
-    color: #f05959;
+    color: var(--basecolor);
 }
 
 .App-client-measure-button:hover .bootstrap-icon {

@@ -1,7 +1,7 @@
 .App-client-human-layout {
     flex-grow: 1;
     background-image: url("../../../public/images/human body.png");
-    background-size:     contain;                      /* <------ */
+    background-size:     contain;
     background-repeat:   no-repeat;
     background-position: center center;
 }
