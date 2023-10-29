@@ -1,0 +1,13 @@
+.App-client-measure-data-list{
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+    gap: 20px;
+    overflow-y: scroll;
+    height: 80%;
+}
+
+.App-client-measure-data-list-item {
+    background-color: var(--lightcolor);
+    padding: 20px;
+}
