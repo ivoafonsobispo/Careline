@@ -21,10 +21,11 @@
 }
 
 
-.bootstrap-icon {
+.measure-button-bootstrap-icon {
     color: var(--basecolor);
 }
 
-.App-client-measure-button:hover .bootstrap-icon {
+.App-client-measure-button:hover .measure-button-bootstrap-icon, .App-client-measure-button:hover {
     color: white;
+    cursor: pointer;
 }

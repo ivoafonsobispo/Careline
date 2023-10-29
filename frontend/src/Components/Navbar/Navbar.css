@@ -18,16 +18,29 @@ nav ul {
 
 nav li {
   height: 60px;
-  line-height: 60px;
+  line-height: 70px;
   width: 100%;
   margin: 0 auto 20px auto;
 }
 
 
 .selected {
-  background: linear-gradient(90deg, rgba(255,255,255,255) 0%, var(--basecolor) 100%);
+  background: linear-gradient(90deg, var(--lightcolor) 0%, var(--basecolor) 100%);
 }
 
+.selected:hover {
+  background: linear-gradient(90deg, var(--basecolor) 0%, var(--darkcolor) 100%);
+}
+
+.navbar-item:hover {
+  background-color: var(--darkcolor);
+  cursor: pointer;
+}
+
+.navbar-item-text{
+  margin-left: 20px;
+  display: none;
+}
 
 .App-navbar-logo {
 
@@ -58,6 +71,18 @@ nav li {
 
   #menuIcon {
     display: block;
+  }
+
+  .navbar-item {
+    text-align: left;
+    padding: 0 20px 0 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .navbar-item-text{
+    display: inline;
   }
  
 }
