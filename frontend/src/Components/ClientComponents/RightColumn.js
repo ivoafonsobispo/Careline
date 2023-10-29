@@ -13,7 +13,7 @@ export default function ClientRightColumn() {
             <hr className='App-client-horizontal-bar'></hr>
             <div className='App-client-datalist'>
                 <span>Diagnoses List</span>
-                {/* <DiagnosesList /> */}
+                <DiagnosesList />
             </div>
         </div>
     );
