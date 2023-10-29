@@ -1,14 +1,13 @@
 import './Column.css'
 import './LeftColumn.css'
+import MeasureButtons from './MeasureButtons.js'
 
 export default function ClientLeftColumn() {
     return (
         <div className='App-client-column'>
-          <div className='App-client-human-layout'>Human Layout</div>
-          <div className='App-client-measure-buttons'>
-            <div className='App-client-measure-button'>A</div>
-            <div className='App-client-measure-button'>B</div>
-          </div>
+          <div className='App-client-human-layout'></div>
+
+          <MeasureButtons />
         </div>
     );
 }

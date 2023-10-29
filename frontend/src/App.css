@@ -20,16 +20,6 @@
   padding: 30px;
 }
 
-.App-client-measure-buttons{
-  display: flex;
-  flex-direction: row;
-  gap: 10px
-}
-
-.App-client-measure-button{
-
-}
-
 @media (max-width: 600px) {
 
   .App-body, .App-content {
