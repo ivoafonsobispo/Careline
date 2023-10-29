@@ -4,3 +4,13 @@
   height: auto;
 }
 
+@media (max-width: 600px) {
+
+  .App-vertical-bar {
+    width: auto;
+    height: fit-content;
+    border-left: 0px;
+    border-bottom: 2px solid black;
+    margin-top: 20px;
+  }
+}

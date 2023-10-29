@@ -6,4 +6,11 @@
     background-position: center center;
 }
   
+
+@media (max-width: 600px) {
+
+    .App-client-human-layout {
+      height: 250px;
+    }
+  }
   
