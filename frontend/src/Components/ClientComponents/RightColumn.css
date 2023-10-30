@@ -1,6 +1,9 @@
 .App-client-datalist {
     padding: 20px;
-    height: 235px;
+    /* height: 235px; */
+    flex-grow: 1;
+    min-height: 0;
+    flex-basis: 0;
 }
 
 .App-client-horizontal-bar{
