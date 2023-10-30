@@ -10,3 +10,12 @@
     width: 95%;
     border-left: 2px solid black;
 }
+
+@media (max-width: 600px) {
+
+    .App-client-datalist {
+      height: 250px;
+      flex-basis: unset;
+    }
+  }
+  
