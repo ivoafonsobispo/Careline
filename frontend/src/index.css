@@ -2,6 +2,9 @@
   --basecolor: #74C9D0;
   --lightcolor: #C8E8EA;
   --darkcolor: #08808E;
+  --complementarcolor: #fe9a84;
+  --darkcomplementarcolor: #c26552;
+  --lightcomplementarcolor: #ffe5da;
 }
 
 html {

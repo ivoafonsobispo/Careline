@@ -1,3 +1,14 @@
+.App-client-column-left {
+  width: 35%;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(87, 87, 87, 0.1);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  border: 1px solid rgba(200, 232, 234, 0.26);
+  padding: 2%;
+}
+
 .App-client-human-layout {
     flex-grow: 1;
     background-image: url("../../../public/images/human body.png");
@@ -11,6 +22,12 @@
 
     .App-client-human-layout {
       height: 250px;
+    }
+
+    .App-client-column-left {
+      width: auto;
+      margin-bottom: 5%;
+      padding: 2%;
     }
   }
   

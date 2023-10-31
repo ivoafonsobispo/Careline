@@ -10,8 +10,12 @@
 }
 
 .App-client-measure-data-list-item {
-    background-color: var(--lightcolor);
-    padding: 2%;
+    background-color: white;
+    padding: 3%;
+    border-radius: 10px;
 }
 
+.App-client-measure-data-list-item:hover {
+    background-color: var(--basecolor);
+}
   

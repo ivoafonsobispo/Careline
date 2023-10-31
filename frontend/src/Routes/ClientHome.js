@@ -6,7 +6,7 @@ export default function ClientHome(){
     return (
         <div className='App-content' >
             <ClientLeftColumn />
-            <VerticalBar />
+            {/* <VerticalBar /> */}
             <ClientRightColumn />
         </div>
     );

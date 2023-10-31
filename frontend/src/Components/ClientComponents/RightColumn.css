@@ -1,14 +1,25 @@
+.App-client-column-right {
+  flex-grow: 1;
+  gap: 5%;
+}
+
 .App-client-datalist {
     padding: 20px;
     /* height: 235px; */
     flex-grow: 1;
     min-height: 0;
     flex-basis: 0;
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(87, 87, 87, 0.1);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    border: 1px solid rgba(200, 232, 234, 0.26);
 }
 
 .App-client-horizontal-bar{
     width: 95%;
-    border-left: 2px solid black;
+    border: 2px solid var(--lightcolor);
 }
 
 @media (max-width: 600px) {
