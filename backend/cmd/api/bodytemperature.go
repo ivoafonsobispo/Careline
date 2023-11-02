@@ -46,6 +46,11 @@ func (app *application) showBodytemperatureHandler(w http.ResponseWriter, r *htt
 		ID:          id,
 		CreatedAt:   time.Now(),
 		Temperature: 36.4,
+		User: data.User{
+			ID:        548,
+			FirstName: "José",
+			LastName:  "Areia",
+		},
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"body_temperature": bt}, nil)
