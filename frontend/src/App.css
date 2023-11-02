@@ -13,12 +13,15 @@
 }
 
 .App-content {
-  background-color: rgb(233, 233, 233);
+  /* background-color: rgb(233, 233, 233); */
   flex-grow: 1;
   display: flex;
   flex-direction: row;
   padding: 30px;
   gap: 2%;
+  background-image: url("../public/images/backroung-azul.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .App-content-div {

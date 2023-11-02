@@ -12,7 +12,6 @@
 .App-client-diagnoses-list-item {
     background-color: white;
     padding: 3%;
-    border-radius: 10px;
 }
 
 .App-client-diagnoses-list-item:hover {
