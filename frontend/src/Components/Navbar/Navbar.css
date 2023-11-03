@@ -1,6 +1,6 @@
 nav, a {
   background-color: var(--basecolor);
-  min-width: 80px;
+  min-width: 15%;
   color: white;
   overflow: hidden;
   transition: max-height 1s;
@@ -40,6 +40,36 @@ nav li {
   background: linear-gradient(90deg, var(--basecolor) 0%, var(--darkcolor) 100%);
 } */
 
+.navbar-logo-area > li {
+  height: 70px;
+  margin: 0;
+  font-family: 'Comfortaa', sans-serif;
+  font-size: 30px;
+}
+
+.navbar-logo-area > hr {
+  width: 95%;
+  color: white;
+  border: 1px solid;
+}
+
+.navbar-logo-name {
+  font-weight: bolder;
+}
+
+.navbar-buttons-area{
+  height: calc(100% - 80px);
+}
+
+.navbar-item {
+  text-align: left;
+  padding: 0 10% 0 10%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 17px;
+}
+
 .navbar-item:hover {
   background-color: var(--darkcolor);
   cursor: pointer;
@@ -47,16 +77,11 @@ nav li {
 
 .navbar-item-text{
   margin-left: 20px;
-  display: none;
+  display: inline;
 }
 
-.App-navbar-logo {
-
-}
-
-
-.App-navbar-button {
-
+.navbar-last-item{
+  margin-top: auto;
 }
 
 @media (min-width: 601px) {
@@ -65,29 +90,61 @@ nav li {
   }
 }
 
+@media (max-width: 1300px) {
+  .navbar-item-text {
+    display: none;
+  }
+
+  .navbar-logo-area{
+    display: none;
+  }
+
+  nav, a {
+    min-width: 10%;
+  }
+
+  nav li {
+    width: 80%;
+  }
+
+  .navbar-svg {
+    margin: auto;
+  }
+
+  .navbar-buttons-area{
+    height: 100%;
+  }
+}
+
 @media (max-width: 600px) {
 
   nav {
     max-height: 0;
+    width: auto;
   }
 
   nav li {
     height: 30px;
     line-height: 30px;
     margin: 0 auto 10px auto;
+    width: 100%;
+  }
+
+  .navbar-svg {
+    margin: unset;
   }
 
   #menuIcon {
     display: block;
   }
-
+/* 
   .navbar-item {
     text-align: left;
     padding: 0 20px 0 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
-  }
+  } */
 
   .navbar-item-text{
     display: inline;

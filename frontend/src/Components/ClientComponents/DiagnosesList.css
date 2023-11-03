@@ -12,8 +12,13 @@
 .App-client-diagnoses-list-item {
     background-color: white;
     padding: 3%;
+    border-bottom: 0px;
+    transition: border-bottom 100ms ease-in-out;
+    transform-origin:  0% 50%;
 }
 
 .App-client-diagnoses-list-item:hover {
-    background-color: var(--basecolor)
+    border-bottom: 4px solid var(--basecolor);
 }
+
+  
