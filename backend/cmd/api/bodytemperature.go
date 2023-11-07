@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -32,7 +33,19 @@ func (app *application) createBodytemperatureHandler(w http.ResponseWriter, r *h
 		return
 	}
 
-	fmt.Fprintf(w, "%+v\n", input)
+	err = app.models.BodyTemperatures.Insert(bt)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/bodytemperature/%d", bt.ID))
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"body_temperature": bt}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) showBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,20 +55,28 @@ func (app *application) showBodytemperatureHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	bt := data.BodyTemperature{
-		ID:          id,
-		CreatedAt:   time.Now(),
-		Temperature: 36.4,
-		User: data.User{
-			ID:        548,
-			FirstName: "José",
-			LastName:  "Areia",
-		},
+	bt, err := app.models.BodyTemperatures.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"body_temperature": bt}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
+
+}
+
+func (app *application) updateBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) deleteBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
 
 }
