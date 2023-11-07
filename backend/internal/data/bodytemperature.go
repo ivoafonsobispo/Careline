@@ -9,7 +9,6 @@ import (
 type BodyTemperature struct {
 	ID          int64     `json:"id"`
 	Temperature float32   `json:"temperature"`
-	User        User      `json:"user"`
 	CreatedAt   time.Time `json:"created_at"`
 }
 

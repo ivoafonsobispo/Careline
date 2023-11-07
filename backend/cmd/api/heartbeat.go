@@ -46,11 +46,6 @@ func (app *application) showHeartbeatHandler(w http.ResponseWriter, r *http.Requ
 		ID:        id,
 		CreatedAt: time.Now(),
 		Heartbeat: 80,
-		User: data.User{
-			ID:        548,
-			FirstName: "José",
-			LastName:  "Areia",
-		},
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"heartbeat": h}, nil)

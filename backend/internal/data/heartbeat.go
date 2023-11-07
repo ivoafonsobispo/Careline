@@ -9,7 +9,6 @@ import (
 type Heartbeat struct {
 	ID        int64     `json:"id"`
 	Heartbeat int32     `json:"heartbeat"`
-	User      User      `json:"user`
 	CreatedAt time.Time `json:"created_at"`
 }
 
