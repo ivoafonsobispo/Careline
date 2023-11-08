@@ -13,6 +13,7 @@ func (app *application) routes() http.Handler {
 	router.MethodNotAllowed = http.HandlerFunc(app.methodNotAllowed)
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodGet, "/v1/previousweek", app.previousWeek)
 
 	router.HandlerFunc(http.MethodPost, "/v1/heartbeat", app.createHeartbeatHandler)
 	router.HandlerFunc(http.MethodGet, "/v1/heartbeat/:id", app.showHeartbeatHandler)
