@@ -3,15 +3,16 @@
     flex-direction: column;
     margin: 2% 2%;
     padding: 1%;
-    gap: 10%;
+    gap: 6%;
     overflow-y: scroll;
-    height: 80%;
+    height: 85%;
     min-height: 0;
+    font-size: 16px;
 }
 
 .App-client-diagnoses-list-item {
-    background-color: white;
-    padding: 3%;
+    background-color: #dfeeff;
+    padding: 7% 5%;
     border-bottom: 0px;
     transition: border-bottom 100ms ease-in-out;
     transform-origin:  0% 50%;

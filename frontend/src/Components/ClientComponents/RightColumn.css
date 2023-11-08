@@ -1,11 +1,19 @@
 .App-client-column-right {
   flex-grow: 1;
-  gap: 5%;
+  gap: 4%;
+}
+
+.App-client-lists {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  min-height: 0;
+  flex-basis: 0;
+  gap: 4%;
 }
 
 .App-client-datalist {
-    padding: 20px;
-    /* height: 235px; */
+    padding: 2% 3%;
     flex-grow: 1;
     min-height: 0;
     flex-basis: 0;
