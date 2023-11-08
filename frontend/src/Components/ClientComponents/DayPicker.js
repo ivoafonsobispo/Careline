@@ -15,8 +15,8 @@ export default function DayPicker() {
             </div>
             <div className='App-client-day-picker-days'>
                 <Day dayName="Mon" day={6}/>
-                <Day dayName="Tue" day={7} isSelected={true}/>
-                <Day dayName="Wed" day={8}/>
+                <Day dayName="Tue" day={7}/>
+                <Day dayName="Wed" day={8} isSelected={true}/>
                 <Day dayName="Thu" day={9}/>
                 <Day dayName="Fri" day={10}/>
                 <Day dayName="Sat" day={11}/>

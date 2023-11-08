@@ -33,6 +33,7 @@
     flex-direction: row;
     align-items: center;
     width: 100%;
+    margin: 0 1%;
     gap: 20px;
     height: auto;
     overflow-x: scroll;

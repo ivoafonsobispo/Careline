@@ -1,7 +1,7 @@
 
 .App-client-day-picker-day {
     /* height: 50%; */
-    padding: 3%;
+    padding: 1.5% 3%;
     background-color: white;
     cursor: pointer;
     display: flex;
