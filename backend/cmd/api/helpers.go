@@ -38,6 +38,11 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data envelo
 		w.Header()[key] = value
 	}
 
+	// DELETE LATER
+	w.Header().Add("Access-Control-Allow-Headers", "Access-Control-Allow-Origin")
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Credentials", "true")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(js)
@@ -71,8 +76,8 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst any
 			return fmt.Errorf("body contains incorrect JSON type (at character %d)", unmarshalTypeError.Offset)
 		case errors.Is(err, io.EOF):
 			return errors.New("body must not be empty")
-		case strings.HasPrefix(err.Error(), "json: unkown field"):
-			fieldName := strings.TrimPrefix(err.Error(), "json: unkown field")
+		case strings.HasPrefix(err.Error(), "json: unknown field"):
+			fieldName := strings.TrimPrefix(err.Error(), "json: unknown field")
 			return fmt.Errorf("body contains unknown key %s", fieldName)
 		case errors.As(err, &maxBytesError):
 			return fmt.Errorf("body must not be larger than %d bytes", maxBytesError.Limit)
