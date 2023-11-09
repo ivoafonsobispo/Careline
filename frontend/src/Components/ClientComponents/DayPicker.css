@@ -1,0 +1,40 @@
+.App-client-day-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--basecolor);
+    height: auto;
+    padding: 3%;
+}
+
+.App-client-day-picker-header {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    align-items: center;
+}
+
+.App-client-day-picker-arrows {
+    flex-grow: 1;
+    display: flex;
+    gap: 2%;
+}
+
+.App-client-day-picker-arrows > svg {
+    cursor: pointer;
+}
+
+.App-client-day-picker-arrows > svg:first-child {
+    margin-left: auto;
+}
+
+.App-client-day-picker-days {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    margin: 0 1%;
+    gap: 20px;
+    height: auto;
+    overflow-x: scroll;
+}

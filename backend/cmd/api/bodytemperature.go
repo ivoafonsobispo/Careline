@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -32,7 +33,19 @@ func (app *application) createBodytemperatureHandler(w http.ResponseWriter, r *h
 		return
 	}
 
-	fmt.Fprintf(w, "%+v\n", input)
+	err = app.models.BodyTemperatures.Insert(bt)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	headers := make(http.Header)
+	headers.Set("Location", fmt.Sprintf("/v1/bodytemperature/%d", bt.ID))
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"body_temperature": bt}, headers)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) showBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
@@ -42,10 +55,15 @@ func (app *application) showBodytemperatureHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	bt := data.BodyTemperature{
-		ID:          id,
-		CreatedAt:   time.Now(),
-		Temperature: 36.4,
+	bt, err := app.models.BodyTemperatures.Get(id)
+	if err != nil {
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+		}
+		return
 	}
 
 	err = app.writeJSON(w, http.StatusOK, envelope{"body_temperature": bt}, nil)
@@ -53,4 +71,45 @@ func (app *application) showBodytemperatureHandler(w http.ResponseWriter, r *htt
 		app.serverErrorResponse(w, r, err)
 	}
 
+}
+
+func (app *application) updateBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) deleteBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (app *application) listBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+	input.Filters.Sort = app.readString(qs, "sort", "id")
+
+	input.Filters.SortSafeList = []string{"id", "date", "-id", "-date"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	bts, metadata, err := app.models.BodyTemperatures.GetAll(input.Filters)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"body_temperatures": bts, "metadata": metadata}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
