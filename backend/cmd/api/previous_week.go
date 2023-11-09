@@ -18,27 +18,27 @@ func (app *application) previousWeek(w http.ResponseWriter, r *http.Request) {
 		},
 		"1": week{
 			Day:     time.Now().Day() - 1,
-			Weekday: time.Now().Add(-24 * time.Hour).Weekday().String(),
+			Weekday: time.Now().AddDate(0, 0, -1).Weekday().String(),
 		},
 		"2": week{
 			Day:     time.Now().Day() - 2,
-			Weekday: time.Now().Add(-48 * time.Hour).Weekday().String(),
+			Weekday: time.Now().AddDate(0, 0, -2).Weekday().String(),
 		},
 		"3": week{
 			Day:     time.Now().Day() - 3,
-			Weekday: time.Now().Add(-72 * time.Hour).Weekday().String(),
+			Weekday: time.Now().AddDate(0, 0, -3).Weekday().String(),
 		},
 		"4": week{
 			Day:     time.Now().Day() - 4,
-			Weekday: time.Now().Add(-96 * time.Hour).Weekday().String(),
+			Weekday: time.Now().AddDate(0, 0, -4).Weekday().String(),
 		},
 		"5": week{
 			Day:     time.Now().Day() - 5,
-			Weekday: time.Now().Add(-120 * time.Hour).Weekday().String(),
+			Weekday: time.Now().AddDate(0, 0, -5).Weekday().String(),
 		},
 		"6": week{
 			Day:     time.Now().Day() - 6,
-			Weekday: time.Now().Add(-144 * time.Hour).Weekday().String(),
+			Weekday: time.Now().AddDate(0, 0, -6).Weekday().String(),
 		},
 	}
 
