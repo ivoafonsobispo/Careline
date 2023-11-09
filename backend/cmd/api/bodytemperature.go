@@ -80,3 +80,36 @@ func (app *application) updateBodytemperatureHandler(w http.ResponseWriter, r *h
 func (app *application) deleteBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
 
 }
+
+func (app *application) listBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		data.Filters
+	}
+
+	v := validator.New()
+
+	qs := r.URL.Query()
+
+	input.Filters.Page = app.readInt(qs, "page", 1, v)
+	input.Filters.PageSize = app.readInt(qs, "page_size", 20, v)
+	input.Filters.Sort = app.readString(qs, "sort", "id")
+
+	input.Filters.SortSafeList = []string{"id", "date", "-id", "-date"}
+
+	if data.ValidateFilters(v, input.Filters); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	bts, metadata, err := app.models.BodyTemperatures.GetAll(input.Filters)
+
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"body_temperatures": bts, "metadata": metadata}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
+}

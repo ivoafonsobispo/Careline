@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/ivoafonsobispo/careline/backend/internal/validator"
@@ -71,4 +72,52 @@ func (m BodyTemperatureModel) Get(id int64) (*BodyTemperature, error) {
 	}
 
 	return &bt, nil
+}
+
+func (m BodyTemperatureModel) GetAll(filters Filters) ([]*BodyTemperature, Metadata, error) {
+	query := fmt.Sprintf(`
+        SELECT count(*) OVER(), id, created_at,temperature
+        FROM body_temperature    
+        ORDER BY %s %s, id ASC
+        LIMIT $1 OFFSET $2`, filters.sortColumn(), filters.sortDirection())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []any{filters.limit(), filters.offset()}
+
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, Metadata{}, err
+	}
+
+	defer rows.Close()
+
+	totalRecords := 0
+	bts := []*BodyTemperature{}
+
+	for rows.Next() {
+		var bt BodyTemperature
+
+		err := rows.Scan(
+			&totalRecords,
+			&bt.ID,
+			&bt.CreatedAt,
+			&bt.Temperature,
+		)
+
+		if err != nil {
+			return nil, Metadata{}, err
+		}
+
+		bts = append(bts, &bt)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, Metadata{}, err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return bts, metadata, nil
 }

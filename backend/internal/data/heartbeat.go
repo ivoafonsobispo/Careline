@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/ivoafonsobispo/careline/backend/internal/validator"
@@ -71,4 +72,52 @@ func (m HeartbeatModel) Get(id int64) (*Heartbeat, error) {
 	}
 
 	return &h, nil
+}
+
+func (m HeartbeatModel) GetAll(filters Filters) ([]*Heartbeat, Metadata, error) {
+	query := fmt.Sprintf(`
+        SELECT count(*) OVER(), id, created_at,heartbeat 
+        FROM heartbeat    
+        ORDER BY %s %s, id ASC
+        LIMIT $1 OFFSET $2`, filters.sortColumn(), filters.sortDirection())
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	args := []any{filters.limit(), filters.offset()}
+
+	rows, err := m.DB.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, Metadata{}, err
+	}
+
+	defer rows.Close()
+
+	totalRecords := 0
+	heartbeats := []*Heartbeat{}
+
+	for rows.Next() {
+		var heartbeat Heartbeat
+
+		err := rows.Scan(
+			&totalRecords,
+			&heartbeat.ID,
+			&heartbeat.CreatedAt,
+			&heartbeat.Heartbeat,
+		)
+
+		if err != nil {
+			return nil, Metadata{}, err
+		}
+
+		heartbeats = append(heartbeats, &heartbeat)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, Metadata{}, err
+	}
+
+	metadata := calculateMetadata(totalRecords, filters.Page, filters.PageSize)
+
+	return heartbeats, metadata, nil
 }
