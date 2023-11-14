@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS patients (
     email citext UNIQUE NOT NULL,
     password_hash bytea NOT NULL,
     sex bool NOT NULL,
-    health_number INT UNIQUE NOT NULL,
+    health_number text UNIQUE NOT NULL,
     activated bool NOT NULL,
     version integer NOT NULL DEFAULT 1
 );
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS professionals (
     email citext UNIQUE NOT NULL,
     password_hash bytea NOT NULL,
     sex bool NOT NULL,
-    health_professional_number INT UNIQUE NOT NULL,
+    health_professional_number text UNIQUE NOT NULL,
     activated bool NOT NULL,
     version integer NOT NULL DEFAULT 1
 );

@@ -1,0 +1,1 @@
+ALTER TABLE DROP CONSTRAINT IF EXISTS heartbeat_runtime_check;
