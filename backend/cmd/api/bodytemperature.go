@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/ivoafonsobispo/careline/backend/internal/data"
 	"github.com/ivoafonsobispo/careline/backend/internal/validator"
@@ -12,8 +11,7 @@ import (
 
 func (app *application) createBodytemperatureHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Temperature float32   `json:"temperature"`
-		CreatedAt   time.Time `json:"created_at"`
+		Temperature float32 `json:"temperature"`
 	}
 
 	err := app.readJSON(w, r, &input)
