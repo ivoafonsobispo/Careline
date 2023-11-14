@@ -2,8 +2,15 @@
 #include "OneWire.h"
 #include "DallasTemperature.h"
 
-const char* ssid = "labs"; //Enter SSID
+
+
+/*const char* ssid = "labs"; //Enter SSID
 const char* password = "1nv3nt@r2023_IPLEIRIA"; //Enter Password
+*/
+
+const char* ssid = "Vodafone-153217"; //Enter SSID
+const char* password = "AC6HMEF9JHMJC96G"; //Enter Password
+
 
 
 // Set web server port number to 80
@@ -13,9 +20,7 @@ WiFiServer server(80);
 // Variable to store the HTTP request
 String header;
 
-// Auxiliar variables to store the current output state
-String output5State = "off";
-String output4State = "off";
+
 
 // Assign output variables to GPIO pins
 const int output5 = 5;
@@ -30,6 +35,7 @@ const long timeoutTime = 2000;
 
 OneWire oneWire(D4);
 DallasTemperature tempSensor(&oneWire);
+
 
 
 
@@ -60,8 +66,12 @@ void loop()
 {
   WiFiClient client = server.available();   // Listen for incoming clients
   //Serial.println(client);
-  if (client) {                             // If a new client connects,
+  
+  if (client) {        
+    
+    //Serial.println(client.host());                     // If a new client connects,
     Serial.println("New Client.");          // print a message out in the serial port
+    String stringBuilder = "";
     String currentLine = "";                // make a String to hold incoming data from the client
     currentTime = millis();
     previousTime = currentTime;
@@ -70,10 +80,15 @@ void loop()
       if (client.available()) {             // if there's bytes to read from the client,
         char c = client.read();             // read a byte, then
         Serial.write(c);                    // print it out the serial monitor
+        stringBuilder+= c;
+        
+
         header += c;
         if (c == '\n') {                    // if the byte is a newline character
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
+          Serial.println("Builder");
+          Serial.println(stringBuilder);
           if (currentLine.length() == 0) {
             // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
             // and a content-type so the client knows what's coming, then a blank line:
@@ -81,19 +96,36 @@ void loop()
             client.println("Content-type:application/json");
             client.println("Connection: close");
             client.println();
-
-            tempSensor.requestTemperaturesByIndex(0);
-            Serial.print("Temperature: ");
-            Serial.print(tempSensor.getTempCByIndex(0));
-            Serial.println(" C");
-                      
-            // Display the HTML web page
-            client.println("{");
-            client.print("\"data\":");
-            client.print(tempSensor.getTempCByIndex(0));
-            client.println(",");
-            client.println("}");
-            
+            int control = 0;
+            if (stringBuilder.indexOf("/temperature") != -1) {
+              tempSensor.requestTemperaturesByIndex(0);
+              Serial.print("Temperature request comp: ");
+              Serial.print(tempSensor.getTempCByIndex(0));
+              Serial.println(" C");
+                        
+              // Display the HTML web page
+              client.println("{");
+              client.print("\"data\":");
+              client.print(tempSensor.getTempCByIndex(0));
+              client.println(",");
+              client.println("}");
+              control = 1;
+            }
+            if (stringBuilder.indexOf("/status") != -1) {
+                        
+              // Display the HTML web page
+              client.println("{");
+              client.print("\"data\":\"OK\"");
+              client.println(",");
+              client.println("}");
+              control = 1;
+            }
+            if(control == 0){
+              client.println("{");
+              client.print("\"data\":\"Empty\"");
+              client.println(",");
+              client.println("}");
+            }
             client.println();
             // Break out of the while loop
             break;
