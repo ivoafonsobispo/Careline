@@ -28,7 +28,7 @@ func ValidateHeartbeat(v *validator.Validator, heartbeat *Heartbeat) {
 
 func (m HeartbeatModel) Insert(h *Heartbeat) error {
 	query := `
-		INSERT INTO heartbeat (heartbeat)
+		INSERT INTO heartbeats (heartbeat)
 		VALUES ($1)	
 		RETURNING id, created_at`
 
@@ -47,7 +47,7 @@ func (m HeartbeatModel) Get(id int64) (*Heartbeat, error) {
 
 	query := `
 		SELECT id, created_at, heartbeat
-		FROM heartbeat
+		FROM heartbeats
 		WHERE id = $1`
 
 	var h Heartbeat
@@ -77,7 +77,7 @@ func (m HeartbeatModel) Get(id int64) (*Heartbeat, error) {
 func (m HeartbeatModel) GetAll(filters Filters) ([]*Heartbeat, Metadata, error) {
 	query := fmt.Sprintf(`
         SELECT count(*) OVER(), id, created_at,heartbeat 
-        FROM heartbeat    
+        FROM heartbeats 
         ORDER BY %s %s, id ASC
         LIMIT $1 OFFSET $2`, filters.sortColumn(), filters.sortDirection())
 

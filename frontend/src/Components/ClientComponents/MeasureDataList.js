@@ -1,14 +1,32 @@
 import './MeasureDataList.css'
 import MeasureDataItem from './MeasureDataItem';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
-export default function MeasureDataList() {
+const baseURL = "http://localhost:4000/v1/heartbeat";
+
+function MeasureDataList() {
+
+    const [heartbeats, setHeartbeats] = useState(null);
+
+    useEffect(() => {
+        axios.get(baseURL).then((response) => {
+            setHeartbeats(response.data);
+        });
+    }, []);
+
+    if (!heartbeats) return null;
+
     return (
+
         <div className="App-client-measure-data-list">
-            <MeasureDataItem label={'Beats Per Minute'} data={60} date={'10:00 AM'}/>
-            <MeasureDataItem label={'Body Temperature'} data={30} date={'10:00 AM'}/>
-            <MeasureDataItem label={'Beats Per Minute'} data={60} date={'9:00 AM'}/>
-            <MeasureDataItem label={'Beats Per Minute'} data={60} date={'9:00 AM'}/>
-            <MeasureDataItem label={'Beats Per Minute'} data={60} date={'9:00 AM'}/>
+            {heartbeats.heartbeats.map(heartbeat => {
+                return (
+                    <MeasureDataItem label={'Beats Per Minute'} data={heartbeat.heartbeat} date={heartbeat.created_at} />
+                );
+            })}
         </div>
     );
 }
+
+export default MeasureDataList;
