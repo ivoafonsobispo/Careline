@@ -1,7 +1,8 @@
 import './MeasureDataItem.css'
 
-export default function MeasureDataItem({label, data, date}) {
-    return(
+export default function MeasureDataItem({ label, data, date }) {
+
+    return (
         <div className="App-client-measure-data-list-item">
             <div className='measure-data-values'>
                 <span>{label}: </span>
