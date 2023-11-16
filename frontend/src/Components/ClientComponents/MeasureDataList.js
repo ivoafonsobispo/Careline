@@ -22,7 +22,7 @@ function MeasureDataList() {
         <div className="App-client-measure-data-list">
             {heartbeats.heartbeats.map(heartbeat => {
                 return (
-                    <MeasureDataItem label={'Beats Per Minute'} data={heartbeat.heartbeat} date={heartbeat.created_at} />
+                    <MeasureDataItem key={heartbeat.id} label={'Beats Per Minute'} data={heartbeat.heartbeat} date={heartbeat.created_at} />
                 );
             })}
         </div>
