@@ -14,6 +14,7 @@ type Models struct {
 	Heartbeats       HeartbeatModel
 	BodyTemperatures BodyTemperatureModel
 	Patients         PatientModel
+	Professionals    ProfessionalModel
 }
 
 func NewModels(db *sql.DB) Models {
@@ -21,5 +22,6 @@ func NewModels(db *sql.DB) Models {
 		Heartbeats:       HeartbeatModel{DB: db},
 		BodyTemperatures: BodyTemperatureModel{DB: db},
 		Patients:         PatientModel{DB: db},
+		Professionals:    ProfessionalModel{DB: db},
 	}
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/ivoafonsobispo/careline/backend/internal/validator"
 )
 
-type Patient struct {
+type Professional struct {
 	ID           int64     `json:"id"`
 	CreatedAt    time.Time `json:"created_at"`
 	Name         string    `json:"name"`
@@ -21,39 +21,44 @@ type Patient struct {
 	Version      int       `json:"-"`
 }
 
-type PatientModel struct {
+type ProfessionalModel struct {
 	DB *sql.DB
 }
 
-func ValidatePatient(v *validator.Validator, patient *Patient) {
-	v.Check(patient.Name != "", "name", "must be provided")
-	v.Check(len(patient.Name) <= 500, "name", "must not be more than 500 bytes long")
+func ValidateHealthNumberProfessional(v *validator.Validator, healthNumber string) {
+	v.Check(healthNumber[0] == '9', "health_number", "must start with 9")
+}
 
-	ValidateEmail(v, patient.Email)
+func ValidateProfessional(v *validator.Validator, professional *Professional) {
+	v.Check(professional.Name != "", "name", "must be provided")
+	v.Check(len(professional.Name) <= 500, "name", "must not be more than 500 bytes long")
 
-	ValidateHealthNumber(v, patient.HealthNumber)
+	ValidateEmail(v, professional.Email)
 
-	if patient.Password.plaintext != nil {
-		ValidatePasswordPlaintext(v, *patient.Password.plaintext)
+	ValidateHealthNumber(v, professional.HealthNumber)
+	ValidateHealthNumberProfessional(v, professional.HealthNumber)
+
+	if professional.Password.plaintext != nil {
+		ValidatePasswordPlaintext(v, *professional.Password.plaintext)
 	}
 
-	if patient.Password.hash == nil {
+	if professional.Password.hash == nil {
 		panic("missing password hash for user")
 	}
 }
 
-func (m PatientModel) Insert(patient *Patient) error {
+func (m ProfessionalModel) Insert(professional *Professional) error {
 	query := `
-        INSERT INTO patients (name, email, password_hash, sex, health_number, activated) 
+        INSERT INTO professionals (name, email, password_hash, sex, health_number, activated) 
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, created_at, version`
 
-	args := []any{patient.Name, patient.Email, patient.Password.hash, patient.Sex, patient.HealthNumber, patient.Activated}
+	args := []any{professional.Name, professional.Email, professional.Password.hash, professional.Sex, professional.HealthNumber, professional.Activated}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&patient.ID, &patient.CreatedAt, &patient.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&professional.ID, &professional.CreatedAt, &professional.Version)
 	if err != nil {
 		switch {
 		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:
@@ -66,25 +71,25 @@ func (m PatientModel) Insert(patient *Patient) error {
 	return nil
 }
 
-func (m PatientModel) GetByEmail(email string) (*Patient, error) {
+func (m ProfessionalModel) GetByEmail(email string) (*Professional, error) {
 	query := `
         SELECT id, created_at, name, email, password_hash, sex, health_number,activated, version
-        FROM patients 
+        FROM professionals
         WHERE email = $1`
 
-	var patient Patient
+	var professional Professional
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	err := m.DB.QueryRowContext(ctx, query, email).Scan(
-		&patient.ID,
-		&patient.CreatedAt,
-		&patient.Name,
-		&patient.Email,
-		&patient.Password.hash,
-		&patient.Activated,
-		&patient.Version,
+		&professional.ID,
+		&professional.CreatedAt,
+		&professional.Name,
+		&professional.Email,
+		&professional.Password.hash,
+		&professional.Activated,
+		&professional.Version,
 	)
 
 	if err != nil {
@@ -96,29 +101,29 @@ func (m PatientModel) GetByEmail(email string) (*Patient, error) {
 		}
 	}
 
-	return &patient, nil
+	return &professional, nil
 }
 
-func (m PatientModel) Update(patient *Patient) error {
+func (m ProfessionalModel) Update(professional *Professional) error {
 	query := `
-        UPDATE patients 
+        UPDATE professionals 
         SET name = $1, email = $2, password_hash = $3, activated = $4, version = version + 1
         WHERE id = $5 AND version = $6
         RETURNING version`
 
 	args := []any{
-		patient.Name,
-		patient.Email,
-		patient.Password.hash,
-		patient.Activated,
-		patient.ID,
-		patient.Version,
+		professional.Name,
+		professional.Email,
+		professional.Password.hash,
+		professional.Activated,
+		professional.ID,
+		professional.Version,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&patient.Version)
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(&professional.Version)
 	if err != nil {
 		switch {
 		case err.Error() == `pq: duplicate key value violates unique constraint "users_email_key"`:

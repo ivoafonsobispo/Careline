@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS professionals (
     password_hash bytea NOT NULL,
     sex char(1) CHECK(sex in ('F','M')),
     health_number text UNIQUE NOT NULL,
-    health_professional_number text UNIQUE NOT NULL,
     activated bool NOT NULL,
     version integer NOT NULL DEFAULT 1
 );
