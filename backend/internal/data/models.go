@@ -13,11 +13,13 @@ var (
 type Models struct {
 	Heartbeats       HeartbeatModel
 	BodyTemperatures BodyTemperatureModel
+	Patients         PatientModel
 }
 
 func NewModels(db *sql.DB) Models {
 	return Models{
 		Heartbeats:       HeartbeatModel{DB: db},
 		BodyTemperatures: BodyTemperatureModel{DB: db},
+		Patients:         PatientModel{DB: db},
 	}
 }

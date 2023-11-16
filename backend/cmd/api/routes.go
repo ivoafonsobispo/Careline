@@ -27,8 +27,7 @@ func (app *application) routes() http.Handler {
 	router.HandlerFunc(http.MethodPut, "/v1/bodytemperature/:id", app.updateBodytemperatureHandler)
 	router.HandlerFunc(http.MethodDelete, "/v1/bodytemperature/:id", app.deleteBodytemperatureHandler)
 
-	router.HandlerFunc(http.MethodPost, "/v1/user", app.createUserHandler)
-	router.HandlerFunc(http.MethodGet, "/v1/user/:id", app.showUserHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/patients", app.registerPatientHandler)
 
 	return app.recoverPanic(app.rateLimit(router))
 }
