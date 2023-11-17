@@ -39,11 +39,11 @@ struct LastHeartbeatView: View {
             VStack(alignment: .leading){
                 Text("Last Heartbeat:")
                 HStack{
-                    Text("999")
+                    Text("70")
                         .font(.custom("", fixedSize: 50))
                         .fontWeight(.bold)
                     Text("BPM")
-                }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
                 Text ("WEDNESDAY, OCT 18 AT 15:35")
                     .foregroundColor(.gray)
                     .font(.caption)
@@ -51,7 +51,6 @@ struct LastHeartbeatView: View {
             Image("heartDT")
                 .resizable()
                 .frame(minWidth: 0, maxWidth: 100)
-                .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
                 .scaleEffect(1)
                 .animation(animation)
         }.padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
@@ -76,9 +75,11 @@ struct MeasureTextView: View {
 }
 
 struct MeasureButtonsListView: View{
+    var measures = Measure.baseMeasures
+    
     var body: some View {
-        List{
-            MeasureButtonView(measure: Measure.sampleMeasures)
+        ForEach(measures){measure in
+            MeasureButtonView(measure: measure)
         }
     }
 }
@@ -87,30 +88,47 @@ struct MeasureButtonView: View{
     var measure: Measure
     
     var body: some View {
-        HStack{
-            Image(systemName: measure.symbol)
-            Text(measure.name)
-            Text(measure.data)
+        NavigationLink(destination: MeasureView(measure: measure)) {
+            HStack{
+                Image(systemName: measure.symbol)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30.0,height: 30.0)
+                Text(measure.name)
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
+            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .leading)
+                .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
+                .foregroundColor(Color.black)
         }.background(Color("Salmon"))
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+            .cornerRadius(15)
+            
     }
 }
 
 struct ContentView: View {
+    
     var body: some View {
-        VStack{
-            SummaryView()
-            Text("Quick Status")
-                .font(.title3)
-                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                .frame(maxWidth: .infinity,alignment: .leading)
-            LastHeartbeatView()
-            MeasureTextView()
-            MeasureButtonsListView()
-        }.padding(EdgeInsets(top: 20, leading: 20, bottom: 40, trailing: 20))
-            .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
+        NavigationView{
+            VStack{
+                SummaryView()
+                Text("Quick Status")
+                    .font(.title3)
+                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    .frame(maxWidth: .infinity,alignment: .leading)
+                LastHeartbeatView()
+                MeasureTextView()
+                MeasureButtonsListView()
+            }
+                .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
+                .navigationBarHidden(true)
+                    .navigationTitle("")
+        }.padding(EdgeInsets(top: 30, leading: 20, bottom: 40, trailing: 20))
+            .foregroundColor(.black)
     }
 }
 
 #Preview {
     ContentView()
 }
+

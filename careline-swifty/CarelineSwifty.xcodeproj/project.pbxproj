@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2CBFD49E2B06A91000BDD99C /* Measure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49D2B06A91000BDD99C /* Measure.swift */; };
+		2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49F2B07F20300BDD99C /* MeasureView.swift */; };
 		2CE6509C2B066B7C00D17A73 /* CarelineSwiftyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE6509B2B066B7C00D17A73 /* CarelineSwiftyApp.swift */; };
 		2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE6509D2B066B7C00D17A73 /* ContentView.swift */; };
 		2CE650A02B066B7F00D17A73 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2CE6509F2B066B7F00D17A73 /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 
 /* Begin PBXFileReference section */
 		2CBFD49D2B06A91000BDD99C /* Measure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measure.swift; sourceTree = "<group>"; };
+		2CBFD49F2B07F20300BDD99C /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
 		2CE650982B066B7C00D17A73 /* CarelineSwifty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarelineSwifty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE6509B2B066B7C00D17A73 /* CarelineSwiftyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarelineSwiftyApp.swift; sourceTree = "<group>"; };
 		2CE6509D2B066B7C00D17A73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -58,6 +60,7 @@
 				2CBFD49D2B06A91000BDD99C /* Measure.swift */,
 				2CE6509F2B066B7F00D17A73 /* Assets.xcassets */,
 				2CE650A12B066B7F00D17A73 /* Preview Content */,
+				2CBFD49F2B07F20300BDD99C /* MeasureView.swift */,
 			);
 			path = CarelineSwifty;
 			sourceTree = "<group>";
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */,
+				2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */,
 				2CE6509C2B066B7C00D17A73 /* CarelineSwiftyApp.swift in Sources */,
 				2CBFD49E2B06A91000BDD99C /* Measure.swift in Sources */,
 			);

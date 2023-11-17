@@ -14,8 +14,11 @@ struct Measure: Codable, Identifiable {
     var name: String
     var data: String
     
-    static var sampleMeasures: Measure {
-        return Measure(symbol: "heart", name: "Heartbeat", data: "70")
+    static var baseMeasures: [Measure] {
+        return [
+            Measure(symbol: "heart", name: "Heartbeat", data: "998"),
+            Measure(symbol: "thermometer", name: "Body Temperature", data: "998"),
+        ]
         
     }
     
