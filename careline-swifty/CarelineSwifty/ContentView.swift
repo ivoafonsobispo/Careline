@@ -28,10 +28,11 @@ struct SummaryView: View {
 }
 
 struct LastHeartbeatView: View {
-    var animation: Animation{
-        Animation.easeIn(duration: 1)
+    @State private var isAnimating = false
+    
+    var animation: Animation {
+        Animation.easeInOut(duration: 0.6) // Mudar o ritmo da animaçâo aqui
             .repeatForever(autoreverses: true)
-        
     }
     
     var body: some View {
@@ -50,9 +51,16 @@ struct LastHeartbeatView: View {
             }
             Image("heartDT")
                 .resizable()
-                .frame(minWidth: 0, maxWidth: 100)
-                .scaleEffect(1)
-                .animation(animation)
+                .scaleEffect(isAnimating ? 0.8 : 1.0)
+                .frame(minWidth: 100, maxWidth: 100, minHeight: 90, maxHeight: 90)
+                .onAppear{
+                    DispatchQueue.main.async {
+                        withAnimation(animation) {
+                            isAnimating = true
+                        }
+                    }
+                }
+
         }.padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
             .frame(minWidth:  0, maxWidth: .infinity, minHeight: 0, maxHeight: 130, alignment: .topLeading)
             .background(Color("Salmon"))
@@ -81,6 +89,33 @@ struct MeasureButtonsListView: View{
         ForEach(measures){measure in
             MeasureButtonView(measure: measure)
         }
+        TriageButtonView(measures: measures)
+    }
+}
+
+struct TriageButtonView: View{
+    var measures: [Measure]
+    
+    var body: some View {
+        NavigationLink(destination: TriageView(measures: measures)) {
+            HStack{
+                Image(systemName: "checkmark.square")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30.0,height: 30.0)
+                Text("Triage")
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
+                Text("RIGHT NOW >")
+                    .foregroundColor(Color.gray)
+                    .font(.caption)
+                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
+            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .leading)
+                .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
+                .foregroundColor(Color.black)
+        }.background(Color("Salmon"))
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+            .cornerRadius(15)
+            
     }
 }
 
@@ -96,6 +131,10 @@ struct MeasureButtonView: View{
                     .frame(width: 30.0,height: 30.0)
                 Text(measure.name)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
+                Text("RIGHT NOW >")
+                    .foregroundColor(Color.gray)
+                    .font(.caption)
+                    .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
             }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .leading)
                 .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
                 .foregroundColor(Color.black)
@@ -107,7 +146,6 @@ struct MeasureButtonView: View{
 }
 
 struct ContentView: View {
-    
     var body: some View {
         NavigationView{
             VStack{
@@ -122,7 +160,7 @@ struct ContentView: View {
             }
                 .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
                 .navigationBarHidden(true)
-                    .navigationTitle("")
+                .navigationBarTitle("", displayMode: .inline)
         }.padding(EdgeInsets(top: 30, leading: 20, bottom: 40, trailing: 20))
             .foregroundColor(.black)
     }
