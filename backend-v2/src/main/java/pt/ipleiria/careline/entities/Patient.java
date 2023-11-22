@@ -19,6 +19,9 @@ public class Patient extends User {
     @OneToMany(fetch = FetchType.LAZY,mappedBy = "patient",cascade = CascadeType.ALL)
     private List<Heartbeat> heartbeats;
 
+    @OneToMany(fetch = FetchType.LAZY,mappedBy = "patient",cascade = CascadeType.ALL)
+    private List<Temperature> temperatures;
+
     public Patient() {
     }
 
