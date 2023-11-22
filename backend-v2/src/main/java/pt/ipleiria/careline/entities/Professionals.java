@@ -2,16 +2,15 @@ package pt.ipleiria.careline.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.annotation.CreatedDate;
 import pt.ipleiria.careline.enums.Sex;
 
 import java.util.Date;
 
 @Entity
-public class Patient {
+public class Professionals {
     @Id
-    @SequenceGenerator(name = "patient_id_sequence", sequenceName = "patient_id_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "patient_id_sequence")
+    @SequenceGenerator(name = "professional_id_sequence", sequenceName = "professionals_id_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "professionals_id_sequence")
     private Integer id;
     @NotNull
     private String name;
@@ -23,54 +22,41 @@ public class Patient {
     @Enumerated(EnumType.STRING)
     private Sex sex;
     @NotNull
-    private String address;
-    @NotNull
-    private String phone;
-    @NotNull
-    private String nif;
+    private String hospital;
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date birthDate;
     @NotNull
     private String nus;
     @NotNull
-    @CreatedDate
-    private Date created_at;
-    @NotNull
     private boolean active;
     @Version
     private int version;
 
-    public Patient() {
+    public Professionals() {
     }
 
-    public Patient(String name, String email, String password, Sex sex, String address, String phone, String nif, Date birthDate, String nus, Date created_at, boolean active, int version) {
+    public Professionals(String name, String email, String password, Sex sex, String hospital, Date birthDate, String nus, boolean active, int version) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.sex = sex;
-        this.address = address;
-        this.phone = phone;
-        this.nif = nif;
+        this.hospital = hospital;
         this.birthDate = birthDate;
         this.nus = nus;
-        this.created_at = created_at;
         this.active = active;
         this.version = version;
     }
 
-    public Patient(Integer id, String name, String email, String password, Sex sex, String address, String phone, String nif, Date birthDate, String nus, Date created_at, boolean active, int version) {
+    public Professionals(Integer id, String name, String email, String password, Sex sex, String hospital, Date birthDate, String nus, boolean active, int version) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.sex = sex;
-        this.address = address;
-        this.phone = phone;
-        this.nif = nif;
+        this.hospital = hospital;
         this.birthDate = birthDate;
         this.nus = nus;
-        this.created_at = created_at;
         this.active = active;
         this.version = version;
     }
@@ -115,28 +101,12 @@ public class Patient {
         this.sex = sex;
     }
 
-    public String getAddress() {
-        return address;
+    public String getHospital() {
+        return hospital;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getNif() {
-        return nif;
-    }
-
-    public void setNif(String nif) {
-        this.nif = nif;
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
     }
 
     public Date getBirthDate() {
@@ -153,14 +123,6 @@ public class Patient {
 
     public void setNus(String nus) {
         this.nus = nus;
-    }
-
-    public Date getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
     }
 
     public boolean isActive() {
