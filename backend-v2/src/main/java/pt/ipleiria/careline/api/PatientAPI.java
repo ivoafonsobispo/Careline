@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.bll.PatientBll;
 import pt.ipleiria.careline.dto.PatientDTO;
-import pt.ipleiria.careline.entities.Patient;
+import pt.ipleiria.careline.entities.users.Patient;
 import java.util.List;
 import java.util.Optional;
 

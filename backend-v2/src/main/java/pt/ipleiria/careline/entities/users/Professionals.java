@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.entities;
+package pt.ipleiria.careline.entities.users;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

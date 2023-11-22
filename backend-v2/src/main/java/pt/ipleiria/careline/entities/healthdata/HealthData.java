@@ -1,8 +1,8 @@
-package pt.ipleiria.careline.entities;
+package pt.ipleiria.careline.entities.healthdata;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
+import pt.ipleiria.careline.entities.users.Patient;
 
 import java.sql.Date;
 

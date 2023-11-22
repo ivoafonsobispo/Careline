@@ -1,10 +1,12 @@
-package pt.ipleiria.careline.entities;
+package pt.ipleiria.careline.entities.users;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
+import pt.ipleiria.careline.entities.healthdata.Heartbeat;
+import pt.ipleiria.careline.entities.healthdata.Temperature;
 import pt.ipleiria.careline.enums.Sex;
 
 import java.sql.Date;
