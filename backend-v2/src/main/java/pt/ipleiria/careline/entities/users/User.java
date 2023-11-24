@@ -2,14 +2,16 @@ package pt.ipleiria.careline.entities.users;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.annotation.CreatedDate;
-import pt.ipleiria.careline.enums.Sex;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.CurrentTimestamp;
 
 import java.sql.Date;
+import java.time.Instant;
 
 @MappedSuperclass
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @NotNull
     private String name;
@@ -18,46 +20,19 @@ public class User {
     @NotNull
     private String password;
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private Sex sex;
-    @NotNull
-    @Temporal(TemporalType.DATE)
-    private Date birthDate;
-    @NotNull
     private String nus;
-    @CreatedDate
-    private Date created_at;
-    @NotNull
-    private boolean active;
-    @Version
-    private int version;
+    @CurrentTimestamp
+    public Instant createdAt;
 
     public User() {
     }
 
-    public User(String name, String email, String password, Sex sex, Date birthDate, String nus, Date created_at, boolean active, int version) {
+    public User(String name, String email, String password, String nus) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.sex = sex;
-        this.birthDate = birthDate;
         this.nus = nus;
-        this.created_at = created_at;
-        this.active = active;
-        this.version = version;
-    }
-
-    public User(Integer id, String name, String email, String password, Sex sex, Date birthDate, String nus, Date created_at, boolean active, int version) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.sex = sex;
-        this.birthDate = birthDate;
-        this.nus = nus;
-        this.created_at = created_at;
-        this.active = active;
-        this.version = version;
+        this.createdAt = Instant.now();
     }
 
     public Integer getId() {
@@ -92,22 +67,6 @@ public class User {
         this.password = password;
     }
 
-    public Sex getSex() {
-        return sex;
-    }
-
-    public void setSex(Sex sex) {
-        this.sex = sex;
-    }
-
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
     public String getNus() {
         return nus;
     }
@@ -116,27 +75,11 @@ public class User {
         this.nus = nus;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 }

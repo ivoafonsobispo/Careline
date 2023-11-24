@@ -21,13 +21,13 @@ public class PatientBll {
     public List<PatientDTO> getAll() {
         return patientRepository.findAll()
                 .stream()
-                .map(patient -> new PatientDTO(patient.getName(), patient.getEmail()))
+                .map(patient -> new PatientDTO(patient.getName(), patient.getEmail(), patient.getNus()))
                 .collect(Collectors.toList());
     }
 
     public Optional<PatientDTO> getById(Integer id) {
         return patientRepository.findById(id)
-                .map(patient -> new PatientDTO(patient.getName(), patient.getEmail()));
+                .map(patient -> new PatientDTO(patient.getName(), patient.getEmail(), patient.getNus()));
     }
 
     public Optional<PatientDTO> update(Integer id, Patient patient) {
@@ -36,15 +36,17 @@ public class PatientBll {
                     patientToUpdate.setName(patient.getName());
                     patientToUpdate.setEmail(patient.getEmail());
                     patientToUpdate.setPassword(patient.getPassword());
+                    patientToUpdate.setNus(patient.getNus());
                     Patient updatedPatient = patientRepository.save(patientToUpdate);
-                    return new PatientDTO(updatedPatient.getName(), updatedPatient.getEmail());
+                    return new PatientDTO(updatedPatient.getName(), updatedPatient.getEmail(), updatedPatient.getNus());
                 });
     }
 
     public PatientDTO create(Patient patient) {
         try {
-            Patient createdPatient = patientRepository.save(patient);
-            return new PatientDTO(createdPatient.getName(), createdPatient.getEmail());
+            Patient patientToCreate = new Patient(patient.getName(), patient.getEmail(), patient.getPassword(), patient.getNus());
+            Patient createdPatient = patientRepository.save(patientToCreate);
+            return new PatientDTO(createdPatient.getName(), createdPatient.getEmail(), createdPatient.getNus());
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to create patient", e);

@@ -3,13 +3,12 @@ package pt.ipleiria.careline.dto;
 public class PatientDTO {
     public String name;
     public String email;
+    public String nus;
 
-    public PatientDTO(String name, String email) {
+    public PatientDTO(String name, String email, String nus) {
         this.name = name;
         this.email = email;
-    }
-
-    public PatientDTO() {
+        this.nus = nus;
     }
 
     public String getName() {
@@ -18,5 +17,9 @@ public class PatientDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getNus() {
+        return nus;
     }
 }

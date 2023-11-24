@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.bll.PatientBll;
 import pt.ipleiria.careline.dto.PatientDTO;
 import pt.ipleiria.careline.entities.users.Patient;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ public class PatientAPI {
 
     @PutMapping("/{id}")
     public ResponseEntity<Optional<PatientDTO>> update(@PathVariable("id") Integer id, @RequestBody @Valid Patient patient) {
-        Optional<PatientDTO > updatedPatient = patientBll.update(id, patient);
+        Optional<PatientDTO> updatedPatient = patientBll.update(id, patient);
         return ResponseEntity.ok(updatedPatient);
     }
 
