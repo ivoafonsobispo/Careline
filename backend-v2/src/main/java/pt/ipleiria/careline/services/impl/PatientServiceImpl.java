@@ -39,4 +39,16 @@ public class PatientServiceImpl implements PatientService {
     public boolean isExists(Long id) {
         return patientRepository.existsById(id);
     }
+
+    @Override
+    public PatientEntity partialUpdate(Long id, PatientEntity patientEntity) {
+        patientEntity.setId(id);
+        return patientRepository.findById(id).map(existingPatient -> {
+            Optional.ofNullable(patientEntity.getName()).ifPresent(existingPatient::setName);
+            Optional.ofNullable(patientEntity.getEmail()).ifPresent(existingPatient::setEmail);
+            Optional.ofNullable(patientEntity.getPassword()).ifPresent(existingPatient::setPassword);
+            Optional.ofNullable(patientEntity.getNus()).ifPresent(existingPatient::setNus);
+            return patientRepository.save(existingPatient);
+        }).orElseThrow(() -> new RuntimeException("Patient not found"));
+    }
 }

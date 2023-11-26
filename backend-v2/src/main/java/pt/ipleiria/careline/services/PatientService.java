@@ -13,4 +13,6 @@ public interface PatientService {
     List<PatientEntity> findAll();
 
     boolean isExists(Long id);
+
+    PatientEntity partialUpdate(Long id, PatientEntity patientEntity);
 }

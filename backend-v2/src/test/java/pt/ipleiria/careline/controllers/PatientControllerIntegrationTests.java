@@ -203,4 +203,59 @@ public class PatientControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.nus").value("987654321")
         );
     }
+
+    @Test
+    public void testThatPartialUpdatePatientReturnsHttpStatus404WhenNoPatientExists() throws Exception {
+        PatientDTO testPatientA = TestDataUtil.createPatientDTOA();
+        String patientJson = objectMapper.writeValueAsString(testPatientA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/patients/0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patientJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void testThatPartialUpdatePatientReturnsHttpStatus200WhenPatientExists() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.save(testPatientA);
+
+        PatientDTO testPatientDTOA = TestDataUtil.createPatientDTOA();
+        testPatientDTOA.setName("UPDATED");
+        String patientJson = objectMapper.writeValueAsString(testPatientDTOA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/patients/" + testPatientA.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patientJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatPartialUpdateUpdatesExistingPatientReturnUpdatedPatient() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.save(testPatientA);
+
+        PatientDTO testPatientDTOA = TestDataUtil.createPatientDTOA();
+        testPatientDTOA.setName("UPDATED");
+        String patientJson = objectMapper.writeValueAsString(testPatientDTOA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/api/patients/" + testPatientA.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patientJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(1)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value("UPDATED")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.email").value("ivo.bispo@gmail.com")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.password").value("password")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.nus").value("123456789")
+        );
+    }
 }

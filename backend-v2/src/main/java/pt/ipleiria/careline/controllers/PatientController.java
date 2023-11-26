@@ -58,6 +58,18 @@ public class PatientController {
         return new ResponseEntity<>(
                 patientMapper.mapToDTO(savedPatientEntity), HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<PatientDTO> partialUpdatePatient(@PathVariable("id") Long id, @RequestBody PatientDTO patientDTO) {
+        if (!patientService.isExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        PatientEntity patientEntity = patientMapper.mapFrom(patientDTO);
+        PatientEntity savedPatientEntity = patientService.partialUpdate(id, patientEntity);
+        return new ResponseEntity<>(
+                patientMapper.mapToDTO(savedPatientEntity), HttpStatus.OK);
+    }
 }
 
 
