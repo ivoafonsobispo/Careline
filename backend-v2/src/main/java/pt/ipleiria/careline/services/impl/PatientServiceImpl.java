@@ -5,6 +5,10 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.services.PatientService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class PatientServiceImpl implements PatientService {
 
@@ -22,5 +26,11 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public PatientEntity getPatientById(Integer id) {
         return patientRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<PatientEntity> findAll() {
+        return StreamSupport.stream(patientRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 }

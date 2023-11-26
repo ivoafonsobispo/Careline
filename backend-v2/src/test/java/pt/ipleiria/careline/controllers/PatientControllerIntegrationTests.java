@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.services.PatientService;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -23,10 +24,12 @@ public class PatientControllerIntegrationTests {
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
+    private PatientService patientService;
 
     @Autowired
-    public PatientControllerIntegrationTests(MockMvc mockMvc) {
+    public PatientControllerIntegrationTests(MockMvc mockMvc, PatientService patientService) {
         this.mockMvc = mockMvc;
+        this.patientService = patientService;
         this.objectMapper = new ObjectMapper();
     }
 
@@ -65,6 +68,37 @@ public class PatientControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.password").value("password")
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.nus").value("123456789")
+        );
+    }
+
+    @Test
+    public void testThatListPatientsReturnsHttpStatus200() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatListPatientsReturnsListOfAuthors() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.createPatient(testPatientA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].id").isNumber()
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].name").value("Ivo Bispo")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].email").value("ivo.bispo@gmail.com")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].password").value("password")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].nus").value("123456789")
         );
     }
 }
