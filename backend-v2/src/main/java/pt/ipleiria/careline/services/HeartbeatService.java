@@ -1,5 +1,7 @@
 package pt.ipleiria.careline.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 
 import java.util.List;
@@ -10,5 +12,11 @@ public interface HeartbeatService {
 
     List<HeartbeatEntity> findAll();
 
+    Page<HeartbeatEntity> findAll(Pageable pageable);
+
     Optional<HeartbeatEntity> getHeartbeatById(Long id);
+
+    boolean isExists(Long id);
+
+    void delete(Long id);
 }

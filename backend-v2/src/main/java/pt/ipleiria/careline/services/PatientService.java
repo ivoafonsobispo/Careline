@@ -1,5 +1,7 @@
 package pt.ipleiria.careline.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
 import java.util.List;
@@ -12,7 +14,11 @@ public interface PatientService {
 
     List<PatientEntity> findAll();
 
+    Page<PatientEntity> findAll(Pageable pageable);
+
     boolean isExists(Long id);
 
     PatientEntity partialUpdate(Long id, PatientEntity patientEntity);
+
+    void delete(Long id);
 }

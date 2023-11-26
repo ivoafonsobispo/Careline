@@ -1,5 +1,7 @@
 package pt.ipleiria.careline.services.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.repositories.HeartbeatRepository;
@@ -33,7 +35,22 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     @Override
+    public Page<HeartbeatEntity> findAll(Pageable pageable) {
+        return heartbeatRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<HeartbeatEntity> getHeartbeatById(Long id) {
         return heartbeatRepository.findById(id);
+    }
+
+    @Override
+    public boolean isExists(Long id) {
+        return heartbeatRepository.existsById(id);
+    }
+
+    @Override
+    public void delete(Long id) {
+        heartbeatRepository.deleteById(id);
     }
 }

@@ -1,5 +1,7 @@
 package pt.ipleiria.careline.services.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.repositories.PatientRepository;
@@ -36,6 +38,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public Page<PatientEntity> findAll(Pageable pageable) {
+        return patientRepository.findAll(pageable);
+    }
+
+    @Override
     public boolean isExists(Long id) {
         return patientRepository.existsById(id);
     }
@@ -50,5 +57,10 @@ public class PatientServiceImpl implements PatientService {
             Optional.ofNullable(patientEntity.getNus()).ifPresent(existingPatient::setNus);
             return patientRepository.save(existingPatient);
         }).orElseThrow(() -> new RuntimeException("Patient not found"));
+    }
+
+    @Override
+    public void delete(Long id) {
+        patientRepository.deleteById(id);
     }
 }

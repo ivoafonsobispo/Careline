@@ -1,6 +1,8 @@
 package pt.ipleiria.careline.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,9 +11,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.PatientService;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequestMapping("/api/patients")
 @RestController
@@ -33,9 +33,9 @@ public class PatientController {
     }
 
     @GetMapping
-    public List<PatientDTO> listPatients() {
-        List<PatientEntity> patients = patientService.findAll();
-        return patients.stream().map(patientMapper::mapToDTO).collect(Collectors.toList());
+    public Page<PatientDTO> listPatients(Pageable pageable) {
+        Page<PatientEntity> patients = patientService.findAll(pageable);
+        return patients.map(patientMapper::mapToDTO);
     }
 
     @GetMapping("/{id}")
@@ -69,6 +69,15 @@ public class PatientController {
         PatientEntity savedPatientEntity = patientService.partialUpdate(id, patientEntity);
         return new ResponseEntity<>(
                 patientMapper.mapToDTO(savedPatientEntity), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deletePatient(@PathVariable("id") Long id) {
+        if (!patientService.isExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        patientService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 

@@ -1,5 +1,7 @@
 package pt.ipleiria.careline.controllers;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +10,7 @@ import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")
 @RestController
@@ -33,9 +33,9 @@ public class HeartbeatController {
     }
 
     @GetMapping
-    public List<HeartbeatDTO> listHeartbeats() {
-        List<HeartbeatEntity> heartbeats = heartbeatService.findAll();
-        return heartbeats.stream().map(heartbeatMapper::mapToDTO).collect(Collectors.toList());
+    public Page<HeartbeatDTO> listHeartbeats(Pageable pageable) {
+        Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable);
+        return heartbeats.map(heartbeatMapper::mapToDTO);
     }
 
     @GetMapping("/{id}")
@@ -45,5 +45,14 @@ public class HeartbeatController {
             HeartbeatDTO heartbeatDTO = heartbeatMapper.mapToDTO(heartbeatEntity);
             return new ResponseEntity<>(heartbeatDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable("id") Long id) {
+        if (!heartbeatService.isExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        heartbeatService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
