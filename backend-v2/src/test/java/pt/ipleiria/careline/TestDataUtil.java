@@ -20,12 +20,30 @@ public class TestDataUtil {
         return patientEntity;
     }
 
+    public static PatientEntity createPatientEntityB() {
+        PatientEntity patientEntity = new PatientEntity();
+        patientEntity.setName("Ana Martins");
+        patientEntity.setEmail("ana.martins@gmail.com");
+        patientEntity.setPassword("password");
+        patientEntity.setNus("987654321");
+        return patientEntity;
+    }
+
     public static PatientDTO createPatientDTOA() {
         PatientDTO patientEntity = new PatientDTO();
         patientEntity.setName("Ivo Bispo");
         patientEntity.setEmail("ivo.bispo@gmail.com");
         patientEntity.setPassword("password");
         patientEntity.setNus("123456789");
+        return patientEntity;
+    }
+
+    public static PatientEntity createPatientDTOB() {
+        PatientEntity patientEntity = new PatientEntity();
+        patientEntity.setName("Ana Martins");
+        patientEntity.setEmail("ana.martins@gmail.com");
+        patientEntity.setPassword("password");
+        patientEntity.setNus("987654321");
         return patientEntity;
     }
 

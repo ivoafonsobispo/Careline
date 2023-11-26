@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PatientService {
-    PatientEntity createPatient(PatientEntity patientEntity);
+    PatientEntity save(PatientEntity patientEntity);
 
     Optional<PatientEntity> getPatientById(Long id);
 
     List<PatientEntity> findAll();
+
+    boolean isExists(Long id);
 }

@@ -20,7 +20,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientEntity createPatient(PatientEntity patientEntity) {
+    public PatientEntity save(PatientEntity patientEntity) {
         return patientRepository.save(patientEntity);
     }
 
@@ -33,5 +33,10 @@ public class PatientServiceImpl implements PatientService {
     public List<PatientEntity> findAll() {
         return StreamSupport.stream(patientRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isExists(Long id) {
+        return patientRepository.existsById(id);
     }
 }

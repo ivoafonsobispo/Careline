@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
+import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.services.PatientService;
 
@@ -84,7 +85,7 @@ public class PatientControllerIntegrationTests {
     @Test
     public void testThatListPatientsReturnsListOfAuthors() throws Exception {
         PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        patientService.createPatient(testPatientA);
+        patientService.save(testPatientA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients")
@@ -105,7 +106,7 @@ public class PatientControllerIntegrationTests {
     @Test
     public void testThatPatientReturnsHttpStatus200WhenPatientExists() throws Exception {
         PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        patientService.createPatient(testPatientA);
+        patientService.save(testPatientA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1")
@@ -118,7 +119,7 @@ public class PatientControllerIntegrationTests {
     @Test
     public void testThatPatientReturnsHttpStatus404WhenNoPatientExists() throws Exception {
         PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        patientService.createPatient(testPatientA);
+        patientService.save(testPatientA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/0")
@@ -131,7 +132,7 @@ public class PatientControllerIntegrationTests {
     @Test
     public void testThatPatientReturnsPatientWhenPatientExists() throws Exception {
         PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        patientService.createPatient(testPatientA);
+        patientService.save(testPatientA);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1")
@@ -146,6 +147,60 @@ public class PatientControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.password").value("password")
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.nus").value("123456789")
+        );
+    }
+
+    @Test
+    public void testThatFullUpdatePatientReturnsHttpStatus404WhenNoPatientExists() throws Exception {
+        PatientDTO testPatientA = TestDataUtil.createPatientDTOA();
+        String patientJson = objectMapper.writeValueAsString(testPatientA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/patients/0")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patientJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void testThatFullUpdatePatientReturnsHttpStatus200WhenPatientExists() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.save(testPatientA);
+
+        PatientDTO testPatientDTOA = TestDataUtil.createPatientDTOA();
+        String patientJson = objectMapper.writeValueAsString(testPatientDTOA);
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/patients/" + testPatientA.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patientJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatFullUpdateUpdatesExistingPatient() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.save(testPatientA);
+
+        PatientEntity testPatientB = TestDataUtil.createPatientEntityB();
+        testPatientB.setId(testPatientA.getId());
+        String patientDtoUpdateJson = objectMapper.writeValueAsString(testPatientB);
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/api/patients/" + testPatientA.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patientDtoUpdateJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(1)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value("Ana Martins")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.email").value("ana.martins@gmail.com")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.password").value("password")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.nus").value("987654321")
         );
     }
 }

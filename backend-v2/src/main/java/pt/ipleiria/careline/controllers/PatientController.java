@@ -28,7 +28,7 @@ public class PatientController {
     @PostMapping
     public ResponseEntity<PatientDTO> create(@RequestBody @Valid PatientDTO patientDTO) {
         PatientEntity patientEntity = patientMapper.mapFrom(patientDTO);
-        PatientEntity savedPatientEntity = patientService.createPatient(patientEntity);
+        PatientEntity savedPatientEntity = patientService.save(patientEntity);
         return new ResponseEntity<>(patientMapper.mapToDTO(savedPatientEntity), HttpStatus.CREATED);
     }
 
@@ -45,6 +45,18 @@ public class PatientController {
             PatientDTO patientDTO = patientMapper.mapToDTO(patientEntity);
             return new ResponseEntity<>(patientDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PatientDTO> fullUpdatePatient(@PathVariable("id") Long id, @RequestBody @Valid PatientDTO patientDTO) {
+        if (!patientService.isExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        patientDTO.setId(id);
+        PatientEntity patientEntity = patientMapper.mapFrom(patientDTO);
+        PatientEntity savedPatientEntity = patientService.save(patientEntity);
+        return new ResponseEntity<>(
+                patientMapper.mapToDTO(savedPatientEntity), HttpStatus.OK);
     }
 }
 
