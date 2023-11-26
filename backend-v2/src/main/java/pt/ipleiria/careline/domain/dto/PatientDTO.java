@@ -1,38 +1,33 @@
-package pt.ipleiria.careline.entities.users;
+package pt.ipleiria.careline.domain.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.CurrentTimestamp;
-
-import java.sql.Date;
 import java.time.Instant;
 
-@MappedSuperclass
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @NotNull
-    private String name;
-    @Column(unique = true, nullable = false)
-    private String email;
-    @NotNull
-    private String password;
-    @NotNull
-    private String nus;
-    @CurrentTimestamp
+public class PatientDTO {
     public Instant createdAt;
+    private Integer id;
+    private String name;
+    private String email;
+    private String password;
+    private String nus;
 
-    public User() {
+    public PatientDTO() {
     }
 
-    public User(String name, String email, String password, String nus) {
+    public PatientDTO(Integer id, String name, String email, String password, String nus, Instant createdAt) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.nus = nus;
-        this.createdAt = Instant.now();
+        this.createdAt = createdAt;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Integer getId() {
@@ -73,13 +68,5 @@ public class User {
 
     public void setNus(String nus) {
         this.nus = nus;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
     }
 }

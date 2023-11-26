@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.enums;
+package pt.ipleiria.careline.domain.enums;
 
 public enum Sex {
     MALE,
