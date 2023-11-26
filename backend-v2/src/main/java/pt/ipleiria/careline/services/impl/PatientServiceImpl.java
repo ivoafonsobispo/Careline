@@ -6,6 +6,7 @@ import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.services.PatientService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -24,8 +25,8 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public PatientEntity getPatientById(Integer id) {
-        return patientRepository.findById(id).orElse(null);
+    public Optional<PatientEntity> getPatientById(Long id) {
+        return patientRepository.findById(id);
     }
 
     @Override

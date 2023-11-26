@@ -101,4 +101,51 @@ public class PatientControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$[0].nus").value("123456789")
         );
     }
+
+    @Test
+    public void testThatPatientReturnsHttpStatus200WhenPatientExists() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.createPatient(testPatientA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatPatientReturnsHttpStatus404WhenNoPatientExists() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.createPatient(testPatientA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/0")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void testThatPatientReturnsPatientWhenPatientExists() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.createPatient(testPatientA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.id").value(1)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.name").value("Ivo Bispo")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.email").value("ivo.bispo@gmail.com")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.password").value("password")
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.nus").value("123456789")
+        );
+    }
 }

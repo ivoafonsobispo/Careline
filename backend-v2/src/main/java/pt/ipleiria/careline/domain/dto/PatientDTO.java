@@ -4,7 +4,7 @@ import java.time.Instant;
 
 public class PatientDTO {
     public Instant createdAt;
-    private Integer id;
+    private Long id;
     private String name;
     private String email;
     private String password;
@@ -13,7 +13,7 @@ public class PatientDTO {
     public PatientDTO() {
     }
 
-    public PatientDTO(Integer id, String name, String email, String password, String nus, Instant createdAt) {
+    public PatientDTO(Long id, String name, String email, String password, String nus, Instant createdAt) {
         this.id = id;
         this.name = name;
         this.email = email;
@@ -30,11 +30,11 @@ public class PatientDTO {
         this.createdAt = createdAt;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

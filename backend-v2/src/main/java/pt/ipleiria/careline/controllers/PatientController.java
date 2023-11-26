@@ -10,6 +10,7 @@ import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.PatientService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequestMapping("/api/patients")
@@ -35,6 +36,15 @@ public class PatientController {
     public List<PatientDTO> listPatients() {
         List<PatientEntity> patients = patientService.findAll();
         return patients.stream().map(patientMapper::mapToDTO).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientDTO> getPatientById(@PathVariable("id") Long id) {
+        Optional<PatientEntity> patient = patientService.getPatientById(id);
+        return patient.map(patientEntity -> {
+            PatientDTO patientDTO = patientMapper.mapToDTO(patientEntity);
+            return new ResponseEntity<>(patientDTO, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }
 
