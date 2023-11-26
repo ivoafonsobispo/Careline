@@ -1,6 +1,7 @@
 package pt.ipleiria.careline.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class PatientController {
     public ResponseEntity<PatientDTO> create(@RequestBody @Valid PatientDTO patientDTO) {
         PatientEntity patientEntity = patientMapper.mapFrom(patientDTO);
         PatientEntity savedPatientEntity = patientService.createPatient(patientEntity);
-        return ResponseEntity.ok(patientMapper.mapToDTO(savedPatientEntity));
+        return new ResponseEntity<>(patientMapper.mapToDTO(savedPatientEntity), HttpStatus.CREATED);
     }
 
 }
