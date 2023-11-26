@@ -130,4 +130,27 @@ public class HeartbeatControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty()
         );
     }
+
+    @Test
+    public void testThatDeleteHeartbeatReturnsHttpStatus204WhenHeartbeatExists() throws Exception {
+        HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
+        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/patients/1/heartbeats/" + testHeartbeatEntity.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
+        );
+    }
+
+    @Test
+    public void testThatDeleteHeartbeatReturnsHttpStatus404WhenHeartbeatNotExists() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/patients/1/heartbeats/0")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
 }

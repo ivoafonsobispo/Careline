@@ -258,4 +258,27 @@ public class PatientControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.nus").value("123456789")
         );
     }
+
+    @Test
+    public void testThatDeletePatientReturnsHttpStatus204WhenPatientExists() throws Exception {
+        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
+        patientService.save(testPatientA);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/patients/" + testPatientA.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
+        );
+    }
+
+    @Test
+    public void testThatDeletePatientReturnsHttpStatus404WhenPatientNotExists() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/api/patients/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
 }
