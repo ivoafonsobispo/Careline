@@ -89,4 +89,45 @@ public class HeartbeatControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$[0].createdAt").isNotEmpty()
         );
     }
+
+    @Test
+    public void testThatHeartbeatReturnsHttpStatus200WhenPatientExists() throws Exception {
+        HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
+        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1/heartbeats/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatHeartbeatReturnsHttpStatus404WhenNoHeartbeatExists() throws Exception {
+        HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
+        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1/heartbeats/0")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNotFound()
+        );
+    }
+
+    @Test
+    public void testThatHeartbeatReturnsHeartbeatWhenHeartbeatExists() throws Exception {
+        HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
+        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1/heartbeats/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.heartbeat").value(testHeartbeatEntity.getHeartbeat())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty()
+        );
+    }
 }

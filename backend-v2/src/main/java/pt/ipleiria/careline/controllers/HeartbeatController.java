@@ -9,6 +9,7 @@ import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")
@@ -35,5 +36,14 @@ public class HeartbeatController {
     public List<HeartbeatDTO> listHeartbeats() {
         List<HeartbeatEntity> heartbeats = heartbeatService.findAll();
         return heartbeats.stream().map(heartbeatMapper::mapToDTO).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<HeartbeatDTO> getHeartbeatById(@PathVariable("id") Long id) {
+        Optional<HeartbeatEntity> heartbeat = heartbeatService.getHeartbeatById(id);
+        return heartbeat.map(heartbeatEntity -> {
+            HeartbeatDTO heartbeatDTO = heartbeatMapper.mapToDTO(heartbeatEntity);
+            return new ResponseEntity<>(heartbeatDTO, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

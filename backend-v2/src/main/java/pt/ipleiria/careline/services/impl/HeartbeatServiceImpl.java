@@ -7,6 +7,7 @@ import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,5 +30,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     public List<HeartbeatEntity> findAll() {
         return StreamSupport.stream(heartbeatRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<HeartbeatEntity> getHeartbeatById(Long id) {
+        return heartbeatRepository.findById(id);
     }
 }
