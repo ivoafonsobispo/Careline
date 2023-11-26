@@ -6,6 +6,10 @@ import pt.ipleiria.careline.repositories.HeartbeatRepository;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class HeartbeatServiceImpl implements HeartbeatService {
 
@@ -19,5 +23,11 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     @Override
     public HeartbeatEntity createHeartbeat(Integer patientId, HeartbeatEntity heartbeatEntity) {
         return heartbeatRepository.save(heartbeatEntity);
+    }
+
+    @Override
+    public List<HeartbeatEntity> findAll() {
+        return StreamSupport.stream(heartbeatRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 }

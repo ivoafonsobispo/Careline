@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
 import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
+import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
+import pt.ipleiria.careline.services.HeartbeatService;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -23,10 +25,12 @@ public class HeartbeatControllerIntegrationTests {
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
+    private HeartbeatService heartbeatService;
 
     @Autowired
-    public HeartbeatControllerIntegrationTests(MockMvc mockMvc) {
+    public HeartbeatControllerIntegrationTests(MockMvc mockMvc, HeartbeatService heartbeatService) {
         this.mockMvc = mockMvc;
+        this.heartbeatService = heartbeatService;
         objectMapper = new ObjectMapper();
     }
 
@@ -59,6 +63,30 @@ public class HeartbeatControllerIntegrationTests {
                 MockMvcResultMatchers.jsonPath("$.heartbeat").value(testHeartbeatDTO.getHeartbeat())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty()
+        );
+    }
+
+    @Test
+    public void testThatListHeartbeatsReturnsHttpStatus200() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1/heartbeats")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatListHeartbeatsReturnsHeartbeats() throws Exception {
+        HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
+        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/api/patients/1/heartbeats")
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].heartbeat").value(testHeartbeatEntity.getHeartbeat())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$[0].createdAt").isNotEmpty()
         );
     }
 }

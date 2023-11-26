@@ -8,6 +8,9 @@ import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequestMapping("/api/patients/{patientId}/heartbeats")
 @RestController
 public class HeartbeatController {
@@ -26,5 +29,11 @@ public class HeartbeatController {
         HeartbeatEntity createdHeartbeat = heartbeatService.createHeartbeat(patientId, heartbeatEntity);
         HeartbeatDTO createdHeartbeatDTO = heartbeatMapper.mapToDTO(createdHeartbeat);
         return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public List<HeartbeatDTO> listHeartbeats() {
+        List<HeartbeatEntity> heartbeats = heartbeatService.findAll();
+        return heartbeats.stream().map(heartbeatMapper::mapToDTO).collect(Collectors.toList());
     }
 }
