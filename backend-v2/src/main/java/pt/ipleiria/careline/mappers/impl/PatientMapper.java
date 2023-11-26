@@ -7,11 +7,11 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 
 @Component
-public class PatientMapperImpl implements Mapper<PatientEntity, PatientDTO> {
+public class PatientMapper implements Mapper<PatientEntity, PatientDTO> {
 
     private ModelMapper modelMapper;
 
-    public PatientMapperImpl(ModelMapper modelMapper) {
+    public PatientMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
     }
 

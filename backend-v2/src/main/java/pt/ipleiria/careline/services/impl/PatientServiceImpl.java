@@ -18,4 +18,9 @@ public class PatientServiceImpl implements PatientService {
     public PatientEntity createPatient(PatientEntity patientEntity) {
         return patientRepository.save(patientEntity);
     }
+
+    @Override
+    public PatientEntity getPatientById(Integer id) {
+        return patientRepository.findById(id).orElse(null);
+    }
 }

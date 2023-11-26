@@ -13,58 +13,52 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
-import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
-public class PatientControllerIntegrationTest {
+public class HeartbeatControllerIntegrationTests {
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public PatientControllerIntegrationTest(MockMvc mockMvc) {
+    public HeartbeatControllerIntegrationTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
-        this.objectMapper = new ObjectMapper();
+        objectMapper = new ObjectMapper();
     }
 
     @Test
-    public void testThatCreatePatientSuccessfullyReturnsHttp201Created() throws Exception {
-        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        testPatientA.setId(null);
-        String patientJson = objectMapper.writeValueAsString(testPatientA);
+    public void testThatCreateBookReturnsHttpStatus201Created() throws Exception {
+        HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(null);
+        testHeartbeatDTO.setCreatedAt(null);
+        String createHeartbeatJSON = objectMapper.writeValueAsString(testHeartbeatDTO);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/patients")
+                MockMvcRequestBuilders.post("/api/patients/1/heartbeats")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(patientJson)
+                        .content(createHeartbeatJSON)
         ).andExpect(
                 MockMvcResultMatchers.status().isCreated()
         );
     }
 
     @Test
-    public void testThatCreatePatientSuccessfullyReturnsSavedAuthor() throws Exception {
-        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        testPatientA.setId(null);
-        String patientJson = objectMapper.writeValueAsString(testPatientA);
+    public void testThatCreateBookReturnsCreatedHeartbeat() throws Exception {
+        HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(null);
+        testHeartbeatDTO.setCreatedAt(null);
+        String createHeartbeatJSON = objectMapper.writeValueAsString(testHeartbeatDTO);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/patients")
+                MockMvcRequestBuilders.post("/api/patients/1/heartbeats")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(patientJson)
+                        .content(createHeartbeatJSON)
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").isNumber()
+                MockMvcResultMatchers.jsonPath("$.heartbeat").value(testHeartbeatDTO.getHeartbeat())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.name").value("Ivo Bispo")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.email").value("ivo.bispo@gmail.com")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.password").value("password")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.nus").value("123456789")
+                MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty()
         );
     }
 }
