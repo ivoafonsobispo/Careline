@@ -47,6 +47,15 @@ public class PatientController {
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/nus/{nus}")
+    public ResponseEntity<PatientDTO> getPatientById(@PathVariable("nus") String nus) {
+        Optional<PatientEntity> patient = patientService.getPatientByNus(nus);
+        return patient.map(patientEntity -> {
+            PatientDTO patientDTO = patientMapper.mapToDTO(patientEntity);
+            return new ResponseEntity<>(patientDTO, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<PatientDTO> fullUpdatePatient(@PathVariable("id") Long id, @RequestBody @Valid PatientDTO patientDTO) {
         if (!patientService.isExists(id)) {

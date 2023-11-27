@@ -12,6 +12,8 @@ public interface PatientService {
 
     Optional<PatientEntity> getPatientById(Long id);
 
+    Optional<PatientEntity> getPatientByNus(String nus);
+
     List<PatientEntity> findAll();
 
     Page<PatientEntity> findAll(Pageable pageable);

@@ -32,6 +32,11 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public Optional<PatientEntity> getPatientByNus(String nus) {
+        return patientRepository.findByNus(nus);
+    }
+
+    @Override
     public List<PatientEntity> findAll() {
         return StreamSupport.stream(patientRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
