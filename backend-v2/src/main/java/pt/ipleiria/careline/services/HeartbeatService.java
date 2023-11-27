@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface HeartbeatService {
-    HeartbeatEntity createHeartbeat(Integer patientId, HeartbeatEntity heartbeatEntity);
+    HeartbeatEntity createHeartbeat(Long patientId, HeartbeatEntity heartbeatEntity);
 
     List<HeartbeatEntity> findAll();
 
