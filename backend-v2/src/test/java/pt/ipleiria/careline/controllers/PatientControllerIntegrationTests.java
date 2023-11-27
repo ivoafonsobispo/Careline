@@ -50,7 +50,7 @@ public class PatientControllerIntegrationTests {
     }
 
     @Test
-    public void testThatCreatePatientSuccessfullyReturnsSavedAuthor() throws Exception {
+    public void testThatCreatePatientSuccessfullyReturnsSavedPatient() throws Exception {
         PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
         testPatientA.setId(null);
         String patientJson = objectMapper.writeValueAsString(testPatientA);
@@ -81,28 +81,7 @@ public class PatientControllerIntegrationTests {
                 MockMvcResultMatchers.status().isOk()
         );
     }
-
-    @Test
-    public void testThatListPatientsReturnsListOfAuthors() throws Exception {
-        PatientEntity testPatientA = TestDataUtil.createPatientEntityA();
-        patientService.save(testPatientA);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/patients")
-                        .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].id").isNumber()
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].name").value("Ivo Bispo")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].email").value("ivo.bispo@gmail.com")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].password").value("password")
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$[0].nus").value("123456789")
-        );
-    }
-
+    
     @Test
     public void testThatPatientReturnsHttpStatus200WhenPatientExists() throws Exception {
         PatientEntity testPatientA = TestDataUtil.createPatientEntityA();

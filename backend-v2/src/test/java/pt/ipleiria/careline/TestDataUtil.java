@@ -2,8 +2,10 @@ package pt.ipleiria.careline;
 
 import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
+import pt.ipleiria.careline.domain.dto.ProfessionalDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 
 import java.time.Instant;
 
@@ -45,6 +47,42 @@ public class TestDataUtil {
         patientEntity.setPassword("password");
         patientEntity.setNus("987654321");
         return patientEntity;
+    }
+
+    public static ProfessionalEntity createProfessionalEntityA() {
+        ProfessionalEntity professionalEntity = new ProfessionalEntity();
+        professionalEntity.setName("Ivo Bispo");
+        professionalEntity.setEmail("ivo.bispo@gmail.com");
+        professionalEntity.setPassword("password");
+        professionalEntity.setNus("123456789");
+        return professionalEntity;
+    }
+
+    public static ProfessionalEntity createProfessionalEntityB() {
+        ProfessionalEntity professionalEntity = new ProfessionalEntity();
+        professionalEntity.setName("Ana Martins");
+        professionalEntity.setEmail("ana.martins@gmail.com");
+        professionalEntity.setPassword("password");
+        professionalEntity.setNus("987654321");
+        return professionalEntity;
+    }
+
+    public static ProfessionalDTO createProfessionalDTOA() {
+        ProfessionalDTO professionalDTO = new ProfessionalDTO();
+        professionalDTO.setName("Ivo Bispo");
+        professionalDTO.setEmail("ivo.bispo@gmail.com");
+        professionalDTO.setPassword("password");
+        professionalDTO.setNus("123456789");
+        return professionalDTO;
+    }
+
+    public static ProfessionalDTO createProfessionalDTOB() {
+        ProfessionalDTO professionalDTO = new ProfessionalDTO();
+        professionalDTO.setName("Ana Martins");
+        professionalDTO.setEmail("ana.martins@gmail.com");
+        professionalDTO.setPassword("password");
+        professionalDTO.setNus("987654321");
+        return professionalDTO;
     }
 
     public static HeartbeatEntity createHeartbeatEntityA(final PatientEntity patientEntity) {
