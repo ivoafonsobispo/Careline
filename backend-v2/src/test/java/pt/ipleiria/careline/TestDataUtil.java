@@ -3,7 +3,9 @@ package pt.ipleiria.careline;
 import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.ProfessionalDTO;
+import pt.ipleiria.careline.domain.dto.TemperatureDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
+import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 
@@ -99,5 +101,21 @@ public class TestDataUtil {
         heartbeatEntity.setHeartbeat(80);
         heartbeatEntity.setCreatedAt(Instant.now());
         return heartbeatEntity;
+    }
+
+    public static TemperatureEntity createTemperatureEntityA(final PatientEntity patientEntity) {
+        TemperatureEntity temperatureEntity = new TemperatureEntity();
+        temperatureEntity.setPatient(patientEntity);
+        temperatureEntity.setTemperature(36);
+        temperatureEntity.setCreatedAt(Instant.now());
+        return temperatureEntity;
+    }
+
+    public static TemperatureDTO createTemperatureDTOA(final PatientDTO patientDTO) {
+        TemperatureDTO temperatureEntity = new TemperatureDTO();
+        temperatureEntity.setPatient(patientDTO);
+        temperatureEntity.setTemperature(36);
+        temperatureEntity.setCreatedAt(Instant.now());
+        return temperatureEntity;
     }
 }

@@ -35,7 +35,7 @@ public class HeartbeatControllerIntegrationTests {
     }
 
     @Test
-    public void testThatCreateBookReturnsHttpStatus201Created() throws Exception {
+    public void testThatCreateHeartbeatReturnsHttpStatus201Created() throws Exception {
         HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(null);
         testHeartbeatDTO.setCreatedAt(null);
         String createHeartbeatJSON = objectMapper.writeValueAsString(testHeartbeatDTO);
@@ -50,7 +50,7 @@ public class HeartbeatControllerIntegrationTests {
     }
 
     @Test
-    public void testThatCreateBookReturnsCreatedHeartbeat() throws Exception {
+    public void testThatCreateHeartbeatReturnsCreatedHeartbeat() throws Exception {
         HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(null);
         testHeartbeatDTO.setCreatedAt(null);
         String createHeartbeatJSON = objectMapper.writeValueAsString(testHeartbeatDTO);
