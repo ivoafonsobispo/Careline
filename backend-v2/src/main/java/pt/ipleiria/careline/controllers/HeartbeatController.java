@@ -38,8 +38,8 @@ public class HeartbeatController {
     }
 
     @GetMapping
-    public Page<HeartbeatDTO> listHeartbeats(Pageable pageable) {
-        Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable);
+    public Page<HeartbeatDTO> listHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable, patientId);
         return heartbeats.map(heartbeatMapper::mapToDTO);
     }
 

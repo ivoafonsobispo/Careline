@@ -12,7 +12,7 @@ public interface HeartbeatService {
 
     List<HeartbeatEntity> findAll();
 
-    Page<HeartbeatEntity> findAll(Pageable pageable);
+    Page<HeartbeatEntity> findAll(Pageable pageable, Long patientId);
 
     Optional<HeartbeatEntity> getHeartbeatById(Long id);
 

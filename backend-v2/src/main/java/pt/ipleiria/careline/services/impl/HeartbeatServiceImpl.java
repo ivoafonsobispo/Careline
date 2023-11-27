@@ -47,8 +47,8 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     @Override
-    public Page<HeartbeatEntity> findAll(Pageable pageable) {
-        return heartbeatRepository.findAll(pageable);
+    public Page<HeartbeatEntity> findAll(Pageable pageable, Long patientId) {
+        return heartbeatRepository.findAllByPatientId(pageable, patientId);
     }
 
     @Override
