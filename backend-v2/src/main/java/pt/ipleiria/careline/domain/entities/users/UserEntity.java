@@ -1,7 +1,9 @@
 package pt.ipleiria.careline.domain.entities.users;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import java.time.Instant;
@@ -18,11 +20,14 @@ public class UserEntity {
     private String name;
     @Column(unique = true, nullable = false)
     @NotNull
+    @Email
     private String email;
     @NotNull
+    @Size(min = 8, max = 30)
     private String password;
     @Column(unique = true, nullable = false)
     @NotNull
+    @Size(min = 9, max = 9)
     private String nus;
 
     public UserEntity() {
