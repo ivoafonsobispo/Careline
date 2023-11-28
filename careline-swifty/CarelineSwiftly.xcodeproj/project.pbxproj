@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C2627B62B14E8D6000DDD38 /* ShowMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627B52B14E8D6000DDD38 /* ShowMoreView.swift */; };
+		2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627B72B14F918000DDD38 /* TriageMeasures.swift */; };
+		2C2627BC2B1669D2000DDD38 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627BB2B1669D2000DDD38 /* Network.swift */; };
+		2C2627BE2B167310000DDD38 /* Temperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627BD2B167310000DDD38 /* Temperature.swift */; };
 		2CBFD49E2B06A91000BDD99C /* Measure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49D2B06A91000BDD99C /* Measure.swift */; };
 		2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49F2B07F20300BDD99C /* MeasureView.swift */; };
 		2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */; };
+		2CBFD4A42B0CB9C300BDD99C /* ARHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD4A32B0CB9C300BDD99C /* ARHelpView.swift */; };
 		2CE6509C2B066B7C00D17A73 /* CarelineSwiftyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE6509B2B066B7C00D17A73 /* CarelineSwiftyApp.swift */; };
 		2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE6509D2B066B7C00D17A73 /* ContentView.swift */; };
 		2CE650A02B066B7F00D17A73 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2CE6509F2B066B7F00D17A73 /* Assets.xcassets */; };
@@ -17,9 +22,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C2627B52B14E8D6000DDD38 /* ShowMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowMoreView.swift; sourceTree = "<group>"; };
+		2C2627B72B14F918000DDD38 /* TriageMeasures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageMeasures.swift; sourceTree = "<group>"; };
+		2C2627B92B163E4B000DDD38 /* CarelineSwifty.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CarelineSwifty.entitlements; sourceTree = "<group>"; };
+		2C2627BA2B164CC2000DDD38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2C2627BB2B1669D2000DDD38 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		2C2627BD2B167310000DDD38 /* Temperature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperature.swift; sourceTree = "<group>"; };
 		2CBFD49D2B06A91000BDD99C /* Measure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measure.swift; sourceTree = "<group>"; };
 		2CBFD49F2B07F20300BDD99C /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
 		2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageView.swift; sourceTree = "<group>"; };
+		2CBFD4A32B0CB9C300BDD99C /* ARHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARHelpView.swift; sourceTree = "<group>"; };
 		2CE650982B066B7C00D17A73 /* CarelineSwifty.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarelineSwifty.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2CE6509B2B066B7C00D17A73 /* CarelineSwiftyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarelineSwiftyApp.swift; sourceTree = "<group>"; };
 		2CE6509D2B066B7C00D17A73 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -57,13 +69,20 @@
 		2CE6509A2B066B7C00D17A73 /* CarelineSwifty */ = {
 			isa = PBXGroup;
 			children = (
+				2C2627BA2B164CC2000DDD38 /* Info.plist */,
+				2C2627B92B163E4B000DDD38 /* CarelineSwifty.entitlements */,
 				2CE6509B2B066B7C00D17A73 /* CarelineSwiftyApp.swift */,
 				2CE6509D2B066B7C00D17A73 /* ContentView.swift */,
 				2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */,
+				2C2627B72B14F918000DDD38 /* TriageMeasures.swift */,
+				2C2627B52B14E8D6000DDD38 /* ShowMoreView.swift */,
 				2CBFD49D2B06A91000BDD99C /* Measure.swift */,
+				2C2627BD2B167310000DDD38 /* Temperature.swift */,
+				2C2627BB2B1669D2000DDD38 /* Network.swift */,
 				2CE6509F2B066B7F00D17A73 /* Assets.xcassets */,
 				2CE650A12B066B7F00D17A73 /* Preview Content */,
 				2CBFD49F2B07F20300BDD99C /* MeasureView.swift */,
+				2CBFD4A32B0CB9C300BDD99C /* ARHelpView.swift */,
 			);
 			path = CarelineSwifty;
 			sourceTree = "<group>";
@@ -111,7 +130,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 2CE650932B066B7C00D17A73 /* Build configuration list for PBXProject "CarelineSwifty" */;
+			buildConfigurationList = 2CE650932B066B7C00D17A73 /* Build configuration list for PBXProject "CarelineSwiftly" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -146,11 +165,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */,
 				2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */,
+				2C2627B62B14E8D6000DDD38 /* ShowMoreView.swift in Sources */,
 				2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */,
 				2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */,
+				2C2627BE2B167310000DDD38 /* Temperature.swift in Sources */,
+				2C2627BC2B1669D2000DDD38 /* Network.swift in Sources */,
 				2CE6509C2B066B7C00D17A73 /* CarelineSwiftyApp.swift in Sources */,
 				2CBFD49E2B06A91000BDD99C /* Measure.swift in Sources */,
+				2CBFD4A42B0CB9C300BDD99C /* ARHelpView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,12 +305,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CarelineSwifty/CarelineSwifty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CarelineSwifty/Preview Content\"";
 				DEVELOPMENT_TEAM = 3272ABNW34;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CarelineSwifty/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Augmented Reality";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "Want to access health app to read heart rate";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Want to access health app to read heart rate";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -311,12 +340,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CarelineSwifty/CarelineSwifty.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"CarelineSwifty/Preview Content\"";
 				DEVELOPMENT_TEAM = 3272ABNW34;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CarelineSwifty/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Augmented Reality";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "Want to access health app to read heart rate";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Want to access health app to read heart rate";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -339,7 +373,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2CE650932B066B7C00D17A73 /* Build configuration list for PBXProject "CarelineSwifty" */ = {
+		2CE650932B066B7C00D17A73 /* Build configuration list for PBXProject "CarelineSwiftly" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2CE650A42B066B7F00D17A73 /* Debug */,
