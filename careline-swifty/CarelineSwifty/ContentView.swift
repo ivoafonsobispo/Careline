@@ -28,6 +28,8 @@ struct SummaryView: View {
 }
 
 struct LastHeartbeatView: View {
+    @State var temperature: Temperature?
+    
     @State private var isAnimating = false
     
     var animation: Animation {
@@ -40,7 +42,7 @@ struct LastHeartbeatView: View {
             VStack(alignment: .leading){
                 Text("Last Heartbeat:")
                 HStack{
-                    Text("70")
+                    Text(String(temperature?.data ?? 0))
                         .font(.custom("", fixedSize: 50))
                         .fontWeight(.bold)
                     Text("BPM")
@@ -65,16 +67,23 @@ struct LastHeartbeatView: View {
             .frame(minWidth:  0, maxWidth: .infinity, minHeight: 0, maxHeight: 130, alignment: .topLeading)
             .background(Color("Salmon"))
             .cornerRadius(15)
+            .onAppear() {
+                TemperatureAPI().getTemperature { (temperature) in
+                    self.temperature = temperature
+                }
+            }
     }
 }
 
 struct MeasureTextView: View {
+    var measures = Measure.baseMeasures
+    
     var body: some View {
         HStack{
             Text("Measure")
                 .fontWeight(.bold)
-            Button("Show More"){
-                
+            NavigationLink(destination: ShowMoreView(measures: measures)){
+                Text("Show More")
             }.foregroundColor(.red)
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
         }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30)
@@ -113,7 +122,7 @@ struct TriageButtonView: View{
                 .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
                 .foregroundColor(Color.black)
         }.background(Color("Salmon"))
-            .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .cornerRadius(15)
             
     }
@@ -135,11 +144,11 @@ struct MeasureButtonView: View{
                     .foregroundColor(Color.gray)
                     .font(.caption)
                     .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
-            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .leading)
+            }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 30, maxHeight: 30, alignment: .leading)
                 .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
                 .foregroundColor(Color.black)
         }.background(Color("Salmon"))
-            .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .cornerRadius(15)
             
     }

@@ -14,11 +14,12 @@ struct Measure: Codable, Identifiable {
     var name: String
     var data: String
     var metric: String
+    var measured: Bool = false
     
     static var baseMeasures: [Measure] {
         return [
-            Measure(symbol: "heart", name: "Heartbeat", data: "998", metric: "BPM"),
-            Measure(symbol: "thermometer", name: "Body Temperature", data: "998", metric: "ºC"),
+            Measure(symbol: "heart", name: "Heartbeat", data: "-1", metric: "BPM"),
+            Measure(symbol: "thermometer", name: "Body Temperature", data: "-1", metric: "ºC"),
         ]
         
     }
