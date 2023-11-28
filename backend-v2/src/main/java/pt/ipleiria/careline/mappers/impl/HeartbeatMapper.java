@@ -2,7 +2,7 @@ package pt.ipleiria.careline.mappers.impl;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
+import pt.ipleiria.careline.domain.dto.HealthData.HeartbeatDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 

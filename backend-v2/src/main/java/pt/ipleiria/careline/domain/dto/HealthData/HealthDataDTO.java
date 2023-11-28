@@ -1,21 +1,20 @@
-package pt.ipleiria.careline.domain.dto;
+package pt.ipleiria.careline.domain.dto.HealthData;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import pt.ipleiria.careline.domain.dto.PatientDTO;
 
 import java.time.Instant;
 
-public class HeartbeatDTO {
+public abstract class HealthDataDTO {
     @JsonProperty("created_at")
     public Instant createdAt;
-    private Integer heartbeat;
 
     private PatientDTO patient;
 
-    public HeartbeatDTO() {
+    public HealthDataDTO() {
     }
 
-    public HeartbeatDTO(Integer heartbeat, PatientDTO patient, Instant createdAt) {
-        this.heartbeat = heartbeat;
+    public HealthDataDTO(PatientDTO patient, Instant createdAt) {
         this.patient = patient;
         this.createdAt = createdAt;
     }
@@ -26,14 +25,6 @@ public class HeartbeatDTO {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Integer getHeartbeat() {
-        return heartbeat;
-    }
-
-    public void setHeartbeat(Integer heartbeat) {
-        this.heartbeat = heartbeat;
     }
 
     public PatientDTO getPatient() {

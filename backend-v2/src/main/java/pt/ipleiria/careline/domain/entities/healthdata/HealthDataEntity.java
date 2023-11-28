@@ -7,7 +7,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import java.time.Instant;
 
 @MappedSuperclass
-public class HealthDataEntity {
+public abstract class HealthDataEntity {
     @CurrentTimestamp
     @Column(name = "created_at")
     public Instant createdAt;

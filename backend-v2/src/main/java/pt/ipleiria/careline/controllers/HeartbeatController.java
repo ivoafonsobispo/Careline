@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
-import pt.ipleiria.careline.domain.dto.HeartbeatResponseDTO;
+import pt.ipleiria.careline.domain.dto.HealthData.HeartbeatDTO;
+import pt.ipleiria.careline.domain.dto.HealthData.Responses.HeartbeatResponseDTO;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
@@ -33,7 +33,7 @@ public class HeartbeatController {
     public ResponseEntity<HeartbeatDTO> createHeartbeat(@PathVariable("patientId") Long patientId, @RequestBody HeartbeatDTO heartbeatDTO) {
         HeartbeatEntity heartbeatEntity = heartbeatMapper.mapFrom(heartbeatDTO);
         heartbeatEntity.setPatient(patientMapper.mapFrom(heartbeatDTO.getPatient()));
-        HeartbeatEntity createdHeartbeat = heartbeatService.createHeartbeat(patientId, heartbeatEntity);
+        HeartbeatEntity createdHeartbeat = heartbeatService.create(patientId, heartbeatEntity);
         HeartbeatDTO createdHeartbeatDTO = heartbeatMapper.mapToDTO(createdHeartbeat);
         return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);
     }

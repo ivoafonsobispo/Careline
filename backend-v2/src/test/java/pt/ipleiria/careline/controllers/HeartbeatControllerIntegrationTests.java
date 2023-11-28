@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
-import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
+import pt.ipleiria.careline.domain.dto.HealthData.HeartbeatDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.services.HeartbeatService;
 
@@ -79,7 +79,7 @@ public class HeartbeatControllerIntegrationTests {
     @Test
     public void testThatListHeartbeatsReturnsHeartbeats() throws Exception {
         HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
-        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+        heartbeatService.create(null, testHeartbeatEntity);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/heartbeats")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class HeartbeatControllerIntegrationTests {
     @Test
     public void testThatHeartbeatReturnsHttpStatus200WhenPatientExists() throws Exception {
         HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
-        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+        heartbeatService.create(null, testHeartbeatEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/heartbeats/1")
@@ -106,7 +106,7 @@ public class HeartbeatControllerIntegrationTests {
     @Test
     public void testThatHeartbeatReturnsHttpStatus404WhenNoHeartbeatExists() throws Exception {
         HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
-        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+        heartbeatService.create(null, testHeartbeatEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/heartbeats/0")
@@ -119,7 +119,7 @@ public class HeartbeatControllerIntegrationTests {
     @Test
     public void testThatHeartbeatReturnsHeartbeatWhenHeartbeatExists() throws Exception {
         HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
-        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+        heartbeatService.create(null, testHeartbeatEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/heartbeats/1")
@@ -134,7 +134,7 @@ public class HeartbeatControllerIntegrationTests {
     @Test
     public void testThatDeleteHeartbeatReturnsHttpStatus204WhenHeartbeatExists() throws Exception {
         HeartbeatEntity testHeartbeatEntity = TestDataUtil.createHeartbeatEntityA(null);
-        heartbeatService.createHeartbeat(null, testHeartbeatEntity);
+        heartbeatService.create(null, testHeartbeatEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/patients/1/heartbeats/" + testHeartbeatEntity.getId())

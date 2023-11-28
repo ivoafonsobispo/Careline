@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
-import pt.ipleiria.careline.domain.dto.TemperatureDTO;
+import pt.ipleiria.careline.domain.dto.HealthData.TemperatureDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
 import pt.ipleiria.careline.services.TemperatureService;
 
@@ -79,7 +79,7 @@ public class TemperatureControllerIntegrationTests {
     @Test
     public void testThatListTemperaturesReturnsTemperatures() throws Exception {
         TemperatureEntity temperatureEntity = TestDataUtil.createTemperatureEntityA(null);
-        temperatureService.createTemperature(null, temperatureEntity);
+        temperatureService.create(null, temperatureEntity);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/temperatures")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +93,7 @@ public class TemperatureControllerIntegrationTests {
     @Test
     public void testThatTemperatureReturnsHttpStatus200WhenTemperatureExists() throws Exception {
         TemperatureEntity temperatureEntity = TestDataUtil.createTemperatureEntityA(null);
-        temperatureService.createTemperature(null, temperatureEntity);
+        temperatureService.create(null, temperatureEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/temperatures/1")
@@ -116,7 +116,7 @@ public class TemperatureControllerIntegrationTests {
     @Test
     public void testThatTemperatureReturnsHeartbeatWhenTemperatureExists() throws Exception {
         TemperatureEntity temperatureEntity = TestDataUtil.createTemperatureEntityA(null);
-        temperatureService.createTemperature(null, temperatureEntity);
+        temperatureService.create(null, temperatureEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/patients/1/temperatures/1")
@@ -131,7 +131,7 @@ public class TemperatureControllerIntegrationTests {
     @Test
     public void testThatDeleteTemperatureReturnsHttpStatus204WhenTemperatureExists() throws Exception {
         TemperatureEntity temperatureEntity = TestDataUtil.createTemperatureEntityA(null);
-        temperatureService.createTemperature(null, temperatureEntity);
+        temperatureService.create(null, temperatureEntity);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/patients/1/temperatures/" + temperatureEntity.getId())

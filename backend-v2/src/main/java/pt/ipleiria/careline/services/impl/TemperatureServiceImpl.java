@@ -24,20 +24,20 @@ public class TemperatureServiceImpl implements TemperatureService {
         this.temperatureRepository = temperatureRepository;
         this.patientService = patientService;
     }
-
+    
     @Override
-    public TemperatureEntity createTemperature(Long patientId, TemperatureEntity temperatureEntity) {
+    public TemperatureEntity create(Long patientId, TemperatureEntity temperature) {
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
 
         if (existingPatient.isPresent()) {
-            temperatureEntity.setPatient(existingPatient.get());
+            temperature.setPatient(existingPatient.get());
         } else {
-            PatientEntity newPatient = temperatureEntity.getPatient();
+            PatientEntity newPatient = temperature.getPatient();
             patientService.save(newPatient);
-            temperatureEntity.setPatient(newPatient);
+            temperature.setPatient(newPatient);
         }
 
-        return temperatureRepository.save(temperatureEntity);
+        return temperatureRepository.save(temperature);
     }
 
     @Override
@@ -49,6 +49,11 @@ public class TemperatureServiceImpl implements TemperatureService {
     @Override
     public Page<TemperatureEntity> findAll(Pageable pageable, Long patientId) {
         return temperatureRepository.findAllByPatientId(pageable, patientId);
+    }
+
+    @Override
+    public Optional<TemperatureEntity> getById(Long id) {
+        return Optional.empty();
     }
 
     @Override
