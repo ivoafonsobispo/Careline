@@ -3,21 +3,21 @@ package pt.ipleiria.careline.domain.dto.HealthData.Responses;
 import java.time.Instant;
 
 public class TemperatureResponseDTO extends HealthDataResponseDTO {
-    private Integer temperature;
+    private Float temperature;
 
     public TemperatureResponseDTO() {
     }
 
-    public TemperatureResponseDTO(Integer temperature, Instant createdAt) {
+    public TemperatureResponseDTO(Float temperature, Instant createdAt) {
         super(createdAt);
         this.temperature = temperature;
     }
 
-    public Integer getTemperature() {
+    public Float getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(Integer temperature) {
+    public void setTemperature(Float temperature) {
         this.temperature = temperature;
     }
 }

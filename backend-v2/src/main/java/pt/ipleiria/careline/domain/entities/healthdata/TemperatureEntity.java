@@ -9,22 +9,22 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 @Table(name = "temperatures")
 public class TemperatureEntity extends HealthDataEntity {
     @NotNull
-    private Integer temperature;
+    private Float temperature;
 
 
     public TemperatureEntity() {
     }
 
-    public TemperatureEntity(Integer temperature, PatientEntity patient) {
+    public TemperatureEntity(Float temperature, PatientEntity patient) {
         super(patient);
         this.temperature = temperature;
     }
 
-    public Integer getTemperature() {
+    public Float getTemperature() {
         return temperature;
     }
 
-    public void setTemperature(Integer temperature) {
+    public void setTemperature(Float temperature) {
         this.temperature = temperature;
     }
 }
