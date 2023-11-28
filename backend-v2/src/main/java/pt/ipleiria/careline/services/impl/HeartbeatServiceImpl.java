@@ -24,7 +24,7 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         this.heartbeatRepository = heartbeatRepository;
         this.patientService = patientService;
     }
-    
+
     @Override
     public HeartbeatEntity create(Long patientId, HeartbeatEntity heartbeatEntity) {
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
@@ -52,6 +52,11 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     @Override
+    public Page<HeartbeatEntity> findAllLatest(Pageable pageable, Long patientId) {
+        return heartbeatRepository.findAllByPatientIdOrderByCreatedAtDesc(pageable, patientId);
+    }
+    
+    @Override
     public Optional<HeartbeatEntity> getById(Long id) {
         return Optional.empty();
     }
@@ -70,4 +75,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     public void delete(Long id) {
         heartbeatRepository.deleteById(id);
     }
+
+
 }

@@ -24,7 +24,7 @@ public class TemperatureServiceImpl implements TemperatureService {
         this.temperatureRepository = temperatureRepository;
         this.patientService = patientService;
     }
-    
+
     @Override
     public TemperatureEntity create(Long patientId, TemperatureEntity temperature) {
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
@@ -49,6 +49,11 @@ public class TemperatureServiceImpl implements TemperatureService {
     @Override
     public Page<TemperatureEntity> findAll(Pageable pageable, Long patientId) {
         return temperatureRepository.findAllByPatientId(pageable, patientId);
+    }
+
+    @Override
+    public Page<TemperatureEntity> findAllLatest(Pageable pageable, Long patientId) {
+        return temperatureRepository.findAllByPatientIdOrderByCreatedAtDesc(pageable, patientId);
     }
 
     @Override

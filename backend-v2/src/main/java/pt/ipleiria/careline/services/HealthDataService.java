@@ -13,6 +13,8 @@ public interface HealthDataService<Entity> {
 
     Page<Entity> findAll(Pageable pageable, Long patientId);
 
+    Page<Entity> findAllLatest(Pageable pageable, Long patientId);
+
     Optional<Entity> getById(Long id);
 
     boolean isExists(Long id);

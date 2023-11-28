@@ -44,6 +44,12 @@ public class HeartbeatController {
         return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
     }
 
+    @GetMapping("/latest")
+    public Page<HeartbeatResponseDTO> listLatestHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<HeartbeatEntity> heartbeats = heartbeatService.findAllLatest(pageable, patientId);
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<HeartbeatDTO> getHeartbeatById(@PathVariable("id") Long id) {
         Optional<HeartbeatEntity> heartbeat = heartbeatService.getHeartbeatById(id);
