@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.domain.entities.healthdata;
+package pt.ipleiria.careline.domain.entities.data;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -9,7 +9,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
 @Entity
 @Table(name = "heartbeats")
-public class HeartbeatEntity extends HealthDataEntity {
+public class HeartbeatEntity extends DataEntity {
     @NotNull
     @Min(0)
     @Max(220)

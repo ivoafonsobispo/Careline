@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.domain.dto.HealthData.Responses;
+package pt.ipleiria.careline.domain.dto.data.responses;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,15 +7,15 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public abstract class HealthDataResponseDTO {
+public abstract class DataResponseDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
     private ZonedDateTime createdAt;
 
-    public HealthDataResponseDTO() {
+    public DataResponseDTO() {
     }
 
-    public HealthDataResponseDTO(Instant createdAt) {
+    public DataResponseDTO(Instant createdAt) {
         this.createdAt = ZonedDateTime.ofInstant(createdAt, ZoneId.systemDefault());
     }
 

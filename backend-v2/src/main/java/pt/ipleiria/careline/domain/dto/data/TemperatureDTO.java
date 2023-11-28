@@ -1,10 +1,10 @@
-package pt.ipleiria.careline.domain.dto.HealthData;
+package pt.ipleiria.careline.domain.dto.data;
 
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 
 import java.time.Instant;
 
-public class TemperatureDTO extends HealthDataDTO {
+public class TemperatureDTO extends DataDTO {
     private Float temperature;
 
     public TemperatureDTO() {

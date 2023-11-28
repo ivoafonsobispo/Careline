@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.domain.entities.healthdata;
+package pt.ipleiria.careline.domain.entities.data;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CurrentTimestamp;
@@ -7,7 +7,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import java.time.Instant;
 
 @MappedSuperclass
-public abstract class HealthDataEntity {
+public abstract class DataEntity {
     @CurrentTimestamp
     @Column(name = "created_at")
     public Instant createdAt;
@@ -18,10 +18,10 @@ public abstract class HealthDataEntity {
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
-    public HealthDataEntity() {
+    public DataEntity() {
     }
 
-    public HealthDataEntity(PatientEntity patient) {
+    public DataEntity(PatientEntity patient) {
         this.patient = patient;
         this.createdAt = Instant.now();
     }

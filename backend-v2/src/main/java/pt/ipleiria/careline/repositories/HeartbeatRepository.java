@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
-import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
+import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 
 @Repository
 public interface HeartbeatRepository extends JpaRepository<HeartbeatEntity, Long>,

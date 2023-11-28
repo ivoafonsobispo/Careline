@@ -3,7 +3,7 @@ package pt.ipleiria.careline.services.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
+import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.repositories.TemperatureRepository;
 import pt.ipleiria.careline.services.PatientService;

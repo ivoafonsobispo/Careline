@@ -1,7 +1,7 @@
 package pt.ipleiria.careline.services;
 
-import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
+import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 
-public interface TemperatureService extends HealthDataService<TemperatureEntity> {
+public interface TemperatureService extends DataService<TemperatureEntity> {
 
 }
