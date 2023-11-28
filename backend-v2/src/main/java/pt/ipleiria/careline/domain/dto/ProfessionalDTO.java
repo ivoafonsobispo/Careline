@@ -1,8 +1,11 @@
 package pt.ipleiria.careline.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 
 public class ProfessionalDTO {
+    @JsonProperty("created_at")
     public Instant createdAt;
     private Long id;
     private String name;

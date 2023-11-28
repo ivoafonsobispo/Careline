@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.HeartbeatDTO;
+import pt.ipleiria.careline.domain.dto.HeartbeatResponseDTO;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
@@ -38,9 +39,9 @@ public class HeartbeatController {
     }
 
     @GetMapping
-    public Page<HeartbeatDTO> listHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
+    public Page<HeartbeatResponseDTO> listHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable, patientId);
-        return heartbeats.map(heartbeatMapper::mapToDTO);
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
     }
 
     @GetMapping("/{id}")

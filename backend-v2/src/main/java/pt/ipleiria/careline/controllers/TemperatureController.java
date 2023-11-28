@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.TemperatureDTO;
+import pt.ipleiria.careline.domain.dto.TemperatureResponseDTO;
 import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
@@ -38,9 +39,9 @@ public class TemperatureController {
     }
 
     @GetMapping
-    public Page<TemperatureDTO> listTemperatures(@PathVariable("patientId") Long patientId, Pageable pageable) {
-        Page<TemperatureEntity> temperatures = temperatureService.findAll(pageable, patientId);
-        return temperatures.map(temperatureMapper::mapToDTO);
+    public Page<TemperatureResponseDTO> listTemperatures(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<TemperatureEntity> temperatureEntities = temperatureService.findAll(pageable, patientId);
+        return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt()));
     }
 
     @GetMapping("/{id}")
