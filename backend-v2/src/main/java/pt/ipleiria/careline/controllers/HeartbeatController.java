@@ -52,7 +52,7 @@ public class HeartbeatController {
 
     @GetMapping("/{id}")
     public ResponseEntity<HeartbeatDTO> getHeartbeatById(@PathVariable("id") Long id) {
-        Optional<HeartbeatEntity> heartbeat = heartbeatService.getHeartbeatById(id);
+        Optional<HeartbeatEntity> heartbeat = heartbeatService.getById(id);
         return heartbeat.map(heartbeatEntity -> {
             HeartbeatDTO heartbeatDTO = heartbeatMapper.mapToDTO(heartbeatEntity);
             return new ResponseEntity<>(heartbeatDTO, HttpStatus.OK);

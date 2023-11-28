@@ -9,7 +9,7 @@ import org.hibernate.annotations.CurrentTimestamp;
 import java.time.Instant;
 
 @MappedSuperclass
-public class UserEntity {
+public abstract class UserEntity {
     @CurrentTimestamp
     @Column(name = "created_at")
     public Instant createdAt;

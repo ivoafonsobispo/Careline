@@ -58,11 +58,6 @@ public class TemperatureServiceImpl implements TemperatureService {
 
     @Override
     public Optional<TemperatureEntity> getById(Long id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<TemperatureEntity> getTemperatureById(Long id) {
         return temperatureRepository.findById(id);
     }
 

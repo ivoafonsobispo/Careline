@@ -52,7 +52,7 @@ public class TemperatureController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TemperatureDTO> getTemperatureById(@PathVariable("id") Long id) {
-        Optional<TemperatureEntity> temperature = temperatureService.getTemperatureById(id);
+        Optional<TemperatureEntity> temperature = temperatureService.getById(id);
         return temperature.map(temperatureEntity -> {
             TemperatureDTO temperatureDTO = temperatureMapper.mapToDTO(temperatureEntity);
             return new ResponseEntity<>(temperatureDTO, HttpStatus.OK);

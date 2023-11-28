@@ -55,14 +55,9 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     public Page<HeartbeatEntity> findAllLatest(Pageable pageable, Long patientId) {
         return heartbeatRepository.findAllByPatientIdOrderByCreatedAtDesc(pageable, patientId);
     }
-    
-    @Override
-    public Optional<HeartbeatEntity> getById(Long id) {
-        return Optional.empty();
-    }
 
     @Override
-    public Optional<HeartbeatEntity> getHeartbeatById(Long id) {
+    public Optional<HeartbeatEntity> getById(Long id) {
         return heartbeatRepository.findById(id);
     }
 
