@@ -10,7 +10,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 @Entity
 @Table(name = "temperatures")
 public class TemperatureEntity extends DataEntity {
-    @NotNull
+    @NotNull(message = "Temperature is required")
     @Min(25)
     @Max(50)
     private Float temperature;

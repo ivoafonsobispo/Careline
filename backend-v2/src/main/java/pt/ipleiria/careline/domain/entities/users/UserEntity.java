@@ -16,17 +16,17 @@ public abstract class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "users_id_seq")
     private Long id;
-    @NotNull
+    @NotNull(message = "Name is required")
     private String name;
     @Column(unique = true, nullable = false)
-    @NotNull
+    @NotNull(message = "Email is required")
     @Email
     private String email;
-    @NotNull
+    @NotNull(message = "Password is required")
     @Size(min = 8, max = 30)
     private String password;
     @Column(unique = true, nullable = false)
-    @NotNull
+    @NotNull(message = "NUS is required")
     @Size(min = 9, max = 9)
     private String nus;
 

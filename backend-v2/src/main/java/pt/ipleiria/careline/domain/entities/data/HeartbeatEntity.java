@@ -10,7 +10,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 @Entity
 @Table(name = "heartbeats")
 public class HeartbeatEntity extends DataEntity {
-    @NotNull
+    @NotNull(message = "Heartbeat is required")
     @Min(0)
     @Max(220)
     private Integer heartbeat;

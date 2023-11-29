@@ -1,6 +1,7 @@
 package pt.ipleiria.careline.domain.entities.data;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
@@ -16,6 +17,7 @@ public abstract class DataEntity {
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "patient_id")
+    @NotNull(message = "Patient is required")
     private PatientEntity patient;
 
     public DataEntity() {

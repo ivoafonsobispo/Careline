@@ -69,7 +69,7 @@ public class PatientController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PatientDTO> partialUpdatePatient(@PathVariable("id") Long id, @RequestBody PatientDTO patientDTO) {
+    public ResponseEntity<PatientDTO> partialUpdatePatient(@PathVariable("id") Long id, @RequestBody @Valid PatientDTO patientDTO) {
         if (!patientService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

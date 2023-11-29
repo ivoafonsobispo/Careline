@@ -1,13 +1,14 @@
 package pt.ipleiria.careline.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.HeartbeatDTO;
 import pt.ipleiria.careline.domain.dto.data.responses.HeartbeatResponseDTO;
-import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
@@ -30,7 +31,7 @@ public class HeartbeatController {
     }
 
     @PostMapping
-    public ResponseEntity<HeartbeatDTO> createHeartbeat(@PathVariable("patientId") Long patientId, @RequestBody HeartbeatDTO heartbeatDTO) {
+    public ResponseEntity<HeartbeatDTO> createHeartbeat(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
         HeartbeatEntity heartbeatEntity = heartbeatMapper.mapFrom(heartbeatDTO);
         heartbeatEntity.setPatient(patientMapper.mapFrom(heartbeatDTO.getPatient()));
         HeartbeatEntity createdHeartbeat = heartbeatService.create(patientId, heartbeatEntity);
