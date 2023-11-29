@@ -22,4 +22,12 @@ public class ApplicationExceptionHandler {
         });
         return errorMap;
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Map<String, String> handleIllegalArgumentException(IllegalArgumentException exception) {
+        Map<String, String> errorMap = new java.util.HashMap<>();
+        errorMap.put("error", exception.getMessage());
+        return errorMap;
+    }
 }
