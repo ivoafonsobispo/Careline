@@ -3,8 +3,9 @@ package pt.ipleiria.careline.services.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
+import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.helpers.DataValidation;
 import pt.ipleiria.careline.repositories.HeartbeatRepository;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
@@ -23,10 +24,15 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     public HeartbeatServiceImpl(HeartbeatRepository heartbeatRepository, PatientService patientService) {
         this.heartbeatRepository = heartbeatRepository;
         this.patientService = patientService;
+        DataValidation dataValidation = new DataValidation();
     }
 
     @Override
     public HeartbeatEntity create(Long patientId, HeartbeatEntity heartbeatEntity) {
+        if (!DataValidation.isHeartbeatValid(heartbeatEntity.getHeartbeat())) {
+            throw new IllegalArgumentException("Heartbeat is not valid");
+        }
+
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
 
         if (existingPatient.isPresent()) {

@@ -3,8 +3,9 @@ package pt.ipleiria.careline.services.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
+import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.helpers.DataValidation;
 import pt.ipleiria.careline.repositories.TemperatureRepository;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.TemperatureService;
@@ -23,10 +24,15 @@ public class TemperatureServiceImpl implements TemperatureService {
     public TemperatureServiceImpl(TemperatureRepository temperatureRepository, PatientService patientService) {
         this.temperatureRepository = temperatureRepository;
         this.patientService = patientService;
+        DataValidation dataValidation = new DataValidation();
     }
 
     @Override
     public TemperatureEntity create(Long patientId, TemperatureEntity temperature) {
+        if (!DataValidation.isTemperatureValid(temperature.getTemperature())) {
+            throw new IllegalArgumentException("Temperature is not valid");
+        }
+
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
 
         if (existingPatient.isPresent()) {

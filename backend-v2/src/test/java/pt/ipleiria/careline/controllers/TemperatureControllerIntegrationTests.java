@@ -13,8 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
-import pt.ipleiria.careline.domain.dto.HealthData.TemperatureDTO;
-import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
+import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
+import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.services.TemperatureService;
 
 @SpringBootTest

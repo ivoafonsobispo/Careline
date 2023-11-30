@@ -1,8 +1,8 @@
-package pt.ipleiria.careline.domain.dto.HealthData.Responses;
+package pt.ipleiria.careline.domain.dto.data.responses;
 
 import java.time.Instant;
 
-public class TemperatureResponseDTO extends HealthDataResponseDTO {
+public class TemperatureResponseDTO extends DataResponseDTO {
     private Float temperature;
 
     public TemperatureResponseDTO() {

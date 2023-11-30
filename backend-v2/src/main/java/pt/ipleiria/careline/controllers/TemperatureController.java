@@ -1,14 +1,15 @@
 package pt.ipleiria.careline.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pt.ipleiria.careline.domain.dto.HealthData.Responses.TemperatureResponseDTO;
-import pt.ipleiria.careline.domain.dto.HealthData.TemperatureDTO;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
-import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
+import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
+import pt.ipleiria.careline.domain.dto.data.responses.TemperatureResponseDTO;
+import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.TemperatureService;
@@ -30,7 +31,7 @@ public class TemperatureController {
     }
 
     @PostMapping
-    public ResponseEntity<TemperatureDTO> createTemperature(@PathVariable("patientId") Long patientId, @RequestBody TemperatureDTO temperatureDTO) {
+    public ResponseEntity<TemperatureDTO> createTemperature(@PathVariable("patientId") Long patientId, @RequestBody @Valid TemperatureDTO temperatureDTO) {
         TemperatureEntity temperatureEntity = temperatureMapper.mapFrom(temperatureDTO);
         temperatureEntity.setPatient(patientMapper.mapFrom(temperatureDTO.getPatient()));
         TemperatureEntity createdHeartbeat = temperatureService.create(patientId, temperatureEntity);

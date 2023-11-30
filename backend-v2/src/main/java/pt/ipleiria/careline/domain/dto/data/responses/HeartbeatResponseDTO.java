@@ -1,8 +1,8 @@
-package pt.ipleiria.careline.domain.dto.HealthData.Responses;
+package pt.ipleiria.careline.domain.dto.data.responses;
 
 import java.time.Instant;
 
-public class HeartbeatResponseDTO extends HealthDataResponseDTO {
+public class HeartbeatResponseDTO extends DataResponseDTO {
     private Integer heartbeat;
 
     public HeartbeatResponseDTO() {

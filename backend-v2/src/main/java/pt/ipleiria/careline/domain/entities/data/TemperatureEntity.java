@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.domain.entities.healthdata;
+package pt.ipleiria.careline.domain.entities.data;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -9,8 +9,8 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
 @Entity
 @Table(name = "temperatures")
-public class TemperatureEntity extends HealthDataEntity {
-    @NotNull
+public class TemperatureEntity extends DataEntity {
+    @NotNull(message = "Temperature is required")
     @Min(25)
     @Max(50)
     private Float temperature;

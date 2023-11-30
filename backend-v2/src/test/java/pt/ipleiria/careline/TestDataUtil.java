@@ -1,11 +1,11 @@
 package pt.ipleiria.careline;
 
-import pt.ipleiria.careline.domain.dto.HealthData.HeartbeatDTO;
-import pt.ipleiria.careline.domain.dto.HealthData.TemperatureDTO;
+import pt.ipleiria.careline.domain.dto.data.HeartbeatDTO;
+import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.ProfessionalDTO;
-import pt.ipleiria.careline.domain.entities.healthdata.HeartbeatEntity;
-import pt.ipleiria.careline.domain.entities.healthdata.TemperatureEntity;
+import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
+import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 

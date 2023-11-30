@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-public interface HealthDataService<Entity> {
+public interface DataService<Entity> {
     Entity create(Long patientId, Entity entity);
 
     List<Entity> findAll();

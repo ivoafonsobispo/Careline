@@ -69,7 +69,7 @@ public class ProfessionalController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProfessionalDTO> partialUpdateProfessional(@PathVariable("id") Long id, @RequestBody ProfessionalDTO professionalDTO) {
+    public ResponseEntity<ProfessionalDTO> partialUpdateProfessional(@PathVariable("id") Long id, @RequestBody @Valid ProfessionalDTO professionalDTO) {
         if (!professionalService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
