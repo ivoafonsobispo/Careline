@@ -12,4 +12,6 @@ public interface ProfessionalRepository extends JpaRepository<ProfessionalEntity
         PagingAndSortingRepository<ProfessionalEntity, Long> {
 
     Optional<ProfessionalEntity> findByNus(String nus);
+
+    Optional<ProfessionalEntity> findByEmail(String email);
 }
