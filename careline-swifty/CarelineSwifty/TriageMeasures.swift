@@ -7,13 +7,17 @@
 
 import Foundation
 
-struct TriageMeasures: Codable, Identifiable {
-    var id = UUID()
+class TriageMeasures {
+    var measures: [Measure]
     
-    var heartbeat: Measure
-    var heartbeatMeasured: Bool = false
-    var bodyTemperature: Measure
-    var bodyTemperatureMeasured: Bool = false
     var symptons: String
+    
+    init(symptons: String, measures: [Measure]) {
+        self.symptons = symptons
+        self.measures = [
+                Heartbeat(measured: false, value: -99),
+                Temperature(measured: false, value: -99)
+            ]
+    }
     
 }
