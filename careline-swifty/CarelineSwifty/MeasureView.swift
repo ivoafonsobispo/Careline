@@ -28,12 +28,27 @@ struct MeasuringTextView: View {
 struct MeasureValueView: View {
     var measure: Measure
     
+    func stringValue(from measure: Measure) -> String {
+        if let _ = measure as? Temperature {
+            var temperatureValue = "0.0"
+            TemperatureAPI().getTemperature { (temperature) in
+               temperatureValue = "\(temperature)"
+            }
+            
+            return temperatureValue
+        } else if let heartbeat = measure as? Heartbeat {
+            return "\(heartbeat.value)"
+        }else {
+            return "N/A"
+        }
+    }
+    
     var body: some View {
         HStack{
             VStack(alignment: .leading){
                 Text("Reading:")
                 HStack{
-                    Text(measure.data)
+                    Text("\(stringValue(from: measure))")
                         .font(.custom("", fixedSize: 50))
                         .fontWeight(.bold)
                     Text(measure.metric)
@@ -41,7 +56,7 @@ struct MeasureValueView: View {
                 Text ("WEDNESDAY, OCT 18 AT 15:35")
                     .foregroundColor(.gray)
                     .font(.caption)
-            }
+            }.frame(minWidth: 210, maxWidth: 210, alignment: .leading)
             Image(systemName: measure.symbol)
                 .resizable()
                 .scaledToFit()
