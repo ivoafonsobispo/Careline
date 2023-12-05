@@ -10,8 +10,8 @@
 		2C2627B62B14E8D6000DDD38 /* ShowMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627B52B14E8D6000DDD38 /* ShowMoreView.swift */; };
 		2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627B72B14F918000DDD38 /* TriageMeasures.swift */; };
 		2C2627BC2B1669D2000DDD38 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627BB2B1669D2000DDD38 /* Network.swift */; };
-		2C2627BE2B167310000DDD38 /* Temperature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627BD2B167310000DDD38 /* Temperature.swift */; };
-		2CBFD49E2B06A91000BDD99C /* Measure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49D2B06A91000BDD99C /* Measure.swift */; };
+		2C2627C22B18DFA3000DDD38 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627C12B18DFA3000DDD38 /* User.swift */; };
+		2CBFD49E2B06A91000BDD99C /* Measures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49D2B06A91000BDD99C /* Measures.swift */; };
 		2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49F2B07F20300BDD99C /* MeasureView.swift */; };
 		2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */; };
 		2CBFD4A42B0CB9C300BDD99C /* ARHelpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD4A32B0CB9C300BDD99C /* ARHelpView.swift */; };
@@ -27,8 +27,8 @@
 		2C2627B92B163E4B000DDD38 /* CarelineSwifty.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CarelineSwifty.entitlements; sourceTree = "<group>"; };
 		2C2627BA2B164CC2000DDD38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2C2627BB2B1669D2000DDD38 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
-		2C2627BD2B167310000DDD38 /* Temperature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Temperature.swift; sourceTree = "<group>"; };
-		2CBFD49D2B06A91000BDD99C /* Measure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measure.swift; sourceTree = "<group>"; };
+		2C2627C12B18DFA3000DDD38 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		2CBFD49D2B06A91000BDD99C /* Measures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measures.swift; sourceTree = "<group>"; };
 		2CBFD49F2B07F20300BDD99C /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
 		2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageView.swift; sourceTree = "<group>"; };
 		2CBFD4A32B0CB9C300BDD99C /* ARHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARHelpView.swift; sourceTree = "<group>"; };
@@ -75,9 +75,9 @@
 				2CE6509D2B066B7C00D17A73 /* ContentView.swift */,
 				2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */,
 				2C2627B72B14F918000DDD38 /* TriageMeasures.swift */,
+				2C2627C12B18DFA3000DDD38 /* User.swift */,
 				2C2627B52B14E8D6000DDD38 /* ShowMoreView.swift */,
-				2CBFD49D2B06A91000BDD99C /* Measure.swift */,
-				2C2627BD2B167310000DDD38 /* Temperature.swift */,
+				2CBFD49D2B06A91000BDD99C /* Measures.swift */,
 				2C2627BB2B1669D2000DDD38 /* Network.swift */,
 				2CE6509F2B066B7F00D17A73 /* Assets.xcassets */,
 				2CE650A12B066B7F00D17A73 /* Preview Content */,
@@ -168,12 +168,12 @@
 				2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */,
 				2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */,
 				2C2627B62B14E8D6000DDD38 /* ShowMoreView.swift in Sources */,
+				2C2627C22B18DFA3000DDD38 /* User.swift in Sources */,
 				2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */,
 				2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */,
-				2C2627BE2B167310000DDD38 /* Temperature.swift in Sources */,
 				2C2627BC2B1669D2000DDD38 /* Network.swift in Sources */,
 				2CE6509C2B066B7C00D17A73 /* CarelineSwiftyApp.swift in Sources */,
-				2CBFD49E2B06A91000BDD99C /* Measure.swift in Sources */,
+				2CBFD49E2B06A91000BDD99C /* Measures.swift in Sources */,
 				2CBFD4A42B0CB9C300BDD99C /* ARHelpView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

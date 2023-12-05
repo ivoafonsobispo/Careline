@@ -28,7 +28,6 @@ struct SummaryView: View {
 }
 
 struct LastHeartbeatView: View {
-    @State var temperature: Temperature?
     
     @State private var isAnimating = false
     
@@ -42,7 +41,7 @@ struct LastHeartbeatView: View {
             VStack(alignment: .leading){
                 Text("Last Heartbeat:")
                 HStack{
-                    Text(String(temperature?.data ?? 0))
+                    Text("70")
                         .font(.custom("", fixedSize: 50))
                         .fontWeight(.bold)
                     Text("BPM")
@@ -67,16 +66,11 @@ struct LastHeartbeatView: View {
             .frame(minWidth:  0, maxWidth: .infinity, minHeight: 0, maxHeight: 130, alignment: .topLeading)
             .background(Color("Salmon"))
             .cornerRadius(15)
-            .onAppear() {
-                TemperatureAPI().getTemperature { (temperature) in
-                    self.temperature = temperature
-                }
-            }
     }
 }
 
 struct MeasureTextView: View {
-    var measures = Measure.baseMeasures
+    var measures: [Measure]
     
     var body: some View {
         HStack{
@@ -92,7 +86,7 @@ struct MeasureTextView: View {
 }
 
 struct MeasureButtonsListView: View{
-    var measures = Measure.baseMeasures
+    var measures: [Measure]
     
     var body: some View {
         ForEach(measures){measure in
@@ -155,6 +149,8 @@ struct MeasureButtonView: View{
 }
 
 struct ContentView: View {
+    var user: User = User()
+    
     var body: some View {
         NavigationView{
             VStack{
@@ -164,8 +160,8 @@ struct ContentView: View {
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .frame(maxWidth: .infinity,alignment: .leading)
                 LastHeartbeatView()
-                MeasureTextView()
-                MeasureButtonsListView()
+                MeasureTextView(measures: user.measures)
+                MeasureButtonsListView(measures: user.measures)
             }
                 .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
                 .navigationBarHidden(true)

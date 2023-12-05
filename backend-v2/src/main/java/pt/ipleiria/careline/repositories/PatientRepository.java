@@ -12,4 +12,6 @@ public interface PatientRepository extends JpaRepository<PatientEntity, Long>,
         PagingAndSortingRepository<PatientEntity, Long> {
 
     Optional<PatientEntity> findByNus(String nus);
+
+    Optional<PatientEntity> findByEmail(String email);
 }

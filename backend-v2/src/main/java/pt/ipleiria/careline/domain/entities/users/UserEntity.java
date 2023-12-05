@@ -27,7 +27,7 @@ public abstract class UserEntity {
     private String password;
     @Column(unique = true, nullable = false)
     @NotNull(message = "NUS is required")
-    @Size(min = 9, max = 9)
+    @Size(min = 9, max = 9, message = "NUS must be exactly 9 characters")
     private String nus;
 
     public UserEntity() {

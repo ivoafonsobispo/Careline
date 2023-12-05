@@ -4,9 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.helpers.UserValidation;
 import pt.ipleiria.careline.repositories.ProfessionalRepository;
 import pt.ipleiria.careline.services.ProfessionalService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +25,7 @@ public class ProfessionalServiceImpl implements ProfessionalService {
 
     @Override
     public ProfessionalEntity save(ProfessionalEntity professionalEntity) {
+        validateProfessional(professionalEntity);
         return professionalRepository.save(professionalEntity);
     }
 
@@ -67,5 +70,17 @@ public class ProfessionalServiceImpl implements ProfessionalService {
     @Override
     public void delete(Long id) {
         professionalRepository.deleteById(id);
+    }
+
+    private void validateProfessional(ProfessionalEntity professionalEntity) {
+        List<String> errors = new ArrayList<>();
+        if (professionalRepository.findByNus(professionalEntity.getNus()).isPresent())
+            errors.add("NUS already exists");
+        if (professionalRepository.findByEmail(professionalEntity.getEmail()).isPresent())
+            errors.add("Email already exists");
+        if (!UserValidation.isNusValid(professionalEntity.getNus()))
+            errors.add("Invalid NUS");
+        if (!errors.isEmpty())
+            throw new IllegalArgumentException(String.join(", ", errors));
     }
 }
