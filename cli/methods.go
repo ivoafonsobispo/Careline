@@ -45,6 +45,26 @@ func post(url string, body string) {
 }
 
 func get(url string) {
+	curlCmd := exec.Command("curl", "-s", "-w",
+		"\nHTTP Status Code: %{http_code}\n"+
+			"Effective URL: %{url_effective}\n"+
+			"Total Time: %{time_total}s\n"+
+			"Request Time: %{time_connect}s\n"+
+			"Redirect Time: %{time_redirect}s\n"+
+			"Size Upload: %{size_upload} bytes\n"+
+			"Size Download: %{size_download} bytes\n"+
+			"Speed Download: %{speed_download} bytes/s\n"+
+			"Speed Upload: %{speed_upload} bytes/s\n\n%{json}\n",
+		"-X", "GET", "-H", "Content-Type: application/json", url)
+
+	output, err := curlCmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Error executing curl command:", err)
+		return
+	}
+
+	fmt.Println("Response:")
+	fmt.Println(string(output))
 
 }
 

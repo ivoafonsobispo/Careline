@@ -42,5 +42,10 @@ func main() {
 			}
 			post("http://localhost:8080/api/patients", body)
 		}
+	case "GET":
+		switch entity {
+		case "patients":
+			get("http://localhost:8080/api/patients")
+		}
 	}
 }
