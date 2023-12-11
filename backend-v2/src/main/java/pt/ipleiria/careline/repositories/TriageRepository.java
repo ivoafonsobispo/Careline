@@ -8,13 +8,16 @@ import org.springframework.stereotype.Repository;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
         PagingAndSortingRepository<TriageEntity, Long> {
     //get triage by id
-    Optional<TriageEntity> findById(Long patientId);
+    Optional<TriageEntity> findById(Long triageId);
+
+    List<TriageEntity> findAllById( Long trisgeId);
 
     //get all triage data units at some time
     Page<TriageEntity> findAllByCreatedAt(Pageable pageable, Instant instant);

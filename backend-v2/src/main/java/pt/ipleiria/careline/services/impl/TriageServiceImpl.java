@@ -26,30 +26,32 @@ public class TriageServiceImpl implements TriageService {
         DataValidation dataValidation = new DataValidation();
     }
 
-
     @Override
     public TriageEntity save(TriageEntity triageEntity) {
-        return null;
+        validateTriage(triageEntity);
+        return triageRepository.save(triageEntity);
     }
 
     @Override
     public Optional<TriageEntity> getTriageById(Long id) {
-        return Optional.empty();
+        return triageRepository.findById(id);
     }
 
     @Override
     public List<TriageEntity> findAll() {
-        return null;
+        return triageRepository.findAll();
     }
 
     @Override
     public Page<TriageEntity> findAll(Pageable pageable) {
-        return null;
+        return triageRepository.findAll(pageable);
     }
 
     @Override
     public boolean isExists(Long id) {
-        return false;
+        if (!triageRepository.existsById(id))
+            return false;
+        return true;
     }
 
     @Override
@@ -59,6 +61,17 @@ public class TriageServiceImpl implements TriageService {
 
     @Override
     public void delete(Long id) {
+        Optional<TriageEntity> opt = triageRepository.findById(id);
+        if (opt.isPresent())
+            triageRepository.delete(opt.get());
+    }
 
+    private void validateTriage(TriageEntity triageEntity) {
+        List<String> errors = new ArrayList<>();
+        //TODO validar se o cliente existe, integrar com dados de saúde e validar
+        if (!(triageRepository.findAllById(triageEntity.getId()).isEmpty()))
+            errors.add("Triage Id already exists");
+        if (!errors.isEmpty())
+            throw new IllegalArgumentException(String.join(", ", errors));
     }
 }
