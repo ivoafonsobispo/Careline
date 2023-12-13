@@ -56,7 +56,14 @@ public class TriageServiceImpl implements TriageService {
 
     @Override
     public TriageEntity partialUpdate(Long id, TriageEntity triageEntity) {
-        return null;
+        triageEntity.setId(id);
+        return triageRepository.findById(id).map(existingTriage -> {
+            Optional.ofNullable(triageEntity.getHeartbeat()).ifPresent(existingTriage::setHeartbeat);
+            Optional.ofNullable(triageEntity.getTemperature()).ifPresent(existingTriage::setTemperature);
+            Optional.ofNullable(triageEntity.getSimptoms()).ifPresent(existingTriage::setSimptoms);
+            Optional.ofNullable(triageEntity.getPatient()).ifPresent(existingTriage::setPatient);
+            return triageRepository.save(existingTriage);
+        }).orElseThrow(() -> new RuntimeException("Triage not found"));
     }
 
     @Override

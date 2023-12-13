@@ -9,6 +9,8 @@ public abstract class DataDTO {
     @JsonProperty("created_at")
     public Instant createdAt;
 
+    public Long id;
+
     private PatientDTO patient;
 
     public DataDTO() {
@@ -33,5 +35,9 @@ public abstract class DataDTO {
 
     public void setPatient(PatientDTO patient) {
         this.patient = patient;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
