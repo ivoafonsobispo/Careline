@@ -1,12 +1,15 @@
 package pt.ipleiria.careline.services.impl;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
-import pt.ipleiria.careline.helpers.DataValidation;
 import pt.ipleiria.careline.repositories.DiagnosisRepository;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.services.PatientService;
@@ -58,6 +61,22 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
     @Override
     public Optional<DiagnosisEntity> getById(Long id) {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage(page);
+
+        try {
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+            contentStream.beginText();
+            contentStream.showText("Hello World");
+            contentStream.endText();
+            contentStream.close();
+
+            document.save("Hello World.pdf");
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return diagnosisRepository.findById(id);
     }
 

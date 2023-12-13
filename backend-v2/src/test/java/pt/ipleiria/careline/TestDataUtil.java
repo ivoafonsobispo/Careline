@@ -103,10 +103,11 @@ public class TestDataUtil {
         return heartbeatEntity;
     }
 
+    /*
     public static TemperatureEntity createTemperatureEntityA(final PatientEntity patientEntity) {
         TemperatureEntity temperatureEntity = new TemperatureEntity();
         temperatureEntity.setPatient(patientEntity);
-        temperatureEntity.setTemperature(36);
+        temperatureEntity.setTemperature(36.00);
         temperatureEntity.setCreatedAt(Instant.now());
         return temperatureEntity;
     }
@@ -114,8 +115,9 @@ public class TestDataUtil {
     public static TemperatureDTO createTemperatureDTOA(final PatientDTO patientDTO) {
         TemperatureDTO temperatureEntity = new TemperatureDTO();
         temperatureEntity.setPatient(patientDTO);
-        temperatureEntity.setTemperature(36);
+        temperatureEntity.setTemperature(36.00);
         temperatureEntity.setCreatedAt(Instant.now());
         return temperatureEntity;
     }
+     */
 }

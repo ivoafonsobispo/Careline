@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import pt.ipleiria.careline.TestDataUtil;
+import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.HeartbeatDTO;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.services.HeartbeatService;
@@ -36,7 +37,8 @@ public class HeartbeatControllerIntegrationTests {
 
     @Test
     public void testThatCreateHeartbeatReturnsHttpStatus201Created() throws Exception {
-        HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(null);
+        PatientDTO patientDTO = TestDataUtil.createPatientDTOA();
+        HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(patientDTO);
         testHeartbeatDTO.setCreatedAt(null);
         String createHeartbeatJSON = objectMapper.writeValueAsString(testHeartbeatDTO);
 
@@ -51,7 +53,8 @@ public class HeartbeatControllerIntegrationTests {
 
     @Test
     public void testThatCreateHeartbeatReturnsCreatedHeartbeat() throws Exception {
-        HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(null);
+        PatientDTO patientDTO = TestDataUtil.createPatientDTOA();
+        HeartbeatDTO testHeartbeatDTO = TestDataUtil.createHeartbeatDTOA(patientDTO);
         testHeartbeatDTO.setCreatedAt(null);
         String createHeartbeatJSON = objectMapper.writeValueAsString(testHeartbeatDTO);
 
