@@ -35,6 +35,7 @@ struct TriageMeasureButtonView: View{
                     .frame(width: 30.0,height: 30.0)
                 Text(measure.name)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
+                    .frame(minWidth: 170, maxWidth: 170, alignment: .leading)
                 VStack {
                     Image(systemName: measure.measured ? "checkmark" : "xmark")
                         .resizable()

@@ -8,6 +8,7 @@
 import SwiftUI
 
 import HealthKit
+import AVFoundation
 
 struct MeasuringTextView: View {
     var body: some View {
@@ -25,6 +26,8 @@ struct MeasuringTextView: View {
     }
 }
 
+
+// MARK: Measure Value View
 struct MeasureValueView: View {
     var measure: Measure
     
@@ -68,6 +71,22 @@ struct MeasureValueView: View {
     }
 }
 
+// MARK: Measuring Heart Rate Layout
+struct MeasuringHeartRateView: View {
+    
+    var measure: Measure
+    
+    var body: some View {
+        VStack {
+            RoundedRectangle(cornerRadius: 15.0)
+                .padding()
+        }
+           
+    }
+}
+
+
+// MARK: AR Help Button View
 struct ARHelpButtonView: View {
     
     var measure: Measure
@@ -91,54 +110,24 @@ struct ARHelpButtonView: View {
     }
 }
 
-func authorizeHealthKit() -> HKHealthStore{
-    let healthStore = HKHealthStore()
+struct PulseViewControllerWrapper: UIViewControllerRepresentable {
     
-    let healthKitTypes: Set = [HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!]
-    
-    healthStore.requestAuthorization(toShare: healthKitTypes, read: healthKitTypes) {_, _ in}
-    
-    return healthStore
+    func makeUIViewController(context: Context) -> PulseViewController {
+        return PulseViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: PulseViewController, context: Context) {
+        // Update the view controller if needed
+    }
 }
 
-func latestHeartRate() {
-    
-    let healthStore = authorizeHealthKit()
-    
-    guard let sampleType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate) else {
-        return
-    }
-    
-    let startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date())
-    
-    let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictEndDate)
-    
-    let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
-    
-    let query = HKSampleQuery(sampleType: sampleType, predicate: predicate, limit: Int(HKObjectQueryNoLimit), sortDescriptors: [sortDescriptor]) {
-        (sample, result, error) in
-        guard error == nil else {
-            return
-        }
-        
-        let data = result![0] as! HKQuantitySample
-        let unit = HKUnit(from: "count/min")
-        let latestHr = data.quantity.doubleValue(for: unit)
-        print("Latest Hr: \(latestHr) BPM")
-        
-        let dateFormator = DateFormatter()
-        dateFormator.dateFormat = "dd/MM/yyyy hh:mm s"
-        let StartDate = dateFormator.string(from: data.startDate)
-        let EndDate = dateFormator.string(from: data.endDate)
-        print("StartDate \(StartDate) : EndDate \(EndDate)")
-    }
-    
-    healthStore.execute(query)
-}
 
+
+// MARK: Measure View
 struct MeasureView: View{
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
+   
     var btnBack: some View { Button(action: {
         self.presentationMode.wrappedValue.dismiss()
     }) {
@@ -154,6 +143,8 @@ struct MeasureView: View{
     
     var measure: Measure
     
+    @StateObject private var heartRateManager  = HeartRateManager(cameraType: .back, preferredSpec: nil, previewContainer: nil)
+   
     var body: some View {
         
         VStack{
@@ -162,13 +153,19 @@ struct MeasureView: View{
                 .font(.title3)
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .frame(maxWidth: .infinity,alignment: .leading)
-            MeasureValueView(measure: measure)
+            
+            VStack {
+                
+                PulseViewControllerWrapper()
+                                    .edgesIgnoringSafeArea(.all)
+                Text("Time remaining: 30 seconds")
+            }
+            
             ARHelpButtonView(measure: measure)
         }
             .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: btnBack)
-            .onAppear(perform: latestHeartRate)
     }
 }

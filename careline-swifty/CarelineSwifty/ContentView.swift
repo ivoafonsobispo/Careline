@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SummaryView: View {
+    var userName: String
+    
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
@@ -18,7 +20,7 @@ struct SummaryView: View {
                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
             }
-            Text("Ivo")
+            Text(userName)
                 .font(.title2)
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
@@ -134,6 +136,7 @@ struct MeasureButtonView: View{
                     .frame(width: 30.0,height: 30.0)
                 Text(measure.name)
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
+                    .frame(minWidth: 170, maxWidth: 170, alignment: .leading)
                 Text("RIGHT NOW >")
                     .foregroundColor(Color.gray)
                     .font(.caption)
@@ -154,7 +157,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             VStack{
-                SummaryView()
+                SummaryView(userName: user.name)
                 Text("Quick Status")
                     .font(.title3)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)

@@ -23,11 +23,11 @@ class TemperatureAPI {
             guard let response = response as? HTTPURLResponse else {return}
             
             if response.statusCode == 200 {
-                guard let data = data else {return }
+                guard let value = data else {return }
                 
                 DispatchQueue.main.async {
                     do {
-                        let decodedTemperature = try JSONDecoder().decode(Temperature.self, from: data)
+                        let decodedTemperature = try JSONDecoder().decode(Temperature.self, from: value)
                         print("Temperatureeeeeeeeeeeeee \(decodedTemperature)")
                         completion(decodedTemperature)
                     } catch {
@@ -40,5 +40,4 @@ class TemperatureAPI {
         dataTask.resume()
     }
 }
-
 

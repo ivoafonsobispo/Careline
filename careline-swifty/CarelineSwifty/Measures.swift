@@ -35,12 +35,18 @@ class Temperature: Measure {
     var value: Double = -99.99
     
     init(measured: Bool, value: Double) {
-        super.init(symbol: "thermometer", name: "Body Temperature", metric: "ºC", measured: measured)
+        super.init(symbol: "thermometer", name: "Temperature", metric: "ºC", measured: measured)
         self.value = value
     }
     
+    private enum CodingKeys: String, CodingKey {
+        case value, symbol, name, metric, measured
+    }
+    
     required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.value = try container.decode(Double.self, forKey: .value)
+        try super.init(from: decoder)
     }
 }
 
@@ -52,7 +58,13 @@ class Heartbeat: Measure {
         self.value = value
     }
     
+    private enum CodingKeys: String, CodingKey {
+        case value, symbol, name, metric, measured
+    }
+    
     required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.value = try container.decode(Int.self, forKey: .value)
+        try super.init(from: decoder)
     }
 }

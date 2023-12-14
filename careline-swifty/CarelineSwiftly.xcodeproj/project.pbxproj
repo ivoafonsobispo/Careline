@@ -11,6 +11,13 @@
 		2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627B72B14F918000DDD38 /* TriageMeasures.swift */; };
 		2C2627BC2B1669D2000DDD38 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627BB2B1669D2000DDD38 /* Network.swift */; };
 		2C2627C22B18DFA3000DDD38 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627C12B18DFA3000DDD38 /* User.swift */; };
+		2C2627C42B20ECE1000DDD38 /* HeartrateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627C32B20ECE1000DDD38 /* HeartrateManager.swift */; };
+		2C2627C72B2A0FD4000DDD38 /* AVCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627C62B2A0FD4000DDD38 /* AVCaptureDevice.swift */; };
+		2C2627C92B2B5873000DDD38 /* PulseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627C82B2B5873000DDD38 /* PulseViewController.swift */; };
+		2C2627CB2B2B58C3000DDD38 /* PulseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627CA2B2B58C3000DDD38 /* PulseDetector.swift */; };
+		2C2627CD2B2B58D9000DDD38 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627CC2B2B58D9000DDD38 /* Filter.swift */; };
+		2C2627CF2B2B5969000DDD38 /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627CE2B2B5969000DDD38 /* ColorUtils.swift */; };
+		2C2627D72B2B5F54000DDD38 /* PulseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C2627D62B2B5F54000DDD38 /* PulseViewController.xib */; };
 		2CBFD49E2B06A91000BDD99C /* Measures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49D2B06A91000BDD99C /* Measures.swift */; };
 		2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49F2B07F20300BDD99C /* MeasureView.swift */; };
 		2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */; };
@@ -28,6 +35,13 @@
 		2C2627BA2B164CC2000DDD38 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2C2627BB2B1669D2000DDD38 /* Network.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		2C2627C12B18DFA3000DDD38 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		2C2627C32B20ECE1000DDD38 /* HeartrateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeartrateManager.swift; sourceTree = "<group>"; };
+		2C2627C62B2A0FD4000DDD38 /* AVCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVCaptureDevice.swift; sourceTree = "<group>"; };
+		2C2627C82B2B5873000DDD38 /* PulseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseViewController.swift; sourceTree = "<group>"; };
+		2C2627CA2B2B58C3000DDD38 /* PulseDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PulseDetector.swift; sourceTree = "<group>"; };
+		2C2627CC2B2B58D9000DDD38 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
+		2C2627CE2B2B5969000DDD38 /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
+		2C2627D62B2B5F54000DDD38 /* PulseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PulseViewController.xib; path = ../../../../../../.Trash/PulseViewController.xib; sourceTree = "<group>"; };
 		2CBFD49D2B06A91000BDD99C /* Measures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measures.swift; sourceTree = "<group>"; };
 		2CBFD49F2B07F20300BDD99C /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
 		2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageView.swift; sourceTree = "<group>"; };
@@ -50,6 +64,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2C2627C52B2A0F19000DDD38 /* Heart Rate Measurement */ = {
+			isa = PBXGroup;
+			children = (
+				2C2627C32B20ECE1000DDD38 /* HeartrateManager.swift */,
+				2C2627C62B2A0FD4000DDD38 /* AVCaptureDevice.swift */,
+				2C2627C82B2B5873000DDD38 /* PulseViewController.swift */,
+				2C2627CA2B2B58C3000DDD38 /* PulseDetector.swift */,
+				2C2627CC2B2B58D9000DDD38 /* Filter.swift */,
+				2C2627CE2B2B5969000DDD38 /* ColorUtils.swift */,
+				2C2627D62B2B5F54000DDD38 /* PulseViewController.xib */,
+			);
+			path = "Heart Rate Measurement";
+			sourceTree = "<group>";
+		};
 		2CE6508F2B066B7C00D17A73 = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +111,7 @@
 				2CE650A12B066B7F00D17A73 /* Preview Content */,
 				2CBFD49F2B07F20300BDD99C /* MeasureView.swift */,
 				2CBFD4A32B0CB9C300BDD99C /* ARHelpView.swift */,
+				2C2627C52B2A0F19000DDD38 /* Heart Rate Measurement */,
 			);
 			path = CarelineSwifty;
 			sourceTree = "<group>";
@@ -153,6 +182,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C2627D72B2B5F54000DDD38 /* PulseViewController.xib in Resources */,
 				2CE650A32B066B7F00D17A73 /* Preview Assets.xcassets in Resources */,
 				2CE650A02B066B7F00D17A73 /* Assets.xcassets in Resources */,
 			);
@@ -166,15 +196,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */,
+				2C2627CD2B2B58D9000DDD38 /* Filter.swift in Sources */,
 				2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */,
 				2C2627B62B14E8D6000DDD38 /* ShowMoreView.swift in Sources */,
+				2C2627CB2B2B58C3000DDD38 /* PulseDetector.swift in Sources */,
+				2C2627C72B2A0FD4000DDD38 /* AVCaptureDevice.swift in Sources */,
 				2C2627C22B18DFA3000DDD38 /* User.swift in Sources */,
 				2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */,
 				2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */,
 				2C2627BC2B1669D2000DDD38 /* Network.swift in Sources */,
 				2CE6509C2B066B7C00D17A73 /* CarelineSwiftyApp.swift in Sources */,
+				2C2627CF2B2B5969000DDD38 /* ColorUtils.swift in Sources */,
+				2C2627C42B20ECE1000DDD38 /* HeartrateManager.swift in Sources */,
 				2CBFD49E2B06A91000BDD99C /* Measures.swift in Sources */,
 				2CBFD4A42B0CB9C300BDD99C /* ARHelpView.swift in Sources */,
+				2C2627C92B2B5873000DDD38 /* PulseViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

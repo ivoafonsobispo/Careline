@@ -18,7 +18,7 @@ class User {
     var measures: [Measure]
     
     init() {
-        self.name = "Ivo"
+        self.name = "José"
         self.measures = [
                 Heartbeat(measured: false, value: -99),
                 Temperature(measured: false, value: -99.99)
