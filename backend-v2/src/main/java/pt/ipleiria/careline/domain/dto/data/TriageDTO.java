@@ -46,8 +46,4 @@ public class TriageDTO extends DataDTO {
     public void setSimptoms(String simptoms) {
         this.simptoms = simptoms;
     }
-
-    public Long getPatientId(){
-        return this.getPatient().getId();
-    }
 }

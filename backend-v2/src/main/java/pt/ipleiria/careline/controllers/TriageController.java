@@ -20,7 +20,6 @@ import java.util.Optional;
 public class TriageController {
     private final Mapper<TriageEntity, TriageDTO> triageMapper;
     private final TriageService triageService;
-
     private final PatientService patientService;
 
     public TriageController(Mapper<TriageEntity, TriageDTO> triageMapper, TriageService triageService, PatientService patientService) {
@@ -36,7 +35,7 @@ public class TriageController {
             triageEntity.setTemperature(triageDTO.getTemperature());
             triageEntity.setHeartbeat(triageDTO.getHeartbeat());
             triageEntity.setSimptoms(triageDTO.getSimptoms());
-            Optional<PatientEntity> patient = patientService.getPatientById(triageDTO.getPatientId());
+            Optional<PatientEntity> patient = patientService.getPatientById(triageDTO.getPatient().getId());
             //Get associated patient
             if(patient.isPresent())
                 triageEntity.setPatient(patient.get());
@@ -53,29 +52,30 @@ public class TriageController {
     @GetMapping("/{id}")
     public ResponseEntity<TriageDTO> getTriageById(@PathVariable("id") Long id) {
         Optional<TriageEntity> triage = triageService.getTriageById(id);
-        return triage.map(professionalEntity -> {
-            TriageDTO triageDTO = triageMapper.mapToDTO(professionalEntity);
+        return triage.map(triageEntity -> {
+            TriageDTO triageDTO = triageMapper.mapToDTO(triageEntity);
             return new ResponseEntity<>(triageDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TriageDTO> fullUpdateProfessional(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
-        if (!triageService.isExists(id)) {
+    public ResponseEntity<TriageDTO> fullUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
+        if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         triageDTO.setId(id);
-        TriageEntity triageEntity = triageMapper.mapFrom(triageDTO);
-        TriageEntity savedTriageEntity = triageService.save(triageEntity);
+        TriageEntity triageEntity = triageService.getTriageById(id).get();
+        triageEntity.setSimptoms(triageDTO.getSimptoms());
+        triageEntity.setHeartbeat(triageDTO.getHeartbeat());
+        triageEntity.setSimptoms(triageDTO.getSimptoms());
+        TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TriageDTO> partialUpdateProfessional(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
-        if (!triageService.isExists(id)) {
+    public ResponseEntity<TriageDTO> partialUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
+        if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         TriageEntity triageEntity = triageMapper.mapFrom(triageDTO);
         TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
@@ -90,5 +90,4 @@ public class TriageController {
         triageService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }
