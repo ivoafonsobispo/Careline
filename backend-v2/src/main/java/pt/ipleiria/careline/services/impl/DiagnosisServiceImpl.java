@@ -1,9 +1,5 @@
 package pt.ipleiria.careline.services.impl;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -61,22 +57,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
     @Override
     public Optional<DiagnosisEntity> getById(Long id) {
-        PDDocument document = new PDDocument();
-        PDPage page = new PDPage();
-        document.addPage(page);
 
-        try {
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-            contentStream.beginText();
-            contentStream.showText("Hello World");
-            contentStream.endText();
-            contentStream.close();
-
-            document.save("Hello World.pdf");
-            document.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return diagnosisRepository.findById(id);
     }
 
@@ -105,5 +86,10 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Override
     public void delete(Long id) {
         diagnosisRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<DiagnosisEntity> getPDFById(Long id) {
+        return diagnosisRepository.findById(id);
     }
 }

@@ -22,4 +22,6 @@ public interface DiagnosisService {
     DiagnosisEntity partialUpdate(Long id, DiagnosisEntity diagnosisEntity);
 
     void delete(Long id);
+
+    Optional<DiagnosisEntity> getPDFById(Long id);
 }
