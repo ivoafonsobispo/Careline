@@ -9,8 +9,8 @@ import SwiftUI
 
 class TemperatureAPI {
     
-    func getTemperature(completion: @escaping (Temperature) -> ()) {
-        guard let url = URL(string: "http://10.20.229.121/temperature") else {fatalError("Incorrect URL")}
+    func getTemperature(completion: @escaping (Double) -> ()) {
+        guard let url = URL(string: "http://10.20.229.61/temperature") else {fatalError("Incorrect URL")}
         
         let urlRequest = URLRequest(url: url)
         
@@ -27,9 +27,14 @@ class TemperatureAPI {
                 
                 DispatchQueue.main.async {
                     do {
-                        let decodedTemperature = try JSONDecoder().decode(Temperature.self, from: value)
-                        print("Temperatureeeeeeeeeeeeee \(decodedTemperature)")
-                        completion(decodedTemperature)
+                        let json = try JSONSerialization.jsonObject(with: value, options: []) as? [String: Any]
+                        
+                        if let temperatureValue = json?["value"] as? Double {
+                            print("Temperatureeeeeeeeeeeeee \(temperatureValue)")
+                            completion(temperatureValue)
+                        } else {
+                            print("Error: Unable to extract temperature value from the JSON.")
+                        }
                     } catch {
                         print("Error WOWOWOWOWOWOWWOW. \(error)")
                     }

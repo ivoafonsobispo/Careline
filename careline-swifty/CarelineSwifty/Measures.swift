@@ -13,17 +13,9 @@ class Measure: Identifiable, Decodable {
     var symbol: String
     var name: String
     var metric: String
-    var measured: Bool = false
+    var measured: Bool
     
-    /**static var baseMeasures: [Measure] {
-        return [
-            Measure(symbol: "heart", name: "Heartbeat", data: "-1", metric: "BPM"),
-            Measure(symbol: "thermometer", name: "Body Temperature", data: "-1", metric: "ºC"),
-        ]
-        
-    }*/
-    
-    init(symbol: String, name: String, metric: String, measured: Bool) {
+    init(symbol: String = "", name: String = "", metric: String = "", measured: Bool = false) {
         self.symbol = symbol
         self.name = name
         self.metric = metric
@@ -40,7 +32,7 @@ class Temperature: Measure {
     }
     
     private enum CodingKeys: String, CodingKey {
-        case value, symbol, name, metric, measured
+        case value
     }
     
     required init(from decoder: Decoder) throws {

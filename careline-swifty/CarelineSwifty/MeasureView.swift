@@ -170,6 +170,8 @@ struct MeasureView: View{
     @State private var heartRateValue = 0
     @State private var heartRateAverage = 0
     
+    @State private var temperatureValue = 0.0
+    
     
     var body: some View {
         
@@ -209,8 +211,29 @@ struct MeasureView: View{
                 }
             } else {
                 VStack{
-                    Text("")
+                    Image(systemName: measure.symbol)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 75.0, height: 75.0)
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0))
+                    Text("\(temperatureValue, specifier: "%.2f") ºC")
+                        .font(.title)
+                        .fontWeight(.bold)
                     Text("Time remaining: \(secondsRemaining) seconds")
+                    
+                    Button(action: {
+                        TemperatureAPI().getTemperature { temperature in
+                            temperatureValue = temperature
+                        }}) {
+                        HStack{
+                            Text("Start")
+                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
+                            .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
+                            .foregroundColor(Color.black)
+                    }.background(Color("Salmon"))
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .cornerRadius(15)
+                        .frame(minHeight: 0, maxHeight: .infinity, alignment: .bottom)
                 }
             }
             
