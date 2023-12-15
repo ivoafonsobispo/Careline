@@ -110,14 +110,37 @@ struct ARHelpButtonView: View {
     }
 }
 
-struct PulseViewControllerWrapper: UIViewControllerRepresentable {
+struct PulseViewControllerRepresentable: UIViewControllerRepresentable {
+    @Binding var secondsRemaining: Int
+    @Binding var heartRateValue: Int
+    @Binding var heartRateAverage: Int
     
     func makeUIViewController(context: Context) -> PulseViewController {
-        return PulseViewController()
+        let pulseViewController = PulseViewController()
+        pulseViewController.delegate = context.coordinator
+        return pulseViewController
     }
 
     func updateUIViewController(_ uiViewController: PulseViewController, context: Context) {
         // Update the view controller if needed
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, PulseViewControllerDelegate {
+        var parent: PulseViewControllerRepresentable
+        
+        init(_ parent: PulseViewControllerRepresentable) {
+            self.parent = parent
+        }
+        
+        func didReceiveData(_ data: [Int]) {
+            parent.secondsRemaining = data[0]
+            parent.heartRateValue = data[1]
+            parent.heartRateAverage += data[1]
+        }
     }
 }
 
@@ -126,17 +149,15 @@ struct PulseViewControllerWrapper: UIViewControllerRepresentable {
 // MARK: Measure View
 struct MeasureView: View{
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-    
-   
     var btnBack: some View { Button(action: {
-        self.presentationMode.wrappedValue.dismiss()
+        dismissView()
     }) {
         HStack {
             Image(systemName: "arrow.left")
                 .resizable()
                 .scaledToFit()
                 .foregroundColor(.black)
-                .frame(width: 15.0,height: 15.0, alignment: .leading)
+                .frame(width: 15.0, height: 15.0, alignment: .leading)
             Text("Back")
         }.frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
     }}
@@ -144,7 +165,12 @@ struct MeasureView: View{
     var measure: Measure
     
     @StateObject private var heartRateManager  = HeartRateManager(cameraType: .back, preferredSpec: nil, previewContainer: nil)
-   
+    
+    @State private var secondsRemaining = 30
+    @State private var heartRateValue = 0
+    @State private var heartRateAverage = 0
+    
+    
     var body: some View {
         
         VStack{
@@ -154,11 +180,38 @@ struct MeasureView: View{
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .frame(maxWidth: .infinity,alignment: .leading)
             
-            VStack {
-                
-                PulseViewControllerWrapper()
-                                    .edgesIgnoringSafeArea(.all)
-                Text("Time remaining: 30 seconds")
+            
+            if let _ = measure as? Heartbeat {
+                VStack {
+                    
+                    if secondsRemaining > 0{
+                        PulseViewControllerRepresentable(secondsRemaining: $secondsRemaining, heartRateValue: $heartRateValue, heartRateAverage: $heartRateAverage)
+                            .frame(minHeight: 120, maxHeight: .infinity,alignment: .center)
+                            .padding(EdgeInsets(top: 30, leading: 0, bottom: 150, trailing: 0))
+                        
+                        if heartRateValue > 0{
+                            Text("Time remaining: \(secondsRemaining) seconds")
+                        }
+                    } else {
+                        Text("Measurement Completed")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .padding()
+                            .onAppear(){
+                                makeHeartRatePostRequest()
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now()+2){
+                                    dismissView()
+                                }
+                            }
+                        Text("Value meausred: \(self.heartRateAverage/30)")
+                    }
+                }
+            } else {
+                VStack{
+                    Text("")
+                    Text("Time remaining: \(secondsRemaining) seconds")
+                }
             }
             
             ARHelpButtonView(measure: measure)
@@ -167,5 +220,51 @@ struct MeasureView: View{
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: btnBack)
+    }
+    
+    func dismissView(){
+        self.presentationMode.wrappedValue.dismiss()
+    }
+    
+    func makeHeartRatePostRequest(){
+        guard let url = URL(string: "http://10.20.229.2/api/patients/1/heartbeats") else {
+            print("Invalid URL")
+            return
+        }
+        
+        let requestData: [String: Any] = [
+            "heartbeat": String(self.heartRateAverage/30)
+        ]
+        
+        do {
+            // Convert the requestData to JSON data
+            let jsonData = try JSONSerialization.data(withJSONObject: requestData)
+
+            // Create the URLRequest with the specified URL and method
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+
+            // Set the request body with the JSON data
+            request.httpBody = jsonData
+
+            // Set the content type to JSON
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            // Create a URLSession task for the request
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                } else if let response = response as? HTTPURLResponse {
+                    if(response.statusCode == 201) {
+                        print("POST request successful")
+                    } else {
+                        print("POST request failed with status code: \(response.statusCode)")
+                    }
+                }
+            }.resume()
+        } catch {
+            print("Error converting requestData to JSON data: \(error)")
+        }
+        
     }
 }

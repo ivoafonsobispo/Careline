@@ -9,6 +9,10 @@
 import UIKit
 import AVFoundation
 
+protocol PulseViewControllerDelegate: AnyObject {
+    func didReceiveData(_ data: [Int])
+}
+
 class PulseViewController: UIViewController {
     
     @IBOutlet weak var previewLayerShadowView: UIView!
@@ -16,14 +20,19 @@ class PulseViewController: UIViewController {
     @IBOutlet weak var pulseLabel: UILabel!
     @IBOutlet weak var thresholdLabel: UILabel!
     
+    weak var delegate: PulseViewControllerDelegate?
+    
     private var validFrameCounter = 0
     private var heartRateManager: HeartRateManager!
     private var hueFilter = Filter()
     private var pulseDetector = PulseDetector()
     private var inputs: [CGFloat] = []
     private var measurementStartedFlag = false
+    
     var timer = Timer()
-    var secondsRemaining = 30
+    var dataToSend: [Int] = []
+    var secondsRemaining: Int = 30
+    var heartRateValue: Int = 0
     
     init() {
         super.init(nibName: "PulseViewController", bundle: nil)
@@ -53,6 +62,7 @@ class PulseViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         deinitCaptureSession()
+        toggleTorch(status: false)
     }
     
     // MARK: - Setup Views
@@ -84,7 +94,6 @@ class PulseViewController: UIViewController {
     
     private func deinitCaptureSession() {
         heartRateManager.stopCapture()
-        toggleTorch(status: false)
     }
     
     private func toggleTorch(status: Bool) {
@@ -112,11 +121,23 @@ class PulseViewController: UIViewController {
                     }) { (_) in
                         self.pulseLabel.isHidden = false
                         self.pulseLabel.text = "\(lroundf(pulse)) BPM"
+                        
                         self.secondsRemaining -= 1
+                        self.dataToSend = [self.secondsRemaining, lroundf(pulse)]
+                        self.sendDataToSwiftUI()
+                        if(self.secondsRemaining == 0){
+                            self.deinitCaptureSession()
+                        }
                     }
                 }
             })
         }
+    }
+    
+    func sendDataToSwiftUI(){
+        let dataToSend = self.dataToSend
+        
+        delegate?.didReceiveData(dataToSend)
     }
 }
 
