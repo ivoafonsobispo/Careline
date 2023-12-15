@@ -13,11 +13,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class CsvGenerator {
-    private static final String CSV_HEADER = "PatientID,Heartbeat\n";
+    private static final String CSV_HEADER_HEARTBEAT = "HeartbeatID,PatientID,Heartbeat\n";
+    private static final String CSV_HEADER_TEMPERATURE = "TemperatureID,PatientID,Temperature\n";
 
-    public void generateCsv(List<HeartbeatEntity> heartbeatEntities) {
+    public void generateHeartbeatCsv(List<HeartbeatEntity> heartbeatEntities) {
         StringBuilder csv = new StringBuilder();
-        csv.append(CSV_HEADER);
+        csv.append(CSV_HEADER_HEARTBEAT);
 
         for (HeartbeatEntity heartbeatEntity : heartbeatEntities) {
             csv.append(heartbeatEntity.getPatient().getId());
@@ -28,20 +29,40 @@ public class CsvGenerator {
             csv.append("\n");
         }
 
-        // Specify the desktop path
         String desktopPath = System.getProperty("user.home") + "/Desktop";
-
-        // Create a Path object for the desktop directory
         Path desktopDirectory = Paths.get(desktopPath);
-
-        // Specify the file name and path
         String fileName = "heartbeat_data.csv";
         Path filePath = desktopDirectory.resolve(fileName);
 
-        // Write the CSV data to the file
         try {
             Files.writeString(filePath, csv.toString());
-            System.out.println("CSV file exported to: " + filePath.toString());
+            System.out.println("CSV file exported to: " + filePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void generateTemperatureCsv(List<TemperatureEntity> temperatureEntities) {
+        StringBuilder csv = new StringBuilder();
+        csv.append(CSV_HEADER_TEMPERATURE);
+
+        for (TemperatureEntity temperatureEntity : temperatureEntities) {
+            csv.append(temperatureEntity.getId());
+            csv.append(",");
+            csv.append(temperatureEntity.getPatient().getId());
+            csv.append(",");
+            csv.append(temperatureEntity.getTemperature());
+            csv.append("\n");
+        }
+
+        String desktopPath = System.getProperty("user.home") + "/Desktop";
+        Path desktopDirectory = Paths.get(desktopPath);
+        String fileName = "temperature_data.csv";
+        Path filePath = desktopDirectory.resolve(fileName);
+
+        try {
+            Files.writeString(filePath, csv.toString());
+            System.out.println("CSV file exported to: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }

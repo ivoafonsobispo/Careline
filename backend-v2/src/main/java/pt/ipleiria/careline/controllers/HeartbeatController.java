@@ -51,13 +51,6 @@ public class HeartbeatController {
         return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
     }
 
-    @GetMapping("/csv")
-    public void getHeartbeatsCsv(@PathVariable("patientId") Long patientId) {
-        List<HeartbeatEntity> heartbeatEntityList = heartbeatService.findAll();
-        CsvGenerator csvGenerator = new CsvGenerator();
-        csvGenerator.generateCsv(heartbeatEntityList);
-    }
-
     @GetMapping("/latest")
     public Page<HeartbeatResponseDTO> listLatestHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAllLatest(pageable, patientId);
