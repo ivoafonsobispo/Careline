@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.PatientService;
@@ -17,19 +18,21 @@ import java.util.Optional;
 @RestController
 public class PatientController {
 
-    private final PatientService patientService;
-    private final Mapper<PatientEntity, PatientDTO> patientMapper;
+    private PatientService patientService;
+    private Mapper<PatientEntity, PatientDTO> patientMapper;
+    private Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper;
 
-    public PatientController(PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper) {
+    public PatientController(PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper, Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper) {
         this.patientService = patientService;
         this.patientMapper = patientMapper;
+        this.patientResponseMapper = patientResponseMapper;
     }
 
     @PostMapping
-    public ResponseEntity<PatientDTO> create(@RequestBody @Valid PatientDTO patientDTO) {
+    public ResponseEntity<PatientResponseDTO> create(@RequestBody @Valid PatientDTO patientDTO) {
         PatientEntity patientEntity = patientMapper.mapFrom(patientDTO);
         PatientEntity savedPatientEntity = patientService.save(patientEntity);
-        return new ResponseEntity<>(patientMapper.mapToDTO(savedPatientEntity), HttpStatus.CREATED);
+        return new ResponseEntity<>(patientResponseMapper.mapToDTO(savedPatientEntity), HttpStatus.CREATED);
     }
 
     @GetMapping

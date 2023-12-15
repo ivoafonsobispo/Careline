@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.ProfessionalDTO;
+import pt.ipleiria.careline.domain.dto.responses.ProfessionalResponseDTO;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.ProfessionalService;
@@ -17,19 +18,21 @@ import java.util.Optional;
 @RestController
 public class ProfessionalController {
 
-    private final ProfessionalService professionalService;
-    private final Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper;
+    private ProfessionalService professionalService;
+    private Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper;
+    private Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseMapper;
 
-    public ProfessionalController(ProfessionalService professionalService, Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper) {
+    public ProfessionalController(ProfessionalService professionalService, Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper, Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseMapper) {
         this.professionalService = professionalService;
         this.professionalMapper = professionalMapper;
+        this.professionalResponseMapper = professionalResponseMapper;
     }
 
     @PostMapping
-    public ResponseEntity<ProfessionalDTO> create(@RequestBody @Valid ProfessionalDTO professionalDTO) {
+    public ResponseEntity<ProfessionalResponseDTO> create(@RequestBody @Valid ProfessionalDTO professionalDTO) {
         ProfessionalEntity professionalEntity = professionalMapper.mapFrom(professionalDTO);
         ProfessionalEntity savedProfessionalEntity = professionalService.save(professionalEntity);
-        return new ResponseEntity<>(professionalMapper.mapToDTO(savedProfessionalEntity), HttpStatus.CREATED);
+        return new ResponseEntity<>(professionalResponseMapper.mapToDTO(savedProfessionalEntity), HttpStatus.CREATED);
     }
 
     @GetMapping
