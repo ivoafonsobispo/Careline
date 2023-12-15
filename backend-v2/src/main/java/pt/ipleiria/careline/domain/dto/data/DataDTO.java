@@ -2,6 +2,7 @@ package pt.ipleiria.careline.domain.dto.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 
 import java.time.Instant;
 
@@ -9,12 +10,12 @@ public abstract class DataDTO {
     @JsonProperty("created_at")
     public Instant createdAt;
 
-    private PatientDTO patient;
+    private PatientResponseDTO patient;
 
     public DataDTO() {
     }
 
-    public DataDTO(PatientDTO patient, Instant createdAt) {
+    public DataDTO(PatientResponseDTO patient, Instant createdAt) {
         this.patient = patient;
         this.createdAt = createdAt;
     }
@@ -27,11 +28,11 @@ public abstract class DataDTO {
         this.createdAt = createdAt;
     }
 
-    public PatientDTO getPatient() {
+    public PatientResponseDTO getPatient() {
         return patient;
     }
 
-    public void setPatient(PatientDTO patient) {
+    public void setPatient(PatientResponseDTO patient) {
         this.patient = patient;
     }
 }

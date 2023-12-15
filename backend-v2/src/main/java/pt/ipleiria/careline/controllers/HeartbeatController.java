@@ -8,12 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.HeartbeatDTO;
-import pt.ipleiria.careline.domain.dto.data.responses.HeartbeatResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.HeartbeatResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
+import pt.ipleiria.careline.services.PatientService;
+import pt.ipleiria.careline.utils.CsvGenerator;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")
@@ -22,18 +26,20 @@ public class HeartbeatController {
 
     private Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper;
     private Mapper<PatientEntity, PatientDTO> patientMapper;
+    private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
     private HeartbeatService heartbeatService;
+    private PatientService patientService;
 
-    public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, Mapper<PatientEntity, PatientDTO> patientMapper) {
+    public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper) {
         this.heartbeatMapper = heartbeatMapper;
         this.patientMapper = patientMapper;
         this.heartbeatService = heartbeatService;
+        this.patientService = patientService;
     }
 
     @PostMapping
-    public ResponseEntity<HeartbeatDTO> createHeartbeat(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
+    public ResponseEntity<HeartbeatDTO> create(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
         HeartbeatEntity heartbeatEntity = heartbeatMapper.mapFrom(heartbeatDTO);
-        heartbeatEntity.setPatient(patientMapper.mapFrom(heartbeatDTO.getPatient()));
         HeartbeatEntity createdHeartbeat = heartbeatService.create(patientId, heartbeatEntity);
         HeartbeatDTO createdHeartbeatDTO = heartbeatMapper.mapToDTO(createdHeartbeat);
         return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);

@@ -1,5 +1,6 @@
 package pt.ipleiria.careline.controllers;
 
+import com.lowagie.text.DocumentException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,11 @@ import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.services.ProfessionalService;
+import pt.ipleiria.careline.utils.PdfGenerator;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 @RequestMapping("/api/professionals/{professionalId}/patients/{patientId}/diagnosis")
@@ -48,6 +53,16 @@ public class DiagnosisController {
             DiagnosisDTO diagnosisDTO= diagnosisMapper.mapToDTO(diagnosisEntity);
             return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{id}/pdf")
+    public void getPDFById(@PathVariable("id") Long id) throws DocumentException, IOException {
+        Optional<DiagnosisEntity> diagnosisEntity= diagnosisService.getById(id);
+        if (diagnosisEntity.isEmpty()) {
+            throw new IllegalArgumentException("Diagnosis not found");
+        }
+        PdfGenerator generator = new PdfGenerator();
+        generator.generateDiagnosisPDF(diagnosisEntity.get());
     }
 
     @PutMapping("/{id}")

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CurrentTimestamp;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.ProfessionalResponseDTO;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 
@@ -14,15 +16,15 @@ public class DiagnosisDTO {
     @JsonProperty("created_at")
     public Instant createdAt;
     private Long id;
-    private PatientEntity patient;
-    private ProfessionalEntity professional;
+    private PatientResponseDTO patient;
+    private ProfessionalResponseDTO professional;
     private String diagnosis;
     List<String> prescriptions;
 
     public DiagnosisDTO() {
     }
 
-    public DiagnosisDTO(PatientEntity patient, ProfessionalEntity professional, String diagnosis, List<String> prescriptions) {
+    public DiagnosisDTO(PatientResponseDTO patient, ProfessionalResponseDTO professional, String diagnosis, List<String> prescriptions) {
         this.patient = patient;
         this.professional = professional;
         this.diagnosis = diagnosis;
@@ -46,19 +48,19 @@ public class DiagnosisDTO {
         this.id = id;
     }
 
-    public PatientEntity getPatient() {
+    public PatientResponseDTO getPatient() {
         return patient;
     }
 
-    public void setPatient(PatientEntity patient) {
+    public void setPatient(PatientResponseDTO patient) {
         this.patient = patient;
     }
 
-    public ProfessionalEntity getProfessional() {
+    public ProfessionalResponseDTO getProfessional() {
         return professional;
     }
 
-    public void setProfessional(ProfessionalEntity professional) {
+    public void setProfessional(ProfessionalResponseDTO professional) {
         this.professional = professional;
     }
 

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
-import pt.ipleiria.careline.domain.dto.data.responses.TemperatureResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.TemperatureResponseDTO;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
@@ -33,7 +33,6 @@ public class TemperatureController {
     @PostMapping
     public ResponseEntity<TemperatureDTO> createTemperature(@PathVariable("patientId") Long patientId, @RequestBody @Valid TemperatureDTO temperatureDTO) {
         TemperatureEntity temperatureEntity = temperatureMapper.mapFrom(temperatureDTO);
-        temperatureEntity.setPatient(patientMapper.mapFrom(temperatureDTO.getPatient()));
         TemperatureEntity createdHeartbeat = temperatureService.create(patientId, temperatureEntity);
         TemperatureDTO createdHeartbeatDTO = temperatureMapper.mapToDTO(createdHeartbeat);
         return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);

@@ -34,13 +34,10 @@ public class TemperatureServiceImpl implements TemperatureService {
         }
 
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
-
         if (existingPatient.isPresent()) {
             temperature.setPatient(existingPatient.get());
         } else {
-            PatientEntity newPatient = temperature.getPatient();
-            patientService.save(newPatient);
-            temperature.setPatient(newPatient);
+            throw new IllegalArgumentException("Patient not found");
         }
 
         return temperatureRepository.save(temperature);
