@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.domain.dto.data.responses;
+package pt.ipleiria.careline.domain.dto.responses;
 
 import java.time.Instant;
 

@@ -39,17 +39,13 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         if (existingPatient.isPresent()) {
             diagnosisEntity.setPatient(existingPatient.get());
         } else {
-            PatientEntity newPatient = diagnosisEntity.getPatient();
-            patientService.save(newPatient);
-            diagnosisEntity.setPatient(newPatient);
+            throw new IllegalArgumentException("Patient not found");
         }
 
         if (existingProfessional.isPresent()) {
             diagnosisEntity.setProfessional(existingProfessional.get());
         } else {
-            ProfessionalEntity newProfessional = diagnosisEntity.getProfessional();
-            professionalService.save(newProfessional);
-            diagnosisEntity.setProfessional(newProfessional);
+            throw new IllegalArgumentException("Professional not found");
         }
 
         return diagnosisRepository.save(diagnosisEntity);

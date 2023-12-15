@@ -95,7 +95,7 @@ public class TestDataUtil {
         return heartbeatEntity;
     }
 
-    public static HeartbeatDTO createHeartbeatDTOA(final PatientDTO patientDTO) {
+    /*public static HeartbeatDTO createHeartbeatDTOA(final PatientDTO patientDTO) {
         HeartbeatDTO heartbeatEntity = new HeartbeatDTO();
         heartbeatEntity.setPatient(patientDTO);
         heartbeatEntity.setHeartbeat(80);
@@ -103,7 +103,7 @@ public class TestDataUtil {
         return heartbeatEntity;
     }
 
-    /*
+
     public static TemperatureEntity createTemperatureEntityA(final PatientEntity patientEntity) {
         TemperatureEntity temperatureEntity = new TemperatureEntity();
         temperatureEntity.setPatient(patientEntity);

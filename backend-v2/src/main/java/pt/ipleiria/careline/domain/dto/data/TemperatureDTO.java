@@ -1,6 +1,7 @@
 package pt.ipleiria.careline.domain.dto.data;
 
 import pt.ipleiria.careline.domain.dto.PatientDTO;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 
 import java.time.Instant;
 
@@ -10,7 +11,7 @@ public class TemperatureDTO extends DataDTO {
     public TemperatureDTO() {
     }
 
-    public TemperatureDTO(PatientDTO patient, Instant createdAt, Float temperature) {
+    public TemperatureDTO(PatientResponseDTO patient, Instant createdAt, Float temperature) {
         super(patient, createdAt);
         this.temperature = temperature;
     }

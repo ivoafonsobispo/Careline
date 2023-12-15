@@ -24,7 +24,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     public HeartbeatServiceImpl(HeartbeatRepository heartbeatRepository, PatientService patientService) {
         this.heartbeatRepository = heartbeatRepository;
         this.patientService = patientService;
-        DataValidation dataValidation = new DataValidation();
     }
 
     @Override
@@ -34,13 +33,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         }
 
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
-
         if (existingPatient.isPresent()) {
             heartbeatEntity.setPatient(existingPatient.get());
         } else {
-            PatientEntity newPatient = heartbeatEntity.getPatient();
-            patientService.save(newPatient);
-            heartbeatEntity.setPatient(newPatient);
+            throw new IllegalArgumentException("Patient not found");
         }
 
         return heartbeatRepository.save(heartbeatEntity);
