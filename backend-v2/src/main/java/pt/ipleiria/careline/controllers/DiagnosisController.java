@@ -13,6 +13,7 @@ import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.DiagnosisService;
+import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.ProfessionalService;
 import pt.ipleiria.careline.utils.PdfGenerator;
 
@@ -21,34 +22,38 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 
-@RequestMapping("/api/professionals/{professionalId}/patients/{patientId}/diagnosis")
+@RequestMapping("/api")
 @RestController
 @CrossOrigin
 public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
     private final Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
+    private ProfessionalService professionalService;
+    private PatientService patientService;
 
-    public DiagnosisController(DiagnosisService diagnosisService, Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper) {
+    public DiagnosisController(DiagnosisService diagnosisService, ProfessionalService professionalService, PatientService patientService, Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper) {
         this.diagnosisService = diagnosisService;
+        this.professionalService = professionalService;
+        this.patientService = patientService;
         this.diagnosisMapper = diagnosisMapper;
     }
 
-    @PostMapping
+    @PostMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
     public ResponseEntity<DiagnosisDTO> create(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId , @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
         DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId,professionalId,diagnosisEntity);
         return new ResponseEntity<>(diagnosisMapper.mapToDTO(savedDiagnosticEntity), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
     public Page<DiagnosisDTO> listDiagnostics(Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities= diagnosisService.findAll(pageable);
         return diagnosisEntities.map(diagnosisMapper::mapToDTO);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DiagnosisDTO> getById(@PathVariable("id") Long id) {
+    @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
+    public ResponseEntity<DiagnosisDTO> getByIdProfessional(@PathVariable("id") Long id) {
         Optional<DiagnosisEntity> diagnosis= diagnosisService.getById(id);
         return diagnosis.map(diagnosisEntity-> {
             DiagnosisDTO diagnosisDTO= diagnosisMapper.mapToDTO(diagnosisEntity);
@@ -56,7 +61,32 @@ public class DiagnosisController {
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/{id}/pdf")
+    @GetMapping("/patients/{patientId}/diagnosis/{id}")
+    public ResponseEntity<DiagnosisDTO> getByIdPatient(@PathVariable("id") Long id) {
+        Optional<DiagnosisEntity> diagnosis= diagnosisService.getById(id);
+        return diagnosis.map(diagnosisEntity-> {
+            DiagnosisDTO diagnosisDTO= diagnosisMapper.mapToDTO(diagnosisEntity);
+            return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
+        }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/patients/{patientId}/diagnosis")
+    public Page<DiagnosisDTO> listDiagnosticsPatient(Pageable pageable) {
+        Page<DiagnosisEntity> diagnosisEntities= diagnosisService.findAll(pageable);
+        return diagnosisEntities.map(diagnosisMapper::mapToDTO);
+    }
+
+    @GetMapping("/patients/{patientId}/diagnosis/{id}/pdf")
+    public void getPDFByIdPatient(@PathVariable("id") Long id) throws DocumentException, IOException {
+        Optional<DiagnosisEntity> diagnosisEntity= diagnosisService.getById(id);
+        if (diagnosisEntity.isEmpty()) {
+            throw new IllegalArgumentException("Diagnosis not found");
+        }
+        PdfGenerator generator = new PdfGenerator();
+        generator.generateDiagnosisPDF(diagnosisEntity.get());
+    }
+
+    @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}/pdf")
     public void getPDFById(@PathVariable("id") Long id) throws DocumentException, IOException {
         Optional<DiagnosisEntity> diagnosisEntity= diagnosisService.getById(id);
         if (diagnosisEntity.isEmpty()) {
@@ -66,7 +96,7 @@ public class DiagnosisController {
         generator.generateDiagnosisPDF(diagnosisEntity.get());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity<DiagnosisDTO> fullUpdate(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @PathVariable("id") Long diagnosisId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         if (!diagnosisService.isExists(diagnosisId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -78,7 +108,7 @@ public class DiagnosisController {
                 diagnosisMapper.mapToDTO(savedDiagnosisEntity), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity<DiagnosisDTO> partialUpdate(@PathVariable("id") Long id, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         if (!diagnosisService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -90,7 +120,7 @@ public class DiagnosisController {
                 diagnosisMapper.mapToDTO(savedDiagnosisEntity), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         if (!diagnosisService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
