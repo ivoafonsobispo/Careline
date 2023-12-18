@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @RequestMapping("/api/professionals")
 @RestController
+@CrossOrigin
 public class ProfessionalController {
 
     private ProfessionalService professionalService;

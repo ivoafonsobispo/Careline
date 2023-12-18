@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")
 @RestController
+@CrossOrigin
 public class HeartbeatController {
 
     private Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper;
