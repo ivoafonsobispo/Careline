@@ -1,8 +1,9 @@
 :root {
-  --basecolor: #3065c9;
-  --lightcolor: #5c95ff;
-  --lightcolorhover: #4385ff;
-  --darkcolor: #0247c9;
+  --basecolor: #f57171;
+  --lightcolor: #f5d7d7;
+  --lightcolorhover: #f5d7d7;
+  --lightercolor: #ffdede;
+  --darkcolor: #d44444;
   --complementarcolor: #fe9a84;
   --darkcomplementarcolor: #c26552;
   --lightcomplementarcolor: #ffe5da;

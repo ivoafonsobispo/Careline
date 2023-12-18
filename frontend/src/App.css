@@ -17,7 +17,7 @@
   flex-grow: 1;
   display: flex;
   flex-direction: row;
-  padding: 30px;
+  padding: 2% 5% 8% 5%;
   gap: 2%;
 }
 
@@ -25,9 +25,6 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  background-image: url("../public/images/backroung-azul.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
 @media (max-width: 600px) {

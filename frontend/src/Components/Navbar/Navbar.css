@@ -41,7 +41,7 @@ nav li {
 } */
 
 .navbar-logo-area > li {
-  height: 70px;
+  height: 66px;
   margin: 0;
   font-family: 'Comfortaa', sans-serif;
   font-size: 30px;
@@ -55,6 +55,8 @@ nav li {
 
 .navbar-logo-name {
   font-weight: bolder;
+  margin-top: 2%;
+  margin-left: -4%;
 }
 
 .navbar-buttons-area{

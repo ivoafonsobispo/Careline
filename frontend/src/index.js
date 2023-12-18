@@ -5,6 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import ClientHome from './Routes/ClientHome';
 import ClientDiagnoses from './Routes/ClientDiagnoses'
+import ClientMeasures from './Routes/ClientMeasures';
+import ClientDrones from './Routes/ClientDrones';
+import ClientProfile from './Routes/ClientProfile';
 import ErrorPage from './Routes/ErrorPage';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -24,6 +27,21 @@ const router = createBrowserRouter([
       {
         path: '/diagnoses',
         element: <ClientDiagnoses />,
+        errorElement: <ErrorPage />
+      },
+      {
+        path: '/measures',
+        element: <ClientMeasures />,
+        errorElement: <ErrorPage />
+      },
+      {
+        path: '/drones',
+        element: <ClientDrones />,
+        errorElement: <ErrorPage />
+      },
+      {
+        path: '/profile',
+        element: <ClientProfile />,
         errorElement: <ErrorPage />
       },
     ],

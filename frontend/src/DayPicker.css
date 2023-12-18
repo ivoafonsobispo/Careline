@@ -1,0 +1,32 @@
+.day-picker {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--lightercolor);
+    width: 15%;
+    align-items: center;
+    gap: 3%;
+    overflow-x: scroll;
+  }
+  
+  .day-picker-style{
+    width: 80% !important;
+    --rdp-accent-color: var(--basecolor) !important;
+    --rdp-background-color: white !important;
+    margin: 0;
+    --rdp-cell-size: 0p !important;
+    font-size: 16px !important;
+  }
+
+
+.rdp-caption {
+    margin-top: 8% !important;
+    margin-bottom: 12% !important;
+    font-size: 10px !important;
+}
+
+@media (max-width: 900px) {
+
+  .day-picker, .day-picker-style {
+    display: none;
+  }
+}

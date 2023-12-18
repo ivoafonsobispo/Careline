@@ -1,6 +1,6 @@
 import './Navbar.css'
 
-import {HouseFill, HeartFill, FileBarGraphFill, DatabaseFill, PersonFill} from 'react-bootstrap-icons'
+import {HouseFill, HeartFill, FileBarGraphFill, MapFill, PersonFill} from 'react-bootstrap-icons'
 import { NavLink } from 'react-router-dom';
 
 export default function Navbar({isActive}) {
@@ -20,10 +20,10 @@ export default function Navbar({isActive}) {
                         <span className='navbar-item-text'>Home</span>
                     </li>
                 </NavLink>
-                <NavLink to='/diagnoses'>
+                <NavLink to='/measures'>
                     <li className='navbar-item'>
                         <HeartFill size={25} className='navbar-svg'/>
-                        <span className='navbar-item-text'>Beats Per Minute</span>
+                        <span className='navbar-item-text'>Measures</span>
                     </li>
                 </NavLink>
                 <NavLink to='/diagnoses'>
@@ -32,13 +32,13 @@ export default function Navbar({isActive}) {
                         <span className='navbar-item-text'>Diagnoses</span>
                     </li>
                 </NavLink>
-                <NavLink to='/diagnoses'>
+                <NavLink to='/drones'>
                     <li className='navbar-item'>
-                        <DatabaseFill size={25} className='navbar-svg'/>
-                        <span className='navbar-item-text'>Measured Data</span>
+                        <MapFill size={25} className='navbar-svg'/>
+                        <span className='navbar-item-text'>Drones</span>
                     </li>
                 </NavLink>
-                <NavLink to='/diagnoses' className={'navbar-last-item'}>
+                <NavLink to='/profile' className={'navbar-last-item'}>
                     <li className='navbar-item'>
                         <PersonFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Helena</span>

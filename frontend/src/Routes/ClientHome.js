@@ -1,10 +1,14 @@
-import ClientLeftColumn from "../Components/ClientComponents/LeftColumn";
-import ClientRightColumn from "../Components/ClientComponents/RightColumn";
+import ClientHomeBody from "../Components/ClientComponents/ClientHomeBody";
+import PageTitle from '../Components/PageTitle/PageTitle';
+import "../Components/ClientComponents/ClientBase.css";
+
 export default function ClientHome(){
     return (
-        <div className='App-content'>
-            <ClientLeftColumn />
-            <ClientRightColumn />
+        <div className="vertical-container">
+            <PageTitle title="Home"/>
+            <div className='App-content' style={{margin: "0 5%"}}>
+                <ClientHomeBody/>
+            </div>
         </div>
     );
 }
