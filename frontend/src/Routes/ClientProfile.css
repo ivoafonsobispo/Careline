@@ -1,0 +1,14 @@
+.profile-container{
+    gap: 5%;
+}
+
+.profile-field{
+    border: 1px solid var(--basecolor);
+    padding: 2%;
+    border-radius: 1%/15%;
+}
+
+.profile-field-title{
+    width: 20%;
+    display: inline-flex;
+}

@@ -11,27 +11,28 @@ const baseURL = 'http://localhost:8080/api/patients/1/heartbeats';
 export default function ClientHomeBody() {
   const [measures, setMeasures] = useState(null);
 
-  // useEffect(() => {
-  //     axios.get(baseURL, { 
-  //       headers: {
-  //         'Access-Control-Allow-Origin': '*',
-  //       }, 
-  //       proxy: {
-  //         port: 8080
-  //       } })
-  //       .then(response => {
-  //         // handle the response
-  //         setMeasures(response.data);
-  //       })
-  //       .catch(error => {
-  //         // handle the error
-  //         console.log(error);
-  //       });
-  // }, []);
+  useEffect(() => {
+      axios.get(baseURL, { 
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        }, 
+        proxy: {
+          port: 8080
+        } })
+        .then(response => {
+          // handle the response
+          setMeasures(response.data.content);
+          console.log(response.data.content);
+        })
+        .catch(error => {
+          // handle the error
+          console.log(error);
+        });
+  }, []);
 
-  // if (!measures) return null;
+  if (!measures) return null;
 
-  // let measuresArray = Object.values(measures)
+  let measuresArray = Object.values(measures)
 
 
     return (
@@ -46,7 +47,7 @@ export default function ClientHomeBody() {
         </div>
   
         <div className='horizontal-container gap-horizontal' style={{maxHeight: "300px"}}>
-          <MeasureList title={"Measures"}/>
+          <MeasureList title={"Measures"} dataArray={measuresArray}/>
           <MeasureList title={"Diagnoses"}/>
         </div>
       </div>
