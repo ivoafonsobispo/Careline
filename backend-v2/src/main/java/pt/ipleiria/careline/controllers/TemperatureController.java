@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/temperatures")
 @RestController
+@CrossOrigin
 public class TemperatureController {
 
     private Mapper<TemperatureEntity, TemperatureDTO> temperatureMapper;

@@ -23,6 +23,7 @@ import java.util.Optional;
 
 @RequestMapping("/api/professionals/{professionalId}/patients/{patientId}/diagnosis")
 @RestController
+@CrossOrigin
 public class DiagnosisController {
 
     private final DiagnosisService diagnosisService;
