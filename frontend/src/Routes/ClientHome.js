@@ -6,7 +6,7 @@ export default function ClientHome(){
     return (
         <div className="vertical-container">
             <PageTitle title="Home"/>
-            <div className='App-content' style={{margin: "0 5%"}}>
+            <div className='App-content'>
                 <ClientHomeBody/>
             </div>
         </div>

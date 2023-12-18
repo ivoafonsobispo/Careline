@@ -19,6 +19,7 @@
   flex-direction: row;
   padding: 2% 5% 8% 5%;
   gap: 2%;
+  margin: 0 5%;
 }
 
 .App-content-div {

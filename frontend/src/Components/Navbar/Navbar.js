@@ -9,7 +9,6 @@ export default function Navbar({isActive}) {
         <nav style={{ 'maxHeight': isActive ? '200px': '0px'}} id='navbar'>
             <ul className='navbar-logo-area'>
                 <li className='navbar-logo-name'>CareLine</li>
-                <img />
                 <hr></hr>
             </ul>
 
