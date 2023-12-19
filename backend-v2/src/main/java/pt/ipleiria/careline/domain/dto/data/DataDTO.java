@@ -12,6 +12,7 @@ public abstract class DataDTO {
 
     private PatientResponseDTO patient;
 
+
     public DataDTO() {
     }
 

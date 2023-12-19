@@ -47,6 +47,13 @@ public class TriageEntity extends DataEntity {
         return temperature;
     }
 
+    public void setTemperature(Float temperature) {
+        this.temperature = temperature;
+    }
+
+    public void setProfessionals(List<ProfessionalEntity> professionals) {
+        this.professionals = professionals;
+    }
 
     public Integer getHeartbeat() {
         return heartbeat;
