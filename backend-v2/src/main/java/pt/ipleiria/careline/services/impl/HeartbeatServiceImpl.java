@@ -72,6 +72,4 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     public void delete(Long id) {
         heartbeatRepository.deleteById(id);
     }
-
-
 }

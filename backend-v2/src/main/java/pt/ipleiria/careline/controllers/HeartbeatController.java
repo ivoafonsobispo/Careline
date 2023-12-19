@@ -15,9 +15,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
-import pt.ipleiria.careline.utils.CsvGenerator;
 
-import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")

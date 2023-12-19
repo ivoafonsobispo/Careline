@@ -34,7 +34,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Override
     public DiagnosisEntity save(Long patientId, Long professionalId, DiagnosisEntity diagnosisEntity) {
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
-        Optional<ProfessionalEntity> existingProfessional= professionalService.getProfessionalById(patientId);
+        Optional<ProfessionalEntity> existingProfessional = professionalService.getProfessionalById(patientId);
 
         if (existingPatient.isPresent()) {
             diagnosisEntity.setPatient(existingPatient.get());
@@ -87,5 +87,15 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Override
     public Optional<DiagnosisEntity> getPDFById(Long id) {
         return diagnosisRepository.findById(id);
+    }
+
+    @Override
+    public Optional<DiagnosisEntity> getDiagnosisOfPatient(Long patientId, Long id) {
+        return diagnosisRepository.findByIdOfPatient(patientId, id);
+    }
+
+    @Override
+    public Page<DiagnosisEntity> findAllDiagnosisOfPatient(Long patientId, Pageable pageable) {
+        return diagnosisRepository.findAllByPatientId(patientId, pageable);
     }
 }
