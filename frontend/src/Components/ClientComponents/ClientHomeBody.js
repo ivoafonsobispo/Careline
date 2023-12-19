@@ -17,77 +17,92 @@ export default function ClientHomeBody() {
   const [lastHeartbeat, setLastHeartbeat] = useState(null);
   const [lastTemperature, setLastTemperature] = useState(null);
 
+  const [animationSpeed, setAnimationSpeed] = useState(1);
+  const heartStyle = {
+    animation: `growAndFade ${animationSpeed}s ease-in-out infinite alternate`,
+  };
+
   useEffect(() => {
-      axios.get(baseURL, { 
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-        }, 
-        proxy: {
-          port: 8080
-        } })
-        .then(response => {
-          // handle the response
-          setMeasures(response.data.content);
-          console.log("Measures:");
-          console.log(response.data.content);
-        })
-        .catch(error => {
-          // handle the error
-          console.log(error);
-        });
+    axios.get(baseURL, { 
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }, 
+      proxy: {
+        port: 8080
+      } })
+      .then(response => {
+        // handle the response
+        setMeasures(response.data.content);
+        console.log("Measures:");
+        console.log(response.data.content);
+      })
+      .catch(error => {
+        // handle the error
+        console.log(error);
+      });
 
-        axios.get(urlDiagnoses, { 
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          }, 
-          proxy: {
-            port: 8080
-          } })
-          .then(response => {
-            // handle the response
-            setDiagnoses(response.data.content);
-            console.log("Diagnoses:");
-            console.log(response.data.content);
-          })
-          .catch(error => {
-            // handle the error
-            console.log(error);
-          });
+    axios.get(urlDiagnoses, { 
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }, 
+      proxy: {
+        port: 8080
+      } })
+      .then(response => {
+        // handle the response
+        setDiagnoses(response.data.content);
+        console.log("Diagnoses:");
+        console.log(response.data.content);
+      })
+      .catch(error => {
+        // handle the error
+        console.log(error);
+      });
 
-          axios.get(urlLastHeartbeat, { 
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            }, 
-            proxy: {
-              port: 8080
-            } })
-            .then(response => {
-              // handle the response
-              setLastHeartbeat(response.data.content);
-              console.log("Last Heartbeat:");
-              console.log(response.data.content);
-            })
-            .catch(error => {
-              // handle the error
-              console.log(error);
-            });
-          axios.get(urlLastTemperature, { 
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            }, 
-            proxy: {
-              port: 8080
-            } })
-            .then(response => {
-              // handle the response
-              setLastTemperature(response.data.content);
-              console.log("Last Temperature:");
-              console.log(response.data.content);
-            })
-            .catch(error => {
-              // handle the error
-              console.log(error);
-            });
+    axios.get(urlLastHeartbeat, { 
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }, 
+      proxy: {
+        port: 8080
+      } })
+      .then(response => {
+        // handle the response
+        setLastHeartbeat(response.data.content);
+        console.log("Last Heartbeat:");
+        console.log(response.data.content);
+        let lastHeartbeatValue = Object.values(response.data.content)[0];
+        console.log(lastHeartbeatValue);
+
+        // 60 BPM <=> 1 segundo = 1 beat
+        // 80 BPM <=> 1 segundo = 1.33 beats
+        // Para tornar mais suave: retirar apenas metade da diferença de 60 para 80
+        // ex: 1s - ((80 / 70) - 1s) <=> 1s - (1,14 - 1s) = 1s - 0.14 = 0.86s
+        setAnimationSpeed(1 - ((lastHeartbeatValue.heartbeat/(60 + ((lastHeartbeatValue.heartbeat-60)/2))) - 1));
+        console.log(1 - ((lastHeartbeatValue.heartbeat/(60 + ((lastHeartbeatValue.heartbeat-60)/2))) - 1));
+      })
+      .catch(error => {
+        // handle the error
+        console.log(error);
+      });
+
+    axios.get(urlLastTemperature, { 
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }, 
+      proxy: {
+        port: 8080
+      } })
+      .then(response => {
+        // handle the response
+        setLastTemperature(response.data.content);
+        console.log("Last Temperature:");
+        console.log(response.data.content);
+      })
+      .catch(error => {
+        // handle the error
+        console.log(error);
+      });
   }, []);
 
   if (!measures) return null;
@@ -105,7 +120,7 @@ export default function ClientHomeBody() {
   return (
     <div className='vertical-container gap-vertical' >
       <div className='horizontal-container gap-horizontal' >
-        <DigitalTwin value={lastHeartbeatValue.heartbeat}/>
+        <DigitalTwin value={lastHeartbeatValue.heartbeat} heartStyle={heartStyle}/>
         <div className='vertical-container gap-vertical'>
           <MeasureStatusBox measure={"Heartbeat"} value={lastHeartbeatValue.heartbeat}/>
           <MeasureStatusBox measure={"Temperature"} value={lastTemperatureValue.temperature}/>
