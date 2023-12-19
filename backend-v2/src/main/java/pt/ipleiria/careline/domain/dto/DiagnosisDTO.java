@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.List;
 
 public class DiagnosisDTO {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
     public Instant createdAt;
     List<String> prescriptions;

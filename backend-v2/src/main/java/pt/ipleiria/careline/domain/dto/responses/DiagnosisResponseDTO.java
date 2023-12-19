@@ -1,13 +1,16 @@
 package pt.ipleiria.careline.domain.dto.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class DiagnosisResponseDTO {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
-    public Instant createdAt;
+    public ZonedDateTime createdAt;
     List<String> prescriptions;
     private Long id;
     private PatientResponseDTO patient;
@@ -17,19 +20,22 @@ public class DiagnosisResponseDTO {
     public DiagnosisResponseDTO() {
     }
 
-    public DiagnosisResponseDTO(PatientResponseDTO patient, ProfessionalResponseDTO professional, String diagnosis, List<String> prescriptions) {
+    public DiagnosisResponseDTO(PatientResponseDTO patient,
+                                ProfessionalResponseDTO professional,
+                                String diagnosis, List<String> prescriptions,
+                                ZonedDateTime createdAt) {
         this.patient = patient;
         this.professional = professional;
         this.diagnosis = diagnosis;
         this.prescriptions = prescriptions;
-        this.createdAt = Instant.now();
+        this.createdAt = createdAt;
     }
 
-    public Instant getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
