@@ -1,15 +1,11 @@
-package pt.ipleiria.careline.domain.dto;
+package pt.ipleiria.careline.domain.dto.responses;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
-import pt.ipleiria.careline.domain.dto.responses.ProfessionalResponseDTO;
 
 import java.time.Instant;
 import java.util.List;
 
-public class DiagnosisDTO {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
+public class DiagnosisResponseDTO {
     @JsonProperty("created_at")
     public Instant createdAt;
     List<String> prescriptions;
@@ -18,10 +14,10 @@ public class DiagnosisDTO {
     private ProfessionalResponseDTO professional;
     private String diagnosis;
 
-    public DiagnosisDTO() {
+    public DiagnosisResponseDTO() {
     }
 
-    public DiagnosisDTO(PatientResponseDTO patient, ProfessionalResponseDTO professional, String diagnosis, List<String> prescriptions) {
+    public DiagnosisResponseDTO(PatientResponseDTO patient, ProfessionalResponseDTO professional, String diagnosis, List<String> prescriptions) {
         this.patient = patient;
         this.professional = professional;
         this.diagnosis = diagnosis;

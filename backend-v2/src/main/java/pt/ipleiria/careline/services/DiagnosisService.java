@@ -24,4 +24,8 @@ public interface DiagnosisService {
     void delete(Long id);
 
     Optional<DiagnosisEntity> getPDFById(Long id);
+
+    Optional<DiagnosisEntity> getDiagnosisOfPatient(Long patientId,Long id);
+
+    Page<DiagnosisEntity> findAllDiagnosisOfPatient(Long patientId,Pageable pageable);
 }

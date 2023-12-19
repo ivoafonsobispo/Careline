@@ -8,77 +8,66 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.DiagnosisDTO;
-import pt.ipleiria.careline.domain.dto.ProfessionalDTO;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
-import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.DiagnosisService;
-import pt.ipleiria.careline.services.PatientService;
-import pt.ipleiria.careline.services.ProfessionalService;
 import pt.ipleiria.careline.utils.PdfGenerator;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Optional;
 
 @RequestMapping("/api")
 @RestController
 @CrossOrigin
 public class DiagnosisController {
-
     private final DiagnosisService diagnosisService;
-    private final Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
-    private ProfessionalService professionalService;
-    private PatientService patientService;
+    private Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
 
-    public DiagnosisController(DiagnosisService diagnosisService, ProfessionalService professionalService, PatientService patientService, Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper) {
+    public DiagnosisController(DiagnosisService diagnosisService, Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper) {
         this.diagnosisService = diagnosisService;
-        this.professionalService = professionalService;
-        this.patientService = patientService;
         this.diagnosisMapper = diagnosisMapper;
     }
 
     @PostMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
-    public ResponseEntity<DiagnosisDTO> create(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId , @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
+    public ResponseEntity<DiagnosisDTO> create(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
-        DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId,professionalId,diagnosisEntity);
+        DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
         return new ResponseEntity<>(diagnosisMapper.mapToDTO(savedDiagnosticEntity), HttpStatus.CREATED);
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
     public Page<DiagnosisDTO> listDiagnostics(Pageable pageable) {
-        Page<DiagnosisEntity> diagnosisEntities= diagnosisService.findAll(pageable);
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAll(pageable);
         return diagnosisEntities.map(diagnosisMapper::mapToDTO);
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity<DiagnosisDTO> getByIdProfessional(@PathVariable("id") Long id) {
-        Optional<DiagnosisEntity> diagnosis= diagnosisService.getById(id);
-        return diagnosis.map(diagnosisEntity-> {
-            DiagnosisDTO diagnosisDTO= diagnosisMapper.mapToDTO(diagnosisEntity);
+        Optional<DiagnosisEntity> diagnosis = diagnosisService.getById(id);
+        return diagnosis.map(diagnosisEntity -> {
+            DiagnosisDTO diagnosisDTO = diagnosisMapper.mapToDTO(diagnosisEntity);
             return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/patients/{patientId}/diagnosis/{id}")
-    public ResponseEntity<DiagnosisDTO> getByIdPatient(@PathVariable("id") Long id) {
-        Optional<DiagnosisEntity> diagnosis= diagnosisService.getById(id);
-        return diagnosis.map(diagnosisEntity-> {
-            DiagnosisDTO diagnosisDTO= diagnosisMapper.mapToDTO(diagnosisEntity);
+    public ResponseEntity<DiagnosisDTO> getByIdPatient(@PathVariable("id") Long id, @PathVariable("patientId") Long patientId) {
+        Optional<DiagnosisEntity> diagnosis = diagnosisService.getDiagnosisOfPatient(patientId, id);
+        return diagnosis.map(diagnosisEntity -> {
+            DiagnosisDTO diagnosisDTO = diagnosisMapper.mapToDTO(diagnosisEntity);
             return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/patients/{patientId}/diagnosis")
-    public Page<DiagnosisDTO> listDiagnosticsPatient(Pageable pageable) {
-        Page<DiagnosisEntity> diagnosisEntities= diagnosisService.findAll(pageable);
+    public Page<DiagnosisDTO> listDiagnosticsPatient(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAllDiagnosisOfPatient(patientId, pageable);
         return diagnosisEntities.map(diagnosisMapper::mapToDTO);
     }
 
     @GetMapping("/patients/{patientId}/diagnosis/{id}/pdf")
-    public void getPDFByIdPatient(@PathVariable("id") Long id) throws DocumentException, IOException {
-        Optional<DiagnosisEntity> diagnosisEntity= diagnosisService.getById(id);
+    public void getPDFByIdPatient(@PathVariable("id") Long id, @PathVariable("patientId") Long patientId) throws DocumentException, IOException {
+        Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getDiagnosisOfPatient(patientId, id);
         if (diagnosisEntity.isEmpty()) {
             throw new IllegalArgumentException("Diagnosis not found");
         }
@@ -88,7 +77,7 @@ public class DiagnosisController {
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}/pdf")
     public void getPDFById(@PathVariable("id") Long id) throws DocumentException, IOException {
-        Optional<DiagnosisEntity> diagnosisEntity= diagnosisService.getById(id);
+        Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getById(id);
         if (diagnosisEntity.isEmpty()) {
             throw new IllegalArgumentException("Diagnosis not found");
         }
@@ -102,8 +91,8 @@ public class DiagnosisController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         diagnosisDTO.setId(diagnosisId);
-        DiagnosisEntity diagnosisEntity= diagnosisMapper.mapFrom(diagnosisDTO);
-        DiagnosisEntity savedDiagnosisEntity = diagnosisService.save(patientId,professionalId,diagnosisEntity);
+        DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
+        DiagnosisEntity savedDiagnosisEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
         return new ResponseEntity<>(
                 diagnosisMapper.mapToDTO(savedDiagnosisEntity), HttpStatus.OK);
     }
@@ -114,8 +103,8 @@ public class DiagnosisController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        DiagnosisEntity diagnosisEntity= diagnosisMapper.mapFrom(diagnosisDTO);
-        DiagnosisEntity savedDiagnosisEntity= diagnosisService.partialUpdate(id, diagnosisEntity);
+        DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
+        DiagnosisEntity savedDiagnosisEntity = diagnosisService.partialUpdate(id, diagnosisEntity);
         return new ResponseEntity<>(
                 diagnosisMapper.mapToDTO(savedDiagnosisEntity), HttpStatus.OK);
     }
@@ -129,5 +118,3 @@ public class DiagnosisController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-
-

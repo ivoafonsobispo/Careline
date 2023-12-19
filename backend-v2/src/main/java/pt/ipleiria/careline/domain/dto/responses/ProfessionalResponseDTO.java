@@ -1,10 +1,12 @@
 package pt.ipleiria.careline.domain.dto.responses;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 
 public class ProfessionalResponseDTO {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
     public Instant createdAt;
     private Long id;
