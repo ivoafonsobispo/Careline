@@ -22,12 +22,22 @@ public class PdfGenerator {
         Paragraph diagnosis = new Paragraph("Diagnosis: " + diagnosisEntity.getDiagnosis());
         Paragraph prescriptions = new Paragraph("Prescriptions: " + diagnosisEntity.getPrescriptions());
 
+        String medication = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        byte[] qrCodeImage = null;
+        try {
+            qrCodeImage = QRCodeGenerator.getQRCodeImage(medication, 100, 100);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         title.setAlignment(Paragraph.ALIGN_CENTER);
         document.add(title);
         document.add(patient);
         document.add(professional);
         document.add(diagnosis);
         document.add(prescriptions);
+        document.add(Image.getInstance(qrCodeImage));
         document.close();
     }
 }
