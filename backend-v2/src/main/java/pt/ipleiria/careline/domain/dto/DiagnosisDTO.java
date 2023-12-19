@@ -1,25 +1,22 @@
 package pt.ipleiria.careline.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.ProfessionalResponseDTO;
-import pt.ipleiria.careline.domain.entities.users.PatientEntity;
-import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 
 import java.time.Instant;
 import java.util.List;
 
 public class DiagnosisDTO {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
     public Instant createdAt;
+    List<String> prescriptions;
     private Long id;
     private PatientResponseDTO patient;
     private ProfessionalResponseDTO professional;
     private String diagnosis;
-    List<String> prescriptions;
 
     public DiagnosisDTO() {
     }
