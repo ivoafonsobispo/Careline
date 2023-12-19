@@ -60,26 +60,14 @@ export default function MeasureList({title, dataArray}) {
             ) : title === "Diagnoses" ? (
                 <>
                     <div className="client-measure-list">
-                        <div className="App-client-measure-list-item vertical-container">
-                            <span>Diagnosis: ajqjsojsojsqojqs </span>
-                            <span className='list-item-date'>WEDNESDAY, OCT 18 AT 15:35 </span>
-                        </div>  
-                        <div className="App-client-measure-list-item vertical-container">
-                            <span>Diagnosis: ajqjsojsojsqojqs </span>
-                            <span className='list-item-date'>WEDNESDAY, OCT 18 AT 15:35 </span>
-                        </div>  
-                        <div className="App-client-measure-list-item vertical-container">
-                            <span>Diagnosis: ajqjsojsojsqojqs </span>
-                            <span className='list-item-date'>WEDNESDAY, OCT 18 AT 15:35 </span>
-                        </div>  
-                        <div className="App-client-measure-list-item vertical-container">
-                            <span>Diagnosis: ajqjsojsojsqojqs </span>
-                            <span className='list-item-date'>WEDNESDAY, OCT 18 AT 15:35 </span>
-                        </div>  
-                        <div className="App-client-measure-list-item vertical-container">
-                            <span>Diagnosis: ajqjsojsojsqojqs </span>
-                            <span className='list-item-date'>WEDNESDAY, OCT 18 AT 15:35 </span>
-                        </div>  
+                        {dataArray.map(diagnosis => {
+                            return (
+                                <div className="App-client-measure-list-item vertical-container">
+                                    <span>Diagnosis: {diagnosis.id} - {diagnosis.diagnosis}</span>
+                                    <span className='list-item-date'>{diagnosis.created_at} </span>
+                                </div>  
+                            )
+                        })}
                         <div className="App-client-measure-list-item vertical-container">
                             <NavLink to='/diagnoses' style={{backgroundColor: "white"}}> 
                                 <span className='measure-list-navlink'>Show More</span>
