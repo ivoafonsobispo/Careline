@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.DiagnosisDTO;
 import pt.ipleiria.careline.domain.dto.responses.DiagnosisResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.HeartbeatResponseDTO;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
+import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.utils.PdfGenerator;
@@ -33,11 +35,11 @@ public class DiagnosisController {
     }
 
     @PostMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
-    public ResponseEntity<DiagnosisResponseDTO> create(@PathVariable(
+    public ResponseEntity<DiagnosisDTO> create(@PathVariable(
             "professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
         DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
-        return new ResponseEntity<>(diagnosisResponseMapper.mapToDTO(savedDiagnosticEntity),
+        return new ResponseEntity<>(diagnosisMapper.mapToDTO(savedDiagnosticEntity),
                 HttpStatus.CREATED);
     }
 
@@ -92,6 +94,24 @@ public class DiagnosisController {
         }
         PdfGenerator generator = new PdfGenerator();
         generator.generateDiagnosisPDF(diagnosisEntity.get());
+    }
+
+    @GetMapping("patient/{patientId}/diagnosis/latest")
+    public Page<DiagnosisResponseDTO> listLatest(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosisEntities =
+                diagnosisService.findAllLatest(pageable,
+                patientId);
+        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
+    }
+
+    @GetMapping("professionals/{professionalId}/patients/{patientId" +
+            "}/diagnosis/latest")
+    public Page<DiagnosisResponseDTO> listLatestProfessional(@PathVariable(
+            "patientId") Long patientId, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosisEntities =
+                diagnosisService.findAllLatest(pageable,
+                        patientId);
+        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
     }
 
     @PutMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")

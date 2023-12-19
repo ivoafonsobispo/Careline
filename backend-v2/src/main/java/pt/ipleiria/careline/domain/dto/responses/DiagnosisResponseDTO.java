@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 public class DiagnosisResponseDTO {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     public ZonedDateTime createdAt;
     List<String> prescriptions;
     private Long id;
@@ -23,12 +24,12 @@ public class DiagnosisResponseDTO {
     public DiagnosisResponseDTO(PatientResponseDTO patient,
                                 ProfessionalResponseDTO professional,
                                 String diagnosis, List<String> prescriptions,
-                                ZonedDateTime createdAt) {
+                                Instant createdAt) {
         this.patient = patient;
         this.professional = professional;
         this.diagnosis = diagnosis;
         this.prescriptions = prescriptions;
-        this.createdAt = createdAt;
+        this.createdAt = ZonedDateTime.ofInstant(createdAt, ZoneId.systemDefault());
     }
 
     public ZonedDateTime getCreatedAt() {
