@@ -3,10 +3,23 @@ import './ClientBase.css'
 
 import { NavLink } from 'react-router-dom';
 
+import {Heart, ThermometerHalf} from 'react-bootstrap-icons';
+
 export default function MeasureList({title, dataArray}) {
     return (
         <div className="client-measure-list-box">
-            <span className='list-title'>{title}:</span>
+            <span className='list-title align-line-row'> 
+                {title === "Heartbeat" ? (
+                    <>
+                        <Heart size={20} color="black"/> &nbsp;
+                    </>
+                ) : title === "Temperature" ? (
+                    <>
+                        <ThermometerHalf size={20} color="black"/> &nbsp;
+                    </>
+                ) : (<></>)} 
+                {title}:
+            </span>
             {title === "Measures" ? (
                 <>
                     <div className="client-measure-list">
@@ -78,11 +91,11 @@ export default function MeasureList({title, dataArray}) {
             ) : title === "Temperature" ? (
                 <>
                     <div className="client-measure-list">
-                        {dataArray.map(measure => {
+                        {dataArray.map(temperature => {
                             return (
-                                <div className="App-client-measure-list-item vertical-container" style={{maxHeight: "10%"}}>
-                                    <span>Temperature: {measure.temperature} °C</span>
-                                    <span className='list-item-date'>{measure.created_at} </span>
+                                <div className="App-client-measure-list-item vertical-container">
+                                    <span>Temperature: {temperature.temperature} °C</span>
+                                    <span className='list-item-date'>{temperature.created_at} </span>
                                 </div>  
                             )
                         })}
@@ -91,11 +104,11 @@ export default function MeasureList({title, dataArray}) {
             ) : ( // Heartbeat
                 <>
                     <div className="client-measure-list">
-                        {dataArray.map(measure => {
+                        {dataArray.map(heartbeat => {
                             return (
-                                <div className="App-client-measure-list-item vertical-container" style={{maxHeight: "10%"}}>
-                                    <span>Heartbeat: {measure.heartbeat} BPM</span>
-                                    <span className='list-item-date'>{measure.created_at} </span>
+                                <div className="App-client-measure-list-item vertical-container">
+                                    <span>Heartbeat: {heartbeat.heartbeat} BPM</span>
+                                    <span className='list-item-date'>{heartbeat.created_at} </span>
                                 </div>  
                             )
                         })}

@@ -1,8 +1,10 @@
 import PageTitle from "../Components/PageTitle/PageTitle";
 import "../Components/ClientComponents/ClientBase.css";
 import "./ClientProfile.css";
+import ClientProfileBody from "../Components/ClientComponents/ClientProfileBody";
+import ClientEditProfileBody from "../Components/ClientComponents/ClientEditProfileBody";
 
-import {Eye, EyeSlash} from 'react-bootstrap-icons';
+import {Pencil, Check} from 'react-bootstrap-icons';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -11,13 +13,8 @@ const urlUser = 'http://localhost:8080/api/patients/1';
 
 export default function ClientDrones() {
 
-    const [password, setPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
     const [user, setUser] = useState(null);
+    const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
         axios.get(urlUser, { 
@@ -40,35 +37,20 @@ export default function ClientDrones() {
 
     if (!user) return null;
 
+    const editProfileClicked = () => {
+        setShowForm(!showForm);
+    }
+
     return(
         <div className="vertical-container">
             <PageTitle title="Profile"/>
             <div className='App-content'>
                 <div className="vertical-container profile-container">
+                    {showForm ? (<ClientEditProfileBody user={user}/>) :(<ClientProfileBody user={user}/>) }
+                    
+
                     <div className="horizontal-container" style={{alignItems: "center"}}>
-                        <span className="profile-field-title">Name:</span> <span className="profile-field">{user.name}</span>
-                    </div>
-                    <div className="horizontal-container" style={{alignItems: "center"}}>
-                        <span className="profile-field-title">Email:</span> <span className="profile-field">{user.email}</span>
-                    </div>
-                    <div className="horizontal-container" style={{alignItems: "center"}}>
-                        <span className="profile-field-title">Password:</span> 
-                        <span className="profile-field" style={{alignItems: "center", display: "flex"}}>
-                            <input
-                            type={showPassword ? 'text' : 'password'}
-                            value={user.password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{border: "0", fontSize: "20px", pointerEvents: "none", fontFamily: "inherit", width: "100%"}}
-                            readonly="readonly"
-                            
-                            />
-                            <button type="button" onClick={togglePasswordVisibility} style={{background: "none",  border: "0", cursor: "pointer"}}>
-                                {showPassword ? <EyeSlash size={25} className='navbar-svg' color="var(--basecolor)"/> : <Eye size={25} className='navbar-svg' color="var(--basecolor)"/>}
-                            </button>
-                        </span>
-                    </div>
-                    <div className="horizontal-container" style={{alignItems: "center"}}>
-                        <span className="profile-field-title">NUS:</span> <span className="profile-field">{user.nus}</span>
+                        <button onClick={editProfileClicked} className="profile-button">{showForm ? <Check size={15} color="white"/> : <Pencil size={15} color="white"/>} &nbsp; Edit Profile</button>
                     </div>
                 </div>
             </div>

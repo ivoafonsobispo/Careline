@@ -1,0 +1,13 @@
+.profile-field{
+    border: 1px solid var(--basecolor);
+    padding: 1.5%;
+    width: 100%;
+    border-radius: 1%/15%;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.profile-field-title{
+    width: 20%;
+    display: inline-flex;
+}
