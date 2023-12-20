@@ -1,6 +1,6 @@
 import './Navbar.css'
 
-import {HouseFill, HeartFill, FileBarGraphFill, MapFill, PersonFill} from 'react-bootstrap-icons'
+import {HouseFill, HeartFill, FileBarGraphFill, MapFill, PersonFill, FileEarmarkMedicalFill} from 'react-bootstrap-icons'
 import { NavLink } from 'react-router-dom';
 
 export default function Navbar({isActive}) {
@@ -29,6 +29,12 @@ export default function Navbar({isActive}) {
                     <li className='navbar-item'>
                         <FileBarGraphFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Diagnoses</span>
+                    </li>
+                </NavLink>
+                <NavLink to='/triage'>
+                    <li className='navbar-item'>
+                        <FileEarmarkMedicalFill size={25} className='navbar-svg'/>
+                        <span className='navbar-item-text'>Triage</span>
                     </li>
                 </NavLink>
                 <NavLink to='/drones'>

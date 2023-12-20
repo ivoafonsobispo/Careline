@@ -7,6 +7,7 @@ import ClientHome from './Routes/ClientHome';
 import ClientDiagnoses from './Routes/ClientDiagnoses'
 import ClientMeasures from './Routes/ClientMeasures';
 import ClientDrones from './Routes/ClientDrones';
+import ClientTriage from './Routes/ClientTriage';
 import ClientProfile from './Routes/ClientProfile';
 import ErrorPage from './Routes/ErrorPage';
 
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
       {
         path: '/drones',
         element: <ClientDrones />,
+        errorElement: <ErrorPage />
+      },
+      {
+        path: '/triage',
+        element: <ClientTriage />,
         errorElement: <ErrorPage />
       },
       {
