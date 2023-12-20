@@ -1,13 +1,10 @@
 package pt.ipleiria.careline.services.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
-import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.helpers.DataValidation;
-import pt.ipleiria.careline.helpers.UserValidation;
 import pt.ipleiria.careline.repositories.TriageRepository;
 import pt.ipleiria.careline.services.TriageService;
 
@@ -45,6 +42,12 @@ public class TriageServiceImpl implements TriageService {
     @Override
     public Page<TriageEntity> findAll(Pageable pageable) {
         return triageRepository.findAll(pageable);
+    }
+
+    @Override
+    public Optional<TriageEntity> findLastTriage() {
+        Optional<TriageEntity> t = triageRepository.findLastTriage();
+        return t;
     }
 
     @Override

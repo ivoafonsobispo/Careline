@@ -35,6 +35,13 @@ public class TriageController {
             triageEntity.setTemperature(triageDTO.getTemperature());
             triageEntity.setHeartbeat(triageDTO.getHeartbeat());
             triageEntity.setSimptoms(triageDTO.getSimptoms());
+            Optional<TriageEntity> lastTriage = triageService.findLastTriage();
+            if(lastTriage.isPresent())
+                triageEntity.setTagOrder(lastTriage.get().getTagOrder()+1);
+                System.out.println("SET TRIAGE");
+            if(!lastTriage.isPresent())
+                triageEntity.setTagOrder(1L);
+            System.out.println("Creating");
             Optional<PatientEntity> patient = patientService.getPatientById(triageDTO.getPatient().getId());
             //Get associated patient
             if(patient.isPresent())

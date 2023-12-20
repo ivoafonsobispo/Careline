@@ -19,6 +19,8 @@ public interface TriageService  {
 
     Page<TriageEntity> findAll(Pageable pageable);
 
+    Optional<TriageEntity> findLastTriage();
+
     boolean isExists(Long id);
 
     TriageEntity partialUpdate(Long id, TriageEntity triageEntity);

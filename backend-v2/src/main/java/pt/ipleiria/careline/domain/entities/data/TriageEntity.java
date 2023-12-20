@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.domain.enums.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "triages")
 public class TriageEntity extends DataEntity {
+
     @NotNull
     @Min(25)
     @Max(50)
@@ -25,6 +27,11 @@ public class TriageEntity extends DataEntity {
 
     private String simptoms;
 
+    @NotNull
+    private Long tagOrder;
+
+    private Tag severity;
+
     @ManyToMany
     @JoinTable(
             name = "triage_professional",
@@ -35,12 +42,13 @@ public class TriageEntity extends DataEntity {
     public TriageEntity() {
     }
 
-    public TriageEntity(PatientEntity patient, Float temperature, Integer heartbeat, String simptoms) {
+    public TriageEntity(PatientEntity patient, Float temperature, Integer heartbeat, String simptoms, Long tagOrder) {
         super(patient);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
         this.simptoms = simptoms;
         this.professionals = new ArrayList<ProfessionalEntity>();
+        this.tagOrder = tagOrder;
     }
 
     public Float getTemperature() {
@@ -71,4 +79,23 @@ public class TriageEntity extends DataEntity {
         this.simptoms = simptoms;
     }
 
+    public Long getTagOrder() {
+        return tagOrder;
+    }
+
+    public void setTagOrder(Long tagOrder) {
+        this.tagOrder = tagOrder;
+    }
+
+    public Tag getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(Tag severity) {
+        this.severity = severity;
+    }
+
+    public List<ProfessionalEntity> getProfessionals() {
+        return professionals;
+    }
 }

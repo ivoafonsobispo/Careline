@@ -9,12 +9,11 @@ import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 import java.time.Instant;
 
 public class TriageDTO extends DataDTO {
-
     private Float temperature;
     private Integer heartbeat;
     private String simptoms;
 
-    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms) {
+    public TriageDTO( PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms) {
         super(patient, createdAt);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
@@ -47,4 +46,5 @@ public class TriageDTO extends DataDTO {
     public void setSimptoms(String simptoms) {
         this.simptoms = simptoms;
     }
+
 }
