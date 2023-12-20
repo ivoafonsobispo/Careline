@@ -65,6 +65,8 @@ public class TriageServiceImpl implements TriageService {
             Optional.ofNullable(triageEntity.getTemperature()).ifPresent(existingTriage::setTemperature);
             Optional.ofNullable(triageEntity.getSimptoms()).ifPresent(existingTriage::setSimptoms);
             Optional.ofNullable(triageEntity.getPatient()).ifPresent(existingTriage::setPatient);
+            Optional.ofNullable(triageEntity.getTagOrder()).ifPresent(existingTriage::setTagOrder);
+            Optional.ofNullable(triageEntity.getSeverity()).ifPresent(existingTriage::setSeverity);
             return triageRepository.save(existingTriage);
         }).orElseThrow(() -> new RuntimeException("Triage not found"));
     }

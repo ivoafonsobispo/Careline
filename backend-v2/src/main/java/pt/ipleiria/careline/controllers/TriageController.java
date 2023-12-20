@@ -1,6 +1,7 @@
 package pt.ipleiria.careline.controllers;
 
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.data.TriageDTO;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.enums.Tag;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.TriageService;
@@ -35,13 +37,12 @@ public class TriageController {
             triageEntity.setTemperature(triageDTO.getTemperature());
             triageEntity.setHeartbeat(triageDTO.getHeartbeat());
             triageEntity.setSimptoms(triageDTO.getSimptoms());
+            triageEntity.setSeverity(Tag.getTagByName(triageDTO.getSeverity()));
             Optional<TriageEntity> lastTriage = triageService.findLastTriage();
             if(lastTriage.isPresent())
                 triageEntity.setTagOrder(lastTriage.get().getTagOrder()+1);
-                System.out.println("SET TRIAGE");
             if(!lastTriage.isPresent())
                 triageEntity.setTagOrder(1L);
-            System.out.println("Creating");
             Optional<PatientEntity> patient = patientService.getPatientById(triageDTO.getPatient().getId());
             //Get associated patient
             if(patient.isPresent())
@@ -86,6 +87,18 @@ public class TriageController {
         TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
+    }
+
+    @PatchMapping("/tags")
+    public ResponseEntity resetTagOrder() {
+        Optional<TriageEntity> t = triageService.findLastTriage();
+        if (t.isPresent()) {
+            t.get().setTagOrder(1L);
+            TriageEntity savedTriageEntity = triageService.partialUpdate(t.get().getId(), t.get());
+            return new ResponseEntity<>(
+                    triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tese is the first triage in line");
     }
 
     @DeleteMapping("/{id}")
