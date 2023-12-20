@@ -37,7 +37,7 @@ export default function ClientDrones() {
 
     if (!user) return null;
 
-    const editProfileClicked = () => {
+    const handleEditProfileClicked = () => {
         setShowForm(!showForm);
     }
 
@@ -45,14 +45,10 @@ export default function ClientDrones() {
         <div className="vertical-container">
             <PageTitle title="Profile"/>
             <div className='App-content'>
-                <div className="vertical-container profile-container">
-                    {showForm ? (<ClientEditProfileBody user={user}/>) :(<ClientProfileBody user={user}/>) }
-                    
-
-                    <div className="horizontal-container" style={{alignItems: "center"}}>
-                        <button onClick={editProfileClicked} className="profile-button">{showForm ? <Check size={15} color="white"/> : <Pencil size={15} color="white"/>} &nbsp; Edit Profile</button>
-                    </div>
-                </div>
+                {showForm ? 
+                (<ClientEditProfileBody user={user} editProfileClicked={showForm} setEditProfileClicked={handleEditProfileClicked}/>) :
+                (<ClientProfileBody user={user} editProfileClicked={showForm} setEditProfileClicked={handleEditProfileClicked}/>) }
+              
             </div>
         </div>
     );

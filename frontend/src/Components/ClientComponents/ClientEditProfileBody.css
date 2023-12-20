@@ -7,7 +7,46 @@
     font-family: 'Nunito', sans-serif;
 }
 
+.profile-container{
+    gap: 5%;
+    height: 70%;
+    margin-top: 3%;
+}
+
 .profile-field-title{
     width: 20%;
     display: inline-flex;
+}
+
+.profile-button{
+    margin: auto;
+    background-color: var(--basecolor);
+    height: 50%;
+    width: 15%;
+    padding: 2%;
+    border: 0;
+    border-radius: 5%/10%;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 4%;
+}
+
+.profile-button:hover{
+    background-color: var(--darkcolor);
+}
+
+input:focus {
+    border: 3px solid var(--darkcolor);
+    outline: none;
+}
+
+.field-error-message{
+    color: brown;
+    font-size: 16px;
+    margin: auto;
+}
+
+.profile-field-border{
+    border: 3px solid red;
 }
