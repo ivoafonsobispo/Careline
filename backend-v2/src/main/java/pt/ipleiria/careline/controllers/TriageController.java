@@ -16,7 +16,7 @@ import pt.ipleiria.careline.services.TriageService;
 
 import java.util.Optional;
 
-@RequestMapping("/api/triages")
+@RequestMapping("/api")
 @RestController
 public class TriageController {
     private final Mapper<TriageEntity, TriageDTO> triageMapper;
@@ -29,7 +29,7 @@ public class TriageController {
         this.patientService = patientService;
     }
 
-    @PostMapping
+    @PostMapping("/triages")
     public ResponseEntity<TriageDTO> create(@RequestBody @Valid TriageDTO triageDTO) {
             TriageEntity triageEntity = new TriageEntity();
             //Define triage data
@@ -50,13 +50,13 @@ public class TriageController {
             return new ResponseEntity<>(triageMapper.mapToDTO(savedtriageEntity), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/triages")
     public Page<TriageDTO> listTriages(Pageable pageable) {
         Page<TriageEntity> triageEntities = triageService.findAll(pageable);
         return triageEntities.map(triageMapper::mapToDTO);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/triages/{id}")
     public ResponseEntity<TriageDTO> getTriageById(@PathVariable("id") Long id) {
         Optional<TriageEntity> triage = triageService.getTriageById(id);
         return triage.map(triageEntity -> {
@@ -65,7 +65,22 @@ public class TriageController {
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/{id}")
+    @GetMapping("patients/{id}/triages")
+    public Page<TriageDTO> getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId) {
+        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
+        Page<TriageEntity> triages = triageService.getTriageByPatient(pageable, patient.get());
+        return triages.map(triageMapper::mapToDTO);
+    }
+
+    @GetMapping("patients/{id}/triages/{triageId}")
+    public Page<TriageDTO> getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId, @PathVariable("triageId") Long triageId ) {
+        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
+        Page<TriageEntity> triages = triageService.getTriageByPatient(pageable, patient.get());
+        return triages.map(triageMapper::mapToDTO);
+    }
+
+
+    @PutMapping("/triages/{id}")
     public ResponseEntity<TriageDTO> fullUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
         if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -79,7 +94,7 @@ public class TriageController {
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/triages/{id}")
     public ResponseEntity<TriageDTO> partialUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
         if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -89,7 +104,7 @@ public class TriageController {
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
     }
 
-    @PatchMapping("/tags")
+    @PatchMapping("/triages/tags")
     public ResponseEntity resetTagOrder() {
         Optional<TriageEntity> t = triageService.findLastTriage();
         if (t.isPresent()) {
@@ -101,7 +116,7 @@ public class TriageController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tese is the first triage in line");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/triages/{id}")
     public ResponseEntity deleteProfessional(@PathVariable("id") Long id) {
         if (!triageService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

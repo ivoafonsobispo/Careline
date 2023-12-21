@@ -28,18 +28,14 @@ public class PatientController {
 
     private PatientService patientService;
 
-    private TriageService triageService;
     private Mapper<PatientEntity, PatientDTO> patientMapper;
     private Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper;
 
-    private Mapper<TriageEntity, TriageDTO> triageMapper;
 
-    public PatientController(PatientService patientService, TriageService triageService, Mapper<PatientEntity, PatientDTO> patientMapper, Mapper<TriageEntity, TriageDTO> triageMapper,Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper) {
+    public PatientController(PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper,Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper) {
         this.patientService = patientService;
-        this.triageService = triageService;
         this.patientMapper = patientMapper;
         this.patientResponseMapper = patientResponseMapper;
-        this.triageMapper = triageMapper;
     }
 
     @PostMapping
@@ -71,14 +67,6 @@ public class PatientController {
             PatientDTO patientDTO = patientMapper.mapToDTO(patientEntity);
             return new ResponseEntity<>(patientDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("/{id}/triages")
-    public Page<TriageDTO> getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId) {
-        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-
-        Page<TriageEntity> triages = triageService.getTriageByPatient(pageable, patient.get());
-        return triages.map(triageMapper::mapToDTO);
     }
 
     @PutMapping("/{id}")
