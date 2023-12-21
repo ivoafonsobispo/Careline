@@ -14,6 +14,7 @@ import '../DayPicker.css';
 
 import axios from 'axios';
 import { useEffect } from 'react';
+import userEvent from "@testing-library/user-event";
 const urlDiagnoses = 'http://localhost:8080/api/patients/1/diagnosis';
 
 export default function ClientDiagnoses() {
