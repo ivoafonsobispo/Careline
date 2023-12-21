@@ -2,6 +2,7 @@ package pt.ipleiria.careline.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
@@ -14,6 +15,8 @@ public interface TriageService  {
     TriageEntity save(TriageEntity triageEntity);
 
     Optional<TriageEntity> getTriageById(Long id);
+
+    Page<TriageEntity> getTriageByPatient(Pageable pageable, PatientEntity patient);
 
     List<TriageEntity> findAll();
 

@@ -73,6 +73,7 @@ public class TriageController {
         triageEntity.setSymptoms(triageDTO.getSymptoms());
         triageEntity.setHeartbeat(triageDTO.getHeartbeat());
         triageEntity.setSymptoms(triageDTO.getSymptoms());
+        triageEntity.setSeverity(Tag.getTagByName(triageDTO.getSeverity()));
         TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);

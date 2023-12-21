@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.helpers.DataValidation;
 import pt.ipleiria.careline.repositories.TriageRepository;
 import pt.ipleiria.careline.services.TriageService;
@@ -32,6 +33,11 @@ public class TriageServiceImpl implements TriageService {
     @Override
     public Optional<TriageEntity> getTriageById(Long id) {
         return triageRepository.findById(id);
+    }
+
+    @Override
+    public Page<TriageEntity> getTriageByPatient(Pageable pageable, PatientEntity patient) {
+        return triageRepository.getTriageByPatient(pageable, patient);
     }
 
     @Override
