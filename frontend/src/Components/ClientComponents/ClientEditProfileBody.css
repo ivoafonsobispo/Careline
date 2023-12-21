@@ -32,6 +32,12 @@
     margin-top: 4%;
 }
 
+.profile-button-disabled{
+    background-color: var(--lightcolor) !important;
+    color: white;
+    cursor: unset;
+}
+
 .profile-button:hover{
     background-color: var(--darkcolor);
 }

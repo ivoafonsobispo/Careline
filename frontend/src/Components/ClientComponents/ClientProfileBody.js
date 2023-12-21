@@ -3,9 +3,8 @@ import './ClientProfileBody.css'
 import {Eye, EyeSlash, Pencil} from 'react-bootstrap-icons';
 import { useState } from 'react';
 
-export default function ClientProfileBody({user, editProfileClicked, setEditProfileClicked}) {
+export default function ClientProfileBody({user, setEditProfileClicked}) {
     
-    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -30,7 +29,6 @@ export default function ClientProfileBody({user, editProfileClicked, setEditProf
                     <input
                     type={showPassword ? 'text' : 'password'}
                     value={user.password}
-                    onChange={(e) => setPassword(e.target.value)}
                     style={{border: "0", fontSize: "16px", pointerEvents: "none", fontFamily: "inherit", width: "100%"}}
                     readOnly="readonly"
                     

@@ -45,22 +45,6 @@ export default function ClientDiagnoses() {
           });
     }, []);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //       try {
-    //         const response = await fetch(urlDiagnoses); // Replace 'your-api-endpoint' with the actual API endpoint
-    //         const jsonData = await response.json();
-    //         setDiagnoses(jsonData);
-    //         console.log(jsonData)
-    //       } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //       }
-    //     };
-    
-    //     fetchData();
-    //   }, []);
-
-
     if (!diagnoses) return null;
     let diagnosesArray = Object.values(diagnoses);
 

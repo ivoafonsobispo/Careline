@@ -2,8 +2,6 @@ import PageTitle from "../Components/PageTitle/PageTitle";
 import "../Components/ClientComponents/ClientBase.css";
 import MeasureList from "../Components/ClientComponents/MeasureList";
 
-import {Heart, ThermometerHalf} from 'react-bootstrap-icons';
-
 //Day Picker
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
