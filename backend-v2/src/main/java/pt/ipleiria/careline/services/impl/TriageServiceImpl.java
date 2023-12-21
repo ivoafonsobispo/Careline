@@ -63,7 +63,7 @@ public class TriageServiceImpl implements TriageService {
         return triageRepository.findById(id).map(existingTriage -> {
             Optional.ofNullable(triageEntity.getHeartbeat()).ifPresent(existingTriage::setHeartbeat);
             Optional.ofNullable(triageEntity.getTemperature()).ifPresent(existingTriage::setTemperature);
-            Optional.ofNullable(triageEntity.getSimptoms()).ifPresent(existingTriage::setSimptoms);
+            Optional.ofNullable(triageEntity.getSymptoms()).ifPresent(existingTriage::setSymptoms);
             Optional.ofNullable(triageEntity.getPatient()).ifPresent(existingTriage::setPatient);
             Optional.ofNullable(triageEntity.getTagOrder()).ifPresent(existingTriage::setTagOrder);
             Optional.ofNullable(triageEntity.getSeverity()).ifPresent(existingTriage::setSeverity);

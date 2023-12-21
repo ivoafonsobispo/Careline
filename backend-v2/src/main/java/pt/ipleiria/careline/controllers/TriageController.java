@@ -1,7 +1,6 @@
 package pt.ipleiria.careline.controllers;
 
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -36,7 +35,7 @@ public class TriageController {
             //Define triage data
             triageEntity.setTemperature(triageDTO.getTemperature());
             triageEntity.setHeartbeat(triageDTO.getHeartbeat());
-            triageEntity.setSimptoms(triageDTO.getSimptoms());
+            triageEntity.setSymptoms(triageDTO.getSymptoms());
             triageEntity.setSeverity(Tag.getTagByName(triageDTO.getSeverity()));
             Optional<TriageEntity> lastTriage = triageService.findLastTriage();
             if(lastTriage.isPresent())
@@ -71,9 +70,9 @@ public class TriageController {
         if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         TriageEntity triageEntity = triageService.getTriageById(id).get();
-        triageEntity.setSimptoms(triageDTO.getSimptoms());
+        triageEntity.setSymptoms(triageDTO.getSymptoms());
         triageEntity.setHeartbeat(triageDTO.getHeartbeat());
-        triageEntity.setSimptoms(triageDTO.getSimptoms());
+        triageEntity.setSymptoms(triageDTO.getSymptoms());
         TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);

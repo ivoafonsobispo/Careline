@@ -25,7 +25,7 @@ public class TriageEntity extends DataEntity {
     @Max(220)
     private Integer heartbeat;
 
-    private String simptoms;
+    private String symptoms;
 
     @NotNull
     private Long tagOrder;
@@ -42,11 +42,11 @@ public class TriageEntity extends DataEntity {
     public TriageEntity() {
     }
 
-    public TriageEntity(PatientEntity patient, Float temperature, Integer heartbeat, String simptoms, Long tagOrder) {
+    public TriageEntity(PatientEntity patient, Float temperature, Integer heartbeat, String symptoms, Long tagOrder) {
         super(patient);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
-        this.simptoms = simptoms;
+        this.symptoms = symptoms;
         this.professionals = new ArrayList<ProfessionalEntity>();
         this.tagOrder = tagOrder;
     }
@@ -71,12 +71,12 @@ public class TriageEntity extends DataEntity {
         this.heartbeat = heartbeat;
     }
 
-    public String getSimptoms() {
-        return simptoms;
+    public String getSymptoms() {
+        return symptoms;
     }
 
-    public void setSimptoms(String simptoms) {
-        this.simptoms = simptoms;
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
     }
 
     public Long getTagOrder() {
