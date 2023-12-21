@@ -1,5 +1,5 @@
-import PageTitle from "../Components/PageTitle/PageTitle";
-import "../Components/ClientComponents/ClientBase.css";
+import PageTitle from "../../Components/PageTitle/PageTitle";
+import "../../Components/ClientComponents/ClientBase.css";
 
 export default function ClientTriage() {
     return(

@@ -1,12 +1,12 @@
-import PageTitle from "../Components/PageTitle/PageTitle";
-import "../Components/ClientComponents/ClientBase.css";
-import MeasureList from "../Components/ClientComponents/MeasureList";
+import PageTitle from "../../Components/PageTitle/PageTitle";
+import "../../Components/ClientComponents/ClientBase.css";
+import MeasureList from "../../Components/ClientComponents/MeasureList";
 
 //Day Picker
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-import '../DayPicker.css';
+import '../../DayPicker.css';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';

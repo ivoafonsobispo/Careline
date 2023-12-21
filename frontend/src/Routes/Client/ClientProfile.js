@@ -1,8 +1,8 @@
-import PageTitle from "../Components/PageTitle/PageTitle";
-import "../Components/ClientComponents/ClientBase.css";
+import PageTitle from "../../Components/PageTitle/PageTitle";
+import "../../Components/ClientComponents/ClientBase.css";
 import "./ClientProfile.css";
-import ClientProfileBody from "../Components/ClientComponents/ClientProfileBody";
-import ClientEditProfileBody from "../Components/ClientComponents/ClientEditProfileBody";
+import ClientProfileBody from "../../Components/ClientComponents/ClientProfileBody";
+import ClientEditProfileBody from "../../Components/ClientComponents/ClientEditProfileBody";
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

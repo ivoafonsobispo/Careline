@@ -1,7 +1,7 @@
-import PageTitle from "../Components/PageTitle/PageTitle";
-import "../Components/ClientComponents/ClientBase.css";
+import PageTitle from "../../Components/PageTitle/PageTitle";
+import "../../Components/ClientComponents/ClientBase.css";
 import "./ClientDiagnoses.css";
-import ClientDiagnosis from "../Components/ClientComponents/ClientDiagnosis";
+import ClientDiagnosis from "../../Components/ClientComponents/ClientDiagnosis";
 
 import {useState} from 'react';
 
@@ -9,12 +9,11 @@ import {useState} from 'react';
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-import '../DayPicker.css';
+import '../../DayPicker.css';
 
 
 import axios from 'axios';
 import { useEffect } from 'react';
-import userEvent from "@testing-library/user-event";
 const urlDiagnoses = 'http://localhost:8080/api/patients/1/diagnosis';
 
 export default function ClientDiagnoses() {

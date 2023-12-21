@@ -1,5 +1,5 @@
-import PageTitle from "../Components/PageTitle/PageTitle";
-import "../Components/ClientComponents/ClientBase.css";
+import PageTitle from "../../Components/PageTitle/PageTitle";
+import "../../Components/ClientComponents/ClientBase.css";
 
 import React, { useState, useEffect } from 'react';
 
@@ -29,7 +29,7 @@ export default function ClientDrones() {
         <div className="vertical-container">
             <PageTitle title="Drones"/>
             <div className='App-content'>
-                <Map center={[51.505, -0.09]} zoom={13} style={{ height: '400px' }}>
+                {/* <Map center={[51.505, -0.09]} zoom={13} style={{ height: '400px' }}>
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         attribution='&copy; OpenStreetMap contributors'
@@ -37,7 +37,7 @@ export default function ClientDrones() {
                     <Marker position={[51.505, -0.09]}>
                         <Popup>A pretty CSS3 popup.<br/> Easily customizable.</Popup>
                     </Marker>
-                </Map>
+                </Map> */}
             </div>
         </div>
     );
