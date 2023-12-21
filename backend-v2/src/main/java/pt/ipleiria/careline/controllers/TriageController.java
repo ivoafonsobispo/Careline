@@ -68,15 +68,23 @@ public class TriageController {
     @GetMapping("patients/{id}/triages")
     public Page<TriageDTO> getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId) {
         Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-        Page<TriageEntity> triages = triageService.getTriageByPatient(pageable, patient.get());
+        Page<TriageEntity> triages = triageService.getTriagesByPatient(pageable, patient.get());
         return triages.map(triageMapper::mapToDTO);
     }
 
-    @GetMapping("patients/{id}/triages/{triageId}")
-    public Page<TriageDTO> getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId, @PathVariable("triageId") Long triageId ) {
+    @GetMapping("patients/{id}/triage")
+    public ResponseEntity<TriageDTO> getLastPatientTriage(@PathVariable("id") Long patientId) {
         Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-        Page<TriageEntity> triages = triageService.getTriageByPatient(pageable, patient.get());
-        return triages.map(triageMapper::mapToDTO);
+        Optional<TriageEntity> triage = triageService.findLastParientTriage(patient.get());
+        return new ResponseEntity<>(triageMapper.mapToDTO(triage.get()), HttpStatus.OK);
+    }
+
+    @GetMapping("patients/{id}/triages/{triageId}")
+    public TriageDTO getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId, @PathVariable("triageId") Long triageId ) {
+        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
+        Optional<TriageEntity> triage = triageService.getTriageByPatient(patient.get(),triageId);
+        return triageMapper.mapToDTO(triage.get());
+
     }
 
 

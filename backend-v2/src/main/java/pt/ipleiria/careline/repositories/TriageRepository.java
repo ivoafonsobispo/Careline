@@ -29,8 +29,14 @@ public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
     @Query("SELECT t FROM TriageEntity t WHERE t.createdAt = (SELECT MAX(t2.createdAt) FROM TriageEntity t2)")
     Optional<TriageEntity> findLastTriage();
 
+    @Query("SELECT t FROM TriageEntity t WHERE t.patient = patient AND t.createdAt = (SELECT MAX(t2.createdAt) FROM TriageEntity t2)")
+    Optional<TriageEntity> findLastParientTriage( @Param("patient") PatientEntity patient);
+
     @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient")
-    Page<TriageEntity> getTriageByPatient(Pageable pageable, @Param("patient") PatientEntity patient);
+    Page<TriageEntity> getTriagesByPatient(Pageable pageable, @Param("patient") PatientEntity patient);
+
+    @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient AND t.id = :triageId")
+    Optional<TriageEntity> getTriageByPatient( @Param("patient") PatientEntity patient, @Param("triageId") Long triageId);
 
 
 

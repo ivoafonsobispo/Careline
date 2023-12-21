@@ -2,6 +2,7 @@ package pt.ipleiria.careline.services.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
@@ -36,8 +37,18 @@ public class TriageServiceImpl implements TriageService {
     }
 
     @Override
-    public Page<TriageEntity> getTriageByPatient(Pageable pageable, PatientEntity patient) {
-        return triageRepository.getTriageByPatient(pageable, patient);
+    public Page<TriageEntity> getTriagesByPatient(Pageable pageable, PatientEntity patient) {
+        return triageRepository.getTriagesByPatient(pageable, patient);
+    }
+
+    @Override
+    public Optional<TriageEntity> getTriageByPatient(PatientEntity patient, Long triageID) {
+        return triageRepository.getTriageByPatient(patient, triageID);
+    }
+
+    @Override
+    public Optional<TriageEntity> findLastParientTriage(PatientEntity patient) {
+        return triageRepository.findLastParientTriage(patient);
     }
 
     @Override
