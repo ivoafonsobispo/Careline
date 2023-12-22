@@ -1,8 +1,10 @@
 package pt.ipleiria.careline.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 
 import java.time.Instant;
+import java.util.List;
 
 public class ProfessionalDTO {
     @JsonProperty("created_at")
@@ -12,17 +14,19 @@ public class ProfessionalDTO {
     private String email;
     private String password;
     private String nus;
+    private List<PatientResponseDTO> patients;
 
     public ProfessionalDTO() {
     }
 
-    public ProfessionalDTO(Long id, String name, String email, String password, String nus, Instant createdAt) {
+    public ProfessionalDTO(Long id, String name, String email, String password, String nus, Instant createdAt, List<PatientResponseDTO> patients) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.nus = nus;
         this.createdAt = createdAt;
+        this.patients = patients;
     }
 
     public Instant getCreatedAt() {
@@ -71,5 +75,13 @@ public class ProfessionalDTO {
 
     public void setNus(String nus) {
         this.nus = nus;
+    }
+
+    public List<PatientResponseDTO> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(List<PatientResponseDTO> patients) {
+        this.patients = patients;
     }
 }

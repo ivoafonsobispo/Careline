@@ -50,4 +50,6 @@ public class ApplicationExceptionHandler {
         errorMap.put("error", exception.getMessage());
         return errorMap;
     }
+
+
 }
