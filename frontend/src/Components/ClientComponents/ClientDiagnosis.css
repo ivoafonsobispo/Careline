@@ -35,3 +35,13 @@
     background-color: var(--basecolor);
     border: none;
 }
+
+.diagnosis-download-button{
+    margin-left: auto;
+    margin-right: 2%;
+    cursor: pointer;
+}
+
+.diagnosis-download-button:hover{
+    color: var(--basecolor);
+}

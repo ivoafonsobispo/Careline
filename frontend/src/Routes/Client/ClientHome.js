@@ -1,6 +1,6 @@
-import ClientHomeBody from "../Components/ClientComponents/ClientHomeBody";
-import PageTitle from '../Components/PageTitle/PageTitle';
-import "../Components/ClientComponents/ClientBase.css";
+import ClientHomeBody from "../../Components/ClientComponents/ClientHomeBody";
+import PageTitle from '../../Components/PageTitle/PageTitle';
+import "../../Components/ClientComponents/ClientBase.css";
 
 import {useState} from 'react';
 
@@ -8,7 +8,7 @@ import {useState} from 'react';
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-import '../DayPicker.css';
+import '../../DayPicker.css';
 
 export default function ClientHome(){
     

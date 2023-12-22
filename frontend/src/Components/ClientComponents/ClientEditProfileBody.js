@@ -4,7 +4,7 @@ import './ClientEditProfileBody.css'
 import {Eye, EyeSlash, Check, X} from 'react-bootstrap-icons';
 import { useState } from 'react';
 
-export default function ClientEditProfileBody({user, editProfileClicked, setEditProfileClicked}) {
+export default function ClientEditProfileBody({user, setEditProfileClicked, onEditProfileSuccess}) {
     const isNumber = (value) => /^\d+$/.test(value);
 
     const [name, setName] = useState(user.name);
@@ -42,7 +42,7 @@ export default function ClientEditProfileBody({user, editProfileClicked, setEdit
     const [isValidNus, setIsValidNus] = useState(true);
     const handleNusChange = (e) => {
         // Check if the entered value is a number
-        if ((isNumber(e.target.value) && e.target.value.length <= 9) || e.target.value == '') {
+        if ((isNumber(e.target.value) && e.target.value.length <= 9) || e.target.value === '') {
             setNus(e.target.value);
             const nusRegex = /^\d{9}$/;
             const isValidNus = nusRegex.test(e.target.value);
@@ -55,19 +55,22 @@ export default function ClientEditProfileBody({user, editProfileClicked, setEdit
         try {
             const updatedFields = {};
 
-            if (name != user.name) {
+            if (name !== user.name) {
                 updatedFields.name = name;
+                console.log(updatedFields.name);
             }
 
-            if (email != user.email) {
+            if (email !== user.email) {
                 updatedFields.email = email;
+                console.log(updatedFields.email);
             }
 
-            if (password != user.password) {
+            if (password !== user.password) {
                 updatedFields.password = password;
+                console.log(updatedFields.password);
             }
 
-            if (nus != user.nus) {
+            if (nus !== user.nus) {
                 updatedFields.nus = nus;
             }
 
@@ -76,31 +79,36 @@ export default function ClientEditProfileBody({user, editProfileClicked, setEdit
                 return;
             }
 
-          const response = await fetch('http://localhost:8080/api/patients/1', {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              updatedFields
-            }),
-          });
+            console.log(JSON.stringify(updatedFields));
+
+            const response = await fetch('http://localhost:8080/api/patients/1', {
+                method: 'PATCH',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedFields),
+            });
+        
+            if (!response.ok) {
+                // Handle non-successful response here
+                console.error('Error:', response.statusText);
+                return;
+            }
     
-          if (!response.ok) {
-            // Handle non-successful response here
-            console.error('Error:', response.statusText);
-            return;
-          }
-    
-          // Assuming the server responds with JSON data
-          const data = await response.json();
-          console.log('Success:', data);
-          setEditProfileClicked()
+            // Assuming the server responds with JSON data
+            const data = await response.json();
+            user.name = data.name;
+            user.email = data.email;
+            user.nus = data.nus;
+            user.password = data.password;
+
+            setEditProfileClicked();
+            onEditProfileSuccess();
         } catch (error) {
-          // Handle errors during the fetch
-          console.error('Error:', error);
+            // Handle errors during the fetch
+            console.error('Error:', error);
         }
-      };
+    };
 
     return (
         <div className="vertical-container profile-container">
@@ -165,7 +173,7 @@ export default function ClientEditProfileBody({user, editProfileClicked, setEdit
                 <button className="profile-button align-line-row" onClick={() => setEditProfileClicked()}>
                     <X size={25} color="white"/> &nbsp; Back
                 </button>
-                <button className="profile-button align-line-row" onClick={handlePostRequest}>
+                <button className={classNames("profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && isValidPassword) ? "profile-button-disabled" : "")} onClick={handlePostRequest} disabled={!(isValidName && isValidEmail && isValidNus && isValidPassword)}>
                     <Check size={25} color="white"/> &nbsp; Edit Profile
                 </button>
             </div>

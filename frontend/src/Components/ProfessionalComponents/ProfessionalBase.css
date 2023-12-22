@@ -1,0 +1,28 @@
+.vertical-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    /* flex-grow: 1; */
+  }
+  
+  .horizontal-container{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .gap-vertical{
+    gap: 8%;
+  }
+  
+  .gap-horizontal{
+    gap: 4%;
+  }
+  
+  .align-line-row{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
