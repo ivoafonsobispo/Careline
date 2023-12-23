@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
 import java.time.Instant;
 import java.util.List;
@@ -28,8 +29,15 @@ public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
     @Query("SELECT t FROM TriageEntity t WHERE t.createdAt = (SELECT MAX(t2.createdAt) FROM TriageEntity t2)")
     Optional<TriageEntity> findLastTriage();
 
+    @Query("SELECT t FROM TriageEntity t WHERE t.patient = patient AND t.createdAt = (SELECT MAX(t2.createdAt) FROM TriageEntity t2)")
+    Optional<TriageEntity> findLastParientTriage( @Param("patient") PatientEntity patient);
 
-     /*findByIdOfPatient(@Param("patientId") Long patientId, @Param("id") Long id);*/
+    @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient")
+    Page<TriageEntity> getTriagesByPatient(Pageable pageable, @Param("patient") PatientEntity patient);
+
+    @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient AND t.id = :triageId")
+    Optional<TriageEntity> getTriageByPatient( @Param("patient") PatientEntity patient, @Param("triageId") Long triageId);
+
 
 
 }

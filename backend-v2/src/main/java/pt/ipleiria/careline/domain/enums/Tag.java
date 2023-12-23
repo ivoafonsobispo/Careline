@@ -21,4 +21,16 @@ public enum Tag {
     public String getName() {
         return name;
     }
+
+    public static Tag getTagByName ( String name) {
+        if(name == null)
+            return null;
+        if(name.toUpperCase().equals("URGENT"))
+            return Tag.URGENT;
+        if(name.toUpperCase().equals("LESS URGENT"))
+            return Tag.URGENT;
+        if(name.toUpperCase().equals("MEDIAN"))
+            return Tag.URGENT;
+        return Tag.LOW;
+    }
 }
