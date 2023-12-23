@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
+import pt.ipleiria.careline.domain.enums.Severity;
 
 import java.time.Instant;
 
@@ -14,8 +15,8 @@ public class TriageDTO extends DataDTO {
     private Integer heartbeat;
     private String simptoms;
 
-    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms) {
-        super(patient, createdAt);
+    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms, Severity severity) {
+        super(patient, createdAt, severity);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
         this.simptoms = simptoms;

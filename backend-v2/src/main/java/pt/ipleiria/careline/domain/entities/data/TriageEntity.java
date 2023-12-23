@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.domain.enums.Severity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ public class TriageEntity extends DataEntity {
     public TriageEntity() {
     }
 
-    public TriageEntity(PatientEntity patient, Float temperature, Integer heartbeat, String simptoms) {
-        super(patient);
+    public TriageEntity(PatientEntity patient, Float temperature, Integer heartbeat, String simptoms, Severity severity) {
+        super(patient,severity);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
         this.simptoms = simptoms;

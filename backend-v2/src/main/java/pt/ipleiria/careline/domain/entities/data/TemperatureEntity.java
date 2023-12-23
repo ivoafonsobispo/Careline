@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.enums.Severity;
 
 @Entity
 @Table(name = "temperatures")
@@ -19,8 +20,8 @@ public class TemperatureEntity extends DataEntity {
     public TemperatureEntity() {
     }
 
-    public TemperatureEntity(Float temperature, PatientEntity patient) {
-        super(patient);
+    public TemperatureEntity(Float temperature, PatientEntity patient, Severity severity) {
+        super(patient,severity);
         this.temperature = temperature;
     }
 

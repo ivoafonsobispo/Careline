@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.enums.Severity;
 import pt.ipleiria.careline.helpers.DataValidation;
 import pt.ipleiria.careline.repositories.HeartbeatRepository;
 import pt.ipleiria.careline.services.HeartbeatService;
@@ -17,7 +18,11 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class HeartbeatServiceImpl implements HeartbeatService {
-
+    private static final int GOOD_MIN = 60;
+    private static final int GOOD_MAX = 100;
+    private static final int MEDIUM_MIN = 40;
+    private static final int MEDIUM_MAX = 59;
+    private static final int MEDIUM_MAX_UPPER = 120;
     private HeartbeatRepository heartbeatRepository;
     private PatientService patientService;
 
@@ -38,6 +43,9 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         } else {
             throw new IllegalArgumentException("Patient not found");
         }
+
+        Severity severity = getSeverityCategory(heartbeatEntity.getHeartbeat());
+        heartbeatEntity.setSeverity(severity);
 
         return heartbeatRepository.save(heartbeatEntity);
     }
@@ -71,5 +79,15 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     @Override
     public void delete(Long id) {
         heartbeatRepository.deleteById(id);
+    }
+
+    private Severity getSeverityCategory(int heartbeat) {
+        if (heartbeat >= GOOD_MIN && heartbeat <= GOOD_MAX) {
+            return Severity.GOOD;
+        } else if ((heartbeat >= MEDIUM_MIN && heartbeat <= MEDIUM_MAX) || (heartbeat >= GOOD_MAX + 1 && heartbeat <= MEDIUM_MAX_UPPER)) {
+            return Severity.MEDIUM;
+        } else {
+            return Severity.CRITICAL;
+        }
     }
 }
