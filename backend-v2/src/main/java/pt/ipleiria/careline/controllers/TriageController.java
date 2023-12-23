@@ -36,7 +36,7 @@ public class TriageController {
             triageEntity.setTemperature(triageDTO.getTemperature());
             triageEntity.setHeartbeat(triageDTO.getHeartbeat());
             triageEntity.setSymptoms(triageDTO.getSymptoms());
-            triageEntity.setSeverity(Tag.getTagByName(triageDTO.getSeverity()));
+            triageEntity.setTagSeverity(Tag.getTagByName(triageDTO.getTagSeverity()));
             Optional<TriageEntity> lastTriage = triageService.findLastTriage();
             if(lastTriage.isPresent())
                 triageEntity.setTagOrder(lastTriage.get().getTagOrder()+1);
@@ -96,7 +96,7 @@ public class TriageController {
         triageEntity.setSymptoms(triageDTO.getSymptoms());
         triageEntity.setHeartbeat(triageDTO.getHeartbeat());
         triageEntity.setSymptoms(triageDTO.getSymptoms());
-        triageEntity.setSeverity(Tag.getTagByName(triageDTO.getSeverity()));
+        triageEntity.setTagSeverity(Tag.getTagByName(triageDTO.getTagSeverity()));
         TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);

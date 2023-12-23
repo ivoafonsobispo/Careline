@@ -10,9 +10,9 @@ public class TriageDTO extends DataDTO {
     private Integer heartbeat;
     private String symptoms;
     private Long tagOrder;
-    private String severity;
+    private String tagSeverity;
 
-    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms, Long tagOrder, Severity severity) {
+    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms, Long tagOrder, String tagSeverity, Severity severity) {
         super(patient, createdAt, severity);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
@@ -54,11 +54,11 @@ public class TriageDTO extends DataDTO {
         this.tagOrder = tagOrder;
     }
 
-    public String getSeverity() {
-        return severity;
+    public String getTagSeverity() {
+        return tagSeverity;
     }
 
-    public void setSeverity(String severity) {
-        this.severity = severity;
+    public void setTagSeverity(String tagSeverity) {
+        this.tagSeverity = tagSeverity;
     }
 }
