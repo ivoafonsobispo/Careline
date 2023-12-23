@@ -16,7 +16,7 @@ import ProfessionalHome from './Routes/Professional/ProfessionalHome';
 import ErrorPage from './Routes/ErrorPage';
 
 export default function App() {
-  const userType = 'patient';
+  const userType = 'professional';
 
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {
@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <div className='App'>
-      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar}/> 
+      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar} userType={userType}/> 
 
       <div className='App-body'>
         <Navbar isActive={isToggleActive} userType={userType}/>

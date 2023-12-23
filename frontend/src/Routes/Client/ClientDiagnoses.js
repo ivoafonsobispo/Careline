@@ -3,7 +3,7 @@ import "../../Components/ClientComponents/ClientBase.css";
 import "./ClientDiagnoses.css";
 import ClientDiagnosis from "../../Components/ClientComponents/ClientDiagnosis";
 
-import {useState} from 'react';
+import { useState } from 'react';
 
 //Day Picker
 import { format } from 'date-fns';
@@ -27,36 +27,34 @@ export default function ClientDiagnoses() {
 
     const [diagnoses, setDiagnoses] = useState(null);
     useEffect(() => {
-        axios.get(urlDiagnoses, { 
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          }, 
-          proxy: {
-            port: 8080
-          } })
-          .then(response => {
-            // handle the response
-            setDiagnoses(response.data.content);
-            console.log(response.data.content);
-          })
-          .catch(error => {
-            // handle the error
-            console.log(error);
-          });
+        axios.get(urlDiagnoses, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                setDiagnoses(response.data.content);
+                // console.log(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }, []);
 
     if (!diagnoses) return null;
-    let diagnosesArray = Object.values(diagnoses);
 
-    return(
+    return (
         <div className="horizontal-container">
             <div className="vertical-container">
-                <PageTitle title="Diagnoses"/>
+                <PageTitle title="Diagnoses" />
                 <div className='App-content'>
-                    <div className="vertical-container diagnoses-list" style={{maxHeight: "540px"}}>
-                        {diagnosesArray.map(diagnosis => {
+                    <div className="vertical-container diagnoses-list" style={{ maxHeight: "540px" }}>
+                        {diagnoses.map((diagnosis, index) => {
                             return (
-                                <ClientDiagnosis id={diagnosis.id} description={diagnosis.diagnosis} prescriptions={diagnosis.prescriptions} professional={diagnosis.professional ? diagnosis.professional.name : "Unknown Professional"} date={diagnosis.created_at}/>
+                                <ClientDiagnosis key={index} id={diagnosis.id} description={diagnosis.diagnosis} prescriptions={diagnosis.prescriptions} professional={diagnosis.professional ? diagnosis.professional.name : "Unknown Professional"} date={diagnosis.created_at} />
                             )
                         })}
                     </div>

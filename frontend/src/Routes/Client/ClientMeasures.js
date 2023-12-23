@@ -15,78 +15,73 @@ const urlTemperatures = 'http://localhost:8080/api/patients/1/temperatures/lates
 
 export default function ClientMeasures() {
 
-    const [selected, setSelected] = useState(new Date());
+  const [selected, setSelected] = useState(new Date());
 
-    let footer = <p>Please pick a day.</p>;
-    if (selected) {
-        footer = <p>You picked {format(selected, 'PP')}.</p>;
-    }
+  let footer = <p>Please pick a day.</p>;
+  if (selected) {
+    footer = <p>You picked {format(selected, 'PP')}.</p>;
+  }
 
-    const [heartbeats, setHeartbeats] = useState(null);
-    const [temperatures, setTemperatures] = useState(null);
+  const [heartbeats, setHeartbeats] = useState(null);
+  const [temperatures, setTemperatures] = useState(null);
 
-    useEffect(() => {
-        axios.get(urlHeartbeats, { 
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-          }, 
-          proxy: {
-            port: 8080
-          } })
-          .then(response => {
-            // handle the response
-            setHeartbeats(response.data.content);
-            console.log(response.data.content);
-          })
-          .catch(error => {
-            // handle the error
-            console.log(error);
-          });
+  useEffect(() => {
+    axios.get(urlHeartbeats, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      proxy: {
+        port: 8080
+      }
+    })
+      .then(response => {
+        setHeartbeats(response.data.content);
+        // console.log(response.data.content);
+      })
+      .catch(error => {
+        console.log(error);
+      });
 
-          axios.get(urlTemperatures, { 
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-            }, 
-            proxy: {
-              port: 8080
-            } })
-            .then(response => {
-              // handle the response
-              setTemperatures(response.data.content);
-              console.log(response.data.content);
-            })
-            .catch(error => {
-              // handle the error
-              console.log(error);
-            });
-    }, []);
+    axios.get(urlTemperatures, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      proxy: {
+        port: 8080
+      }
+    })
+      .then(response => {
+        setTemperatures(response.data.content);
+        // console.log(response.data.content);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
 
-    if (!heartbeats) return null;
-    let heartbeatsArray = Object.values(heartbeats);
+  if (!heartbeats) return null;
+  if (!temperatures) return null;
 
-    if (!temperatures) return null;
-    let temperaturesArray = Object.values(temperatures);
-
-    return(
-        <div className="horizontal-container">
-            <div className="vertical-container">
-                <PageTitle title="Measures"/>
-                <div className='App-content'>
-                      <div className='horizontal-container gap-horizontal' style={{maxHeight: "540px"}}>
-                          <MeasureList title={"Heartbeat"} dataArray={heartbeatsArray}/>
-                          <MeasureList title={"Temperature"} dataArray={temperaturesArray}/>
-                      </div>
-                </div>
-            </div>
-            <div className='day-picker'>
-                <DayPicker
-                    mode="single"
-                    selected={selected}
-                    onSelect={setSelected}
-                    footer={footer}
-                    className='day-picker-style'
-                />
-            </div>
+  return (
+    <div className="horizontal-container">
+      <div className="vertical-container">
+        <PageTitle title="Measures" />
+        <div className='App-content'>
+          <div className='horizontal-container gap-horizontal' style={{ maxHeight: "540px" }}>
+            <MeasureList title={"Heartbeat"} dataArray={heartbeats} />
+            <MeasureList title={"Temperature"} dataArray={temperatures} />
+          </div>
         </div>
-    );
+      </div>
+      <div className='day-picker'>
+        <DayPicker
+          mode="single"
+          selected={selected}
+          onSelect={setSelected}
+          footer={footer}
+          className='day-picker-style'
+        />
+      </div>
+    </div>
+  );
 }
