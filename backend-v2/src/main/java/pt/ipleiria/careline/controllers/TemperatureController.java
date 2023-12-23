@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
@@ -24,19 +25,25 @@ public class TemperatureController {
     private Mapper<TemperatureEntity, TemperatureDTO> temperatureMapper;
     private Mapper<PatientEntity, PatientDTO> patientMapper;
     private TemperatureService temperatureService;
+    private SimpMessagingTemplate messagingTemplate;
 
-    public TemperatureController(Mapper<TemperatureEntity, TemperatureDTO> temperatureMapper, TemperatureService temperatureService, Mapper<PatientEntity, PatientDTO> patientMapper) {
+    public TemperatureController(Mapper<TemperatureEntity, TemperatureDTO> temperatureMapper, TemperatureService temperatureService, Mapper<PatientEntity, PatientDTO> patientMapper, SimpMessagingTemplate messagingTemplate) {
         this.temperatureMapper = temperatureMapper;
         this.patientMapper = patientMapper;
         this.temperatureService = temperatureService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping
     public ResponseEntity<TemperatureDTO> createTemperature(@PathVariable("patientId") Long patientId, @RequestBody @Valid TemperatureDTO temperatureDTO) {
         TemperatureEntity temperatureEntity = temperatureMapper.mapFrom(temperatureDTO);
-        TemperatureEntity createdHeartbeat = temperatureService.create(patientId, temperatureEntity);
-        TemperatureDTO createdHeartbeatDTO = temperatureMapper.mapToDTO(createdHeartbeat);
-        return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);
+        TemperatureEntity createdTemperature =
+                temperatureService.create(patientId, temperatureEntity);
+        TemperatureDTO createdTemperatureDTO = temperatureMapper.mapToDTO(createdTemperature);
+
+        messagingTemplate.convertAndSend("/topic/temperatures", createdTemperatureDTO);
+
+        return new ResponseEntity<>(createdTemperatureDTO, HttpStatus.CREATED);
     }
 
     @GetMapping

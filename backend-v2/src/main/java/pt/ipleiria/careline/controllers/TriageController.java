@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.data.TriageDTO;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
@@ -22,11 +23,15 @@ public class TriageController {
     private final Mapper<TriageEntity, TriageDTO> triageMapper;
     private final TriageService triageService;
     private final PatientService patientService;
+    private SimpMessagingTemplate messagingTemplate;
 
-    public TriageController(Mapper<TriageEntity, TriageDTO> triageMapper, TriageService triageService, PatientService patientService) {
+    public TriageController(Mapper<TriageEntity, TriageDTO> triageMapper,
+                            TriageService triageService,
+                            PatientService patientService, SimpMessagingTemplate messagingTemplate) {
         this.triageMapper = triageMapper;
         this.triageService = triageService;
         this.patientService = patientService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/triages")
@@ -47,7 +52,12 @@ public class TriageController {
             if(patient.isPresent())
                 triageEntity.setPatient(patient.get());
             TriageEntity savedtriageEntity = triageService.save(triageEntity);
-            return new ResponseEntity<>(triageMapper.mapToDTO(savedtriageEntity), HttpStatus.CREATED);
+            TriageDTO createdtriageDTO = triageMapper.mapToDTO(savedtriageEntity);
+
+            messagingTemplate.convertAndSend("/topic/triages",
+                    createdtriageDTO);
+
+            return new ResponseEntity<>(createdtriageDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/triages")

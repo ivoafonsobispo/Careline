@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.DiagnosisDTO;
 import pt.ipleiria.careline.domain.dto.responses.DiagnosisResponseDTO;
@@ -26,12 +27,14 @@ public class DiagnosisController {
     private final DiagnosisService diagnosisService;
     private Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
     private Mapper<DiagnosisEntity, DiagnosisResponseDTO> diagnosisResponseMapper;
+    private SimpMessagingTemplate messagingTemplate;
 
     public DiagnosisController(DiagnosisService diagnosisService,
-                               Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity,DiagnosisResponseDTO> diagnosisResponseMapper) {
+                               Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity,DiagnosisResponseDTO> diagnosisResponseMapper, SimpMessagingTemplate messagingTemplate) {
         this.diagnosisService = diagnosisService;
         this.diagnosisMapper = diagnosisMapper;
         this.diagnosisResponseMapper = diagnosisResponseMapper;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
@@ -39,8 +42,13 @@ public class DiagnosisController {
             "professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
         DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
-        return new ResponseEntity<>(diagnosisMapper.mapToDTO(savedDiagnosticEntity),
-                HttpStatus.CREATED);
+        DiagnosisDTO createdDiagnosticDTO =
+                diagnosisMapper.mapToDTO(savedDiagnosticEntity);
+
+        messagingTemplate.convertAndSend("/topic/diagnosis",
+                createdDiagnosticDTO);
+
+        return new ResponseEntity<>(createdDiagnosticDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
