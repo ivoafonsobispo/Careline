@@ -42,13 +42,13 @@ public class TemperatureController {
     @GetMapping
     public Page<TemperatureResponseDTO> listTemperatures(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<TemperatureEntity> temperatureEntities = temperatureService.findAll(pageable, patientId);
-        return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt()));
+        return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt(),temperature.getSeverity()));
     }
 
     @GetMapping("/latest")
     public Page<TemperatureResponseDTO> listLatestTemperatures(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<TemperatureEntity> temperatureEntities = temperatureService.findAllLatest(pageable, patientId);
-        return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt()));
+        return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt(),temperature.getSeverity()));
     }
 
     @GetMapping("/{id}")

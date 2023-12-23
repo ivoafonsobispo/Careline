@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.enums.Severity;
 
 import java.time.Instant;
 
@@ -19,13 +20,16 @@ public abstract class DataEntity {
     @JoinColumn(name = "patient_id")
     @NotNull(message = "Patient is required")
     private PatientEntity patient;
+    private Severity severity;
 
     public DataEntity() {
     }
 
-    public DataEntity(PatientEntity patient) {
+    public DataEntity(PatientEntity patient, Severity severity) {
         this.patient = patient;
         this.createdAt = Instant.now();
+        this.severity = severity;
+
     }
 
     public Instant getCreatedAt() {
@@ -50,5 +54,13 @@ public abstract class DataEntity {
 
     public void setPatient(PatientEntity patient) {
         this.patient = patient;
+    }
+
+    public Severity getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(Severity severity) {
+        this.severity = severity;
     }
 }

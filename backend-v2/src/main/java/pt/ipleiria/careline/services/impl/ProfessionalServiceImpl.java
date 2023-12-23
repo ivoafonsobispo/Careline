@@ -3,9 +3,14 @@ package pt.ipleiria.careline.services.impl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.exceptions.PatientNotFoundException;
+import pt.ipleiria.careline.exceptions.ProfessionalNotFoundException;
 import pt.ipleiria.careline.helpers.UserValidation;
+import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.repositories.ProfessionalRepository;
+import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.ProfessionalService;
 
 import java.util.ArrayList;
@@ -18,9 +23,13 @@ import java.util.stream.StreamSupport;
 public class ProfessionalServiceImpl implements ProfessionalService {
 
     private ProfessionalRepository professionalRepository;
+    private PatientRepository patientRepository;
+    private PatientService patientService;
 
-    public ProfessionalServiceImpl(ProfessionalRepository professionalRepository) {
+    public ProfessionalServiceImpl(ProfessionalRepository professionalRepository, PatientRepository patientRepository, PatientService patientService) {
         this.professionalRepository = professionalRepository;
+        this.patientRepository = patientRepository;
+        this.patientService = patientService;
     }
 
     @Override
@@ -63,13 +72,37 @@ public class ProfessionalServiceImpl implements ProfessionalService {
             Optional.ofNullable(professionalEntity.getEmail()).ifPresent(existingProfessional::setEmail);
             Optional.ofNullable(professionalEntity.getPassword()).ifPresent(existingProfessional::setPassword);
             Optional.ofNullable(professionalEntity.getNus()).ifPresent(existingProfessional::setNus);
+            Optional.ofNullable(professionalEntity.getPatients()).ifPresent(existingProfessional::setPatients);
             return professionalRepository.save(existingProfessional);
-        }).orElseThrow(() -> new RuntimeException("Professional not found"));
+        }).orElseThrow(ProfessionalNotFoundException::new);
     }
 
     @Override
     public void delete(Long id) {
         professionalRepository.deleteById(id);
+    }
+
+    @Override
+    public void setPatientToProfessional(Long professionalId, Long patientId) {
+        ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
+        PatientEntity patient = patientRepository.findById(patientId).orElseThrow(PatientNotFoundException::new);
+
+        professional.getPatients().add(patient);
+        patientService.setProfessionalToPatient(professional,patient);
+
+        partialUpdate(professionalId,professional);
+    }
+
+    @Override
+    public Page<PatientEntity> getProfessionalPatients(Long professionalId, Pageable pageable) {
+        ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
+        return patientRepository.findByProfessionalsId(professional.getId(),pageable);
+    }
+
+    @Override
+    public Page<PatientEntity> getAvailablePatient(Long professionalId, Pageable pageable) {
+        professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
+        return patientRepository.findByProfessionalsIdIsNull(pageable);
     }
 
     private void validateProfessional(ProfessionalEntity professionalEntity) {

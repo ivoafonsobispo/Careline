@@ -1,11 +1,18 @@
 nav, a {
-  background-color: var(--basecolor);
   min-width: 15%;
   color: white;
   overflow: hidden;
   transition: max-height 1s;
   text-align: center;
   text-decoration: none;
+}
+
+.nav-patient {
+  background-color: var(--basecolor);
+}
+
+.nav-professional {
+  background-color: var(--professionalBaseColor);
 }
 
 nav ul {
@@ -24,21 +31,23 @@ nav li {
   margin: 0 auto 20px auto;
 }
 
-#navbar a.active > li {
+#navbar .navlink-patient.active > li {
   background: linear-gradient(90deg, var(--lightcolor) 0%, var(--basecolor) 100%);
 }
 
-/* .selected {
-  background: linear-gradient(90deg, var(--lightcolor) 0%, var(--basecolor) 100%);
-} */
+#navbar .navlink-professional.active > li{
+  background: linear-gradient(90deg, var(--professionalLightColor) 0%, var(--professionalBaseColor) 100%);
+}
 
-#navbar a.active > li:hover {
+
+#navbar .navlink-patient.active > li:hover {
   background: linear-gradient(90deg, var(--basecolor) 0%, var(--darkcolor) 100%);
 }
 
-/* .selected:hover {
-  background: linear-gradient(90deg, var(--basecolor) 0%, var(--darkcolor) 100%);
-} */
+#navbar .navlink-professional.active > li:hover {
+  background: linear-gradient(90deg, var(--professionalBaseColor) 0%, var(--professionalDarkColor) 100%);
+}
+
 
 .navbar-logo-area > li {
   height: 66px;
@@ -72,8 +81,13 @@ nav li {
   font-size: 17px;
 }
 
-.navbar-item:hover {
+.navlink-patient > li:hover {
   background-color: var(--darkcolor);
+  cursor: pointer;
+}
+
+.navlink-professional > li:hover {
+  background-color: var(--professionalDarkColor);
   cursor: pointer;
 }
 

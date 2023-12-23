@@ -1,9 +1,3 @@
-.profile-container{
-    gap: 1%;
-    height: 70%;
-    margin-top: 3%;
-}
-
 .profile-field{
     border: 1px solid var(--basecolor);
     padding: 1.5%;

@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.exceptions.PatientNotFoundException;
 import pt.ipleiria.careline.helpers.UserValidation;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.services.PatientService;
@@ -63,14 +65,23 @@ public class PatientServiceImpl implements PatientService {
             Optional.ofNullable(patientEntity.getEmail()).ifPresent(existingPatient::setEmail);
             Optional.ofNullable(patientEntity.getPassword()).ifPresent(existingPatient::setPassword);
             Optional.ofNullable(patientEntity.getNus()).ifPresent(existingPatient::setNus);
+            Optional.ofNullable(patientEntity.getProfessionals()).ifPresent(existingPatient::setProfessionals);
             return patientRepository.save(existingPatient);
-        }).orElseThrow(() -> new RuntimeException("Patient not found"));
+        }).orElseThrow(PatientNotFoundException::new);
     }
+
 
     @Override
     public void delete(Long id) {
         patientRepository.deleteById(id);
     }
+
+    @Override
+    public void setProfessionalToPatient(ProfessionalEntity professional, PatientEntity patient) {
+        patient.getProfessionals().add(professional);
+        patientRepository.save(patient);
+    }
+
 
     private void validatePatient(PatientEntity patientEntity) {
         List<String> errors = new ArrayList<>();

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.enums.Severity;
 import pt.ipleiria.careline.helpers.DataValidation;
 import pt.ipleiria.careline.repositories.TemperatureRepository;
 import pt.ipleiria.careline.services.PatientService;
@@ -17,7 +18,11 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class TemperatureServiceImpl implements TemperatureService {
-
+    private static final double GOOD_MIN = 36.5;
+    private static final double GOOD_MAX = 37.3;
+    private static final double MEDIUM_MIN = 35;
+    private static final double MEDIUM_MAX = 36.4;
+    private static final double MEDIUM_MAX_UPPER = 39.9;
     private TemperatureRepository temperatureRepository;
     private PatientService patientService;
 
@@ -39,6 +44,9 @@ public class TemperatureServiceImpl implements TemperatureService {
         } else {
             throw new IllegalArgumentException("Patient not found");
         }
+
+        Severity severity = getSeverityCategory(temperature.getTemperature());
+        temperature.setSeverity(severity);
 
         return temperatureRepository.save(temperature);
     }
@@ -72,5 +80,14 @@ public class TemperatureServiceImpl implements TemperatureService {
     @Override
     public void delete(Long id) {
         temperatureRepository.deleteById(id);
+    }
+    private Severity getSeverityCategory(double temperature) {
+        if (temperature >= GOOD_MIN && temperature <= GOOD_MAX) {
+            return Severity.GOOD;
+        } else if ((temperature >= MEDIUM_MIN && temperature <= MEDIUM_MAX) || (temperature >= GOOD_MAX + 1 && temperature <= MEDIUM_MAX_UPPER)) {
+            return Severity.MEDIUM;
+        } else {
+            return Severity.CRITICAL;
+        }
     }
 }

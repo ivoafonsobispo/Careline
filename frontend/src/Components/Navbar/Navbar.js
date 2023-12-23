@@ -1,43 +1,50 @@
 import './Navbar.css'
+import classNames from 'classnames';
 
-import {HouseFill, HeartFill, FileBarGraphFill, MapFill, PersonFill} from 'react-bootstrap-icons'
+import {HouseFill, HeartFill, FileBarGraphFill, MapFill, PersonFill, FileEarmarkMedicalFill} from 'react-bootstrap-icons'
 import { NavLink } from 'react-router-dom';
 
-export default function Navbar({isActive}) {
+export default function Navbar({isActive, userType}) {
 
     return(
-        <nav style={{ 'maxHeight': isActive ? '200px': '0px'}} id='navbar'>
+        <nav style={{ 'maxHeight': isActive ? '200px': '0px'}} id='navbar' className={classNames(userType === 'patient' ? 'nav-patient' : 'nav-professional')}>
             <ul className='navbar-logo-area'>
                 <li className='navbar-logo-name'>CareLine</li>
                 <hr></hr>
             </ul>
 
             <ul className='navbar-buttons-area'>
-                <NavLink to='/'>
+                <NavLink to='/' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
                     <li className='navbar-item'> 
                         <HouseFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Home</span>
                     </li>
                 </NavLink>
-                <NavLink to='/measures'>
+                <NavLink to='/measures' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
                     <li className='navbar-item'>
                         <HeartFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Measures</span>
                     </li>
                 </NavLink>
-                <NavLink to='/diagnoses'>
+                <NavLink to='/diagnoses' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
                     <li className='navbar-item'>
                         <FileBarGraphFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Diagnoses</span>
                     </li>
                 </NavLink>
-                <NavLink to='/drones'>
+                <NavLink to='/triage' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
+                    <li className='navbar-item'>
+                        <FileEarmarkMedicalFill size={25} className='navbar-svg'/>
+                        <span className='navbar-item-text'>Triage</span>
+                    </li>
+                </NavLink>
+                <NavLink to='/drones' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
                     <li className='navbar-item'>
                         <MapFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Drones</span>
                     </li>
                 </NavLink>
-                <NavLink to='/profile' className={'navbar-last-item'}>
+                <NavLink to='/profile' className={classNames("navbar-last-item", userType === 'patient' ? "navlink-patient" : "navlink-professional")} >
                     <li className='navbar-item'>
                         <PersonFill size={25} className='navbar-svg'/>
                         <span className='navbar-item-text'>Helena</span>

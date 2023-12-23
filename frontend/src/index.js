@@ -1,57 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import ClientHome from './Routes/ClientHome';
-import ClientDiagnoses from './Routes/ClientDiagnoses'
-import ClientMeasures from './Routes/ClientMeasures';
-import ClientDrones from './Routes/ClientDrones';
-import ClientProfile from './Routes/ClientProfile';
-import ErrorPage from './Routes/ErrorPage';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App />,
-    errorElement: <ErrorPage />,
-    children: [
-      { 
-        index: true,
-        element: <ClientHome /> 
-      },
-      {
-        path: '/diagnoses',
-        element: <ClientDiagnoses />,
-        errorElement: <ErrorPage />
-      },
-      {
-        path: '/measures',
-        element: <ClientMeasures />,
-        errorElement: <ErrorPage />
-      },
-      {
-        path: '/drones',
-        element: <ClientDrones />,
-        errorElement: <ErrorPage />
-      },
-      {
-        path: '/profile',
-        element: <ClientProfile />,
-        errorElement: <ErrorPage />
-      },
-    ],
-  },
-  
-]);
-
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Router>
+      <App />
+    </Router>
   </React.StrictMode>
 );
 

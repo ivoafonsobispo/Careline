@@ -47,13 +47,13 @@ public class HeartbeatController {
     @GetMapping
     public Page<HeartbeatResponseDTO> listHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable, patientId);
-        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(), heartbeat.getSeverity()));
     }
 
     @GetMapping("/latest")
     public Page<HeartbeatResponseDTO> listLatestHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAllLatest(pageable, patientId);
-        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(),heartbeat.getSeverity()));
     }
 
     @GetMapping("/{id}")
