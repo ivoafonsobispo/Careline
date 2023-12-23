@@ -1,24 +1,22 @@
 package pt.ipleiria.careline.domain.dto.data;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
+import pt.ipleiria.careline.domain.enums.Severity;
 
 import java.time.Instant;
 
 public class TriageDTO extends DataDTO {
-
     private Float temperature;
     private Integer heartbeat;
-    private String simptoms;
+    private String symptoms;
+    private Long tagOrder;
+    private String tagSeverity;
 
-    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms) {
-        super(patient, createdAt);
+    public TriageDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String simptoms, Long tagOrder, String tagSeverity, Severity severity) {
+        super(patient, createdAt, severity);
         this.temperature = temperature;
         this.heartbeat = heartbeat;
-        this.simptoms = simptoms;
+        this.symptoms = symptoms;
     }
 
     public TriageDTO() {
@@ -40,11 +38,27 @@ public class TriageDTO extends DataDTO {
         this.heartbeat = heartbeat;
     }
 
-    public String getSimptoms() {
-        return simptoms;
+    public String getSymptoms() {
+        return symptoms;
     }
 
-    public void setSimptoms(String simptoms) {
-        this.simptoms = simptoms;
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
+    }
+
+    public Long getTagOrder() {
+        return tagOrder;
+    }
+
+    public void setTagOrder(Long tagOrder) {
+        this.tagOrder = tagOrder;
+    }
+
+    public String getTagSeverity() {
+        return tagSeverity;
+    }
+
+    public void setTagSeverity(String tagSeverity) {
+        this.tagSeverity = tagSeverity;
     }
 }

@@ -26,6 +26,8 @@ public class CsvGenerator {
             csv.append(heartbeatEntity.getId());
             csv.append(",");
             csv.append(heartbeatEntity.getHeartbeat());
+            csv.append(",");
+            csv.append(heartbeatEntity.getSeverity());
             csv.append("\n");
         }
 
@@ -52,6 +54,8 @@ public class CsvGenerator {
             csv.append(temperatureEntity.getPatient().getId());
             csv.append(",");
             csv.append(temperatureEntity.getTemperature());
+            csv.append(",");
+            csv.append(temperatureEntity.getSeverity());
             csv.append("\n");
         }
 

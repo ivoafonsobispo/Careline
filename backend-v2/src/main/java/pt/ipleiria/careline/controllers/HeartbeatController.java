@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.HeartbeatDTO;
@@ -28,12 +29,14 @@ public class HeartbeatController {
     private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
     private HeartbeatService heartbeatService;
     private PatientService patientService;
+    private SimpMessagingTemplate messagingTemplate;
 
-    public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper) {
+    public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper, SimpMessagingTemplate messagingTemplate) {
         this.heartbeatMapper = heartbeatMapper;
         this.patientMapper = patientMapper;
         this.heartbeatService = heartbeatService;
         this.patientService = patientService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping
@@ -41,19 +44,22 @@ public class HeartbeatController {
         HeartbeatEntity heartbeatEntity = heartbeatMapper.mapFrom(heartbeatDTO);
         HeartbeatEntity createdHeartbeat = heartbeatService.create(patientId, heartbeatEntity);
         HeartbeatDTO createdHeartbeatDTO = heartbeatMapper.mapToDTO(createdHeartbeat);
+
+        messagingTemplate.convertAndSend("/topic/heartbeats", createdHeartbeatDTO);
+
         return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);
     }
 
     @GetMapping
     public Page<HeartbeatResponseDTO> listHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable, patientId);
-        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(), heartbeat.getSeverity()));
     }
 
     @GetMapping("/latest")
     public Page<HeartbeatResponseDTO> listLatestHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAllLatest(pageable, patientId);
-        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(),heartbeat.getSeverity()));
     }
 
     @GetMapping("/{id}")

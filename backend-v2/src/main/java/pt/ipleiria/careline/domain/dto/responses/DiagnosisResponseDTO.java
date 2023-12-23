@@ -10,7 +10,6 @@ import java.util.List;
 
 public class DiagnosisResponseDTO {
     @JsonProperty("created_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     public ZonedDateTime createdAt;
     List<String> prescriptions;
     private Long id;
