@@ -7,6 +7,11 @@
   --complementarcolor: #fe9a84;
   --darkcomplementarcolor: #c26552;
   --lightcomplementarcolor: #ffe5da;
+
+  --professionalBaseColor: #3065c9;
+  --professionalLightColor: #5c95ff;
+  --professionalLightColorHover: #4385ff;
+  --professionalDarkColor: #0247c9;
 }
 
 html {

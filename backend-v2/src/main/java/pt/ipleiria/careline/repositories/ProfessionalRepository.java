@@ -10,8 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ProfessionalRepository extends JpaRepository<ProfessionalEntity, Long>,
         PagingAndSortingRepository<ProfessionalEntity, Long> {
-
     Optional<ProfessionalEntity> findByNus(String nus);
-
     Optional<ProfessionalEntity> findByEmail(String email);
 }
