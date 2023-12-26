@@ -23,55 +23,78 @@ export default function MeasureList({ title, dataArray }) {
             {title === "Measures" ? (
                 <>
                     <div className="client-measure-list">
-                        {dataArray.map((measure, index) => {
-                            return (
-                                <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                                    <span>{title}: {measure.heartbeat} </span>
-                                    <span className='list-item-date'>{measure.created_at} </span>
+                        {!dataArray || dataArray.length === 0 ? (
+                            <div className='no-records'>No records yet.</div>
+                        ) : (
+                            <>
+                                {dataArray.map((measure, index) => {
+                                    return (
+                                        <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
+                                            <span>{title}: {measure.heartbeat} </span>
+                                            <span className='list-item-date'>{measure.created_at} </span>
+                                        </div>
+                                    )
+                                })}
+                                <div className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
+                                    <NavLink to='/measures' style={{ backgroundColor: "white" }}>
+                                        <span className='measure-list-navlink'>Show More</span>
+                                    </NavLink>
                                 </div>
-                            )
-                        })}
-                        <div className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                            <NavLink to='/measures' style={{ backgroundColor: "white" }}>
-                                <span className='measure-list-navlink'>Show More</span>
-                            </NavLink>
-                        </div>
+                            </>
+                        )}
+
                     </div>
                 </>
             ) : title === "Diagnoses" ? (
                 <>
                     <div className="client-measure-list">
-                        {dataArray.map((diagnosis, index) => {
-                            return (
-                                <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                                    <span>Diagnosis: {diagnosis.id} - {diagnosis.diagnosis}</span>
-                                    <span className='list-item-date'>{diagnosis.created_at} </span>
+                        {!dataArray || dataArray.length === 0 ? (
+                            <div className='no-records'>No records yet.</div>
+                        ) : (
+                            <>
+                                {dataArray.map((diagnosis, index) => {
+                                    return (
+                                        <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
+                                            <span>Diagnosis: {diagnosis.id} - {diagnosis.diagnosis}</span>
+                                            <span className='list-item-date'>{diagnosis.created_at} </span>
+                                        </div>
+                                    )
+                                })}
+                                <div className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
+                                    <NavLink to='/diagnoses' style={{ backgroundColor: "white" }}>
+                                        <span className='measure-list-navlink'>Show More</span>
+                                    </NavLink>
                                 </div>
-                            )
-                        })}
-                        <div className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                            <NavLink to='/diagnoses' style={{ backgroundColor: "white" }}>
-                                <span className='measure-list-navlink'>Show More</span>
-                            </NavLink>
-                        </div>
+                            </>
+                        )}
                     </div>
                 </>
             ) : title === "Temperature" ? (
                 <>
                     <div className="client-measure-list">
-                        {dataArray.map((temperature, index) => {
-                            return (
-                                <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                                    <span>Temperature: {temperature.temperature} °C</span>
-                                    <span className='list-item-date'>{temperature.created_at} </span>
-                                </div>
-                            )
-                        })}
+                        {!dataArray || dataArray.length === 0 ? (
+                            <div className='no-records'>No records yet.</div>
+                        ) : (
+                            <>
+                                {dataArray.map((temperature, index) => {
+                                    return (
+                                        <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
+                                            <span>Temperature: {temperature.temperature} °C</span>
+                                            <span className='list-item-date'>{temperature.created_at} </span>
+                                        </div>
+                                    )
+                                })}
+                            </>
+                        )}
                     </div>
                 </>
             ) : ( // Heartbeat
                 <>
                     <div className="client-measure-list">
+                    {!dataArray || dataArray.length === 0 ? (
+                            <div className='no-records'>No records yet.</div>
+                        ) : (
+                            <>
                         {dataArray.map((heartbeat, index) => {
                             return (
                                 <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
@@ -80,6 +103,8 @@ export default function MeasureList({ title, dataArray }) {
                                 </div>
                             )
                         })}
+                        </>
+                        )}
                     </div>
                 </>
             )}

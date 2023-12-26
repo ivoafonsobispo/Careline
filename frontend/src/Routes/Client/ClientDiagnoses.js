@@ -62,19 +62,23 @@ export default function ClientDiagnoses() {
         };
     }, []);
 
-    if (!diagnoses) return null;
-
     return (
         <div className="horizontal-container">
             <div className="vertical-container">
                 <PageTitle title="Diagnoses" />
                 <div className='App-content'>
                     <div className="vertical-container diagnoses-list" style={{ maxHeight: "540px" }}>
-                        {diagnoses.map((diagnosis, index) => {
-                            return (
-                                <ClientDiagnosis key={index} id={diagnosis.id} description={diagnosis.diagnosis} prescriptions={diagnosis.prescriptions} professional={diagnosis.professional ? diagnosis.professional.name : "Unknown Professional"} date={diagnosis.created_at} />
-                            )
-                        })}
+                        {!diagnoses || diagnoses.length === 0 ? (
+                            <div className='no-records'>No records yet.</div>
+                        ) : (
+                            <>
+                                {diagnoses.map((diagnosis, index) => {
+                                    return (
+                                        <ClientDiagnosis key={index} id={diagnosis.id} description={diagnosis.diagnosis} prescriptions={diagnosis.prescriptions} professional={diagnosis.professional ? diagnosis.professional.name : "Unknown Professional"} date={diagnosis.created_at} />
+                                    )
+                                })}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
