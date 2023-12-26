@@ -73,6 +73,11 @@ export default function ClientMeasures() {
         let newHeartbeat = JSON.parse(message.body);
         setHeartbeats((prevHeartbeats) => [newHeartbeat, ...prevHeartbeats]);
       });
+
+      stompClient.subscribe('/topic/temperatures', (message) => {
+        let newTemperature = JSON.parse(message.body);
+        setTemperatures((prevTemperatures) => [newTemperature, ...prevTemperatures]);
+      });
     });
 
     return () => {
