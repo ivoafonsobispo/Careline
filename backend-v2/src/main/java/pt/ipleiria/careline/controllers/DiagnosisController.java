@@ -1,6 +1,7 @@
 package pt.ipleiria.careline.controllers;
 
 import com.lowagie.text.DocumentException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.utils.PdfGenerator;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Optional;
 
 @RequestMapping("/api")
@@ -85,23 +87,39 @@ public class DiagnosisController {
     }
 
     @GetMapping("/patients/{patientId}/diagnosis/{id}/pdf")
-    public void getPDFByIdPatient(@PathVariable("id") Long id, @PathVariable("patientId") Long patientId) throws DocumentException, IOException {
+    public void getPDFByIdPatient(@PathVariable("id") Long id, @PathVariable("patientId") Long patientId, HttpServletResponse response) throws DocumentException, IOException {
         Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getDiagnosisOfPatient(patientId, id);
         if (diagnosisEntity.isEmpty()) {
             throw new IllegalArgumentException("Diagnosis not found");
         }
         PdfGenerator generator = new PdfGenerator();
-        generator.generateDiagnosisPDF(diagnosisEntity.get());
+        byte[] pdfContent = generator.generateDiagnosisPDF(diagnosisEntity.get());
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=diagnosis_report.pdf");
+        response.setContentLength(pdfContent.length);
+
+        try (OutputStream outputStream = response.getOutputStream()) {
+            outputStream.write(pdfContent);
+            outputStream.flush();
+        }
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}/pdf")
-    public void getPDFById(@PathVariable("id") Long id) throws DocumentException, IOException {
+    public void getPDFById(@PathVariable("id") Long id, HttpServletResponse response) throws DocumentException, IOException {
         Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getById(id);
         if (diagnosisEntity.isEmpty()) {
             throw new IllegalArgumentException("Diagnosis not found");
         }
         PdfGenerator generator = new PdfGenerator();
-        generator.generateDiagnosisPDF(diagnosisEntity.get());
+        byte[] pdfContent = generator.generateDiagnosisPDF(diagnosisEntity.get());
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=diagnosis_report.pdf");
+        response.setContentLength(pdfContent.length);
+
+        try (OutputStream outputStream = response.getOutputStream()) {
+            outputStream.write(pdfContent);
+            outputStream.flush();
+        }
     }
 
     @GetMapping("patient/{patientId}/diagnosis/latest")
