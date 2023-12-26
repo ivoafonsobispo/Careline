@@ -3,7 +3,44 @@ import './ClientBase.css'
 
 import { Pencil, Paperclip, Check, Download, ClockHistory } from 'react-bootstrap-icons'
 
+import axios from 'axios';
+
 export default function ClientTriageComponent({ status }) {
+
+    const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/1/pdf`;
+
+    // const [pdf, setPdf] = useState(null);
+    const pdfDownloadClick = () => {
+        axios.get(urlPdf, {
+            responseType: 'blob',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+
+                // Temporary anchor element
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Diagnosis_1.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                // Release the object URL
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                // handle the error
+                console.log(error);
+            });
+    };
+
 
     return (
         <div className="client-triage-box">
@@ -41,7 +78,7 @@ export default function ClientTriageComponent({ status }) {
 
                 <div className='align-line-row' style={{ marginLeft: "auto", marginRight: "2%" }}>
                     <span className='align-line-row'><Paperclip size={20} /> &nbsp;Diagnosis 1 &nbsp;</span>
-                    <span className='align-line-row triage-diagnosis-download-button'><Download size={20} /></span>
+                    <span className='align-line-row triage-diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20} /></span>
                 </div>
             </div>
 
