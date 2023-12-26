@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import './Header.css';
 
-export default function Header({isActive, toggleNavbar}) {
+export default function Header({isActive, toggleNavbar, userType}) {
 
     return(
-        <header>
+        <header className={classNames(userType === 'patient' ? 'header-patient' : 'header-professional')}>
             <div id='logo'>
                 <img alt="CL"></img>
             </div>

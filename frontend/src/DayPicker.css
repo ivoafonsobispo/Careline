@@ -17,6 +17,14 @@
     font-size: 16px !important;
   }
 
+  .day-picker-style-professional{
+    width: 80% !important;
+    --rdp-accent-color: var(--professionalBaseColor) !important;
+    --rdp-background-color: white !important;
+    margin: 0;
+    --rdp-cell-size: 0p !important;
+    font-size: 16px !important;
+  }
 
 .rdp-caption {
     margin-top: 8% !important;

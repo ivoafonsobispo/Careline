@@ -25,7 +25,7 @@ export default function App() {
 
   return (
     <div className='App'>
-      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar}/> 
+      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar} userType={userType}/> 
 
       <div className='App-body'>
         <Navbar isActive={isToggleActive} userType={userType}/>
