@@ -1,5 +1,20 @@
 .professional-home-information{
     background-color: var(--professionalLightColor);
-    padding: 5%;
+    padding: 3%;
     border-radius: 2%/15%;
+    font-size: 18px;
+}
+
+.info-line{
+    display: flex;
+}
+
+.info-line-value{
+    margin-left: auto;
+}
+
+.vertical-bar{
+    border-left: 2px solid var(--professionalBaseColor);
+    height: 100%;
+    width: 1%;
 }

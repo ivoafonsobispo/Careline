@@ -42,8 +42,6 @@ export default function ClientHomeBody() {
     })
       .then(response => {
         setMeasures(response.data.content);
-        // console.log("Measures:");
-        // console.log(response.data.content);
       })
       .catch(error => {
         // handle the error
@@ -60,8 +58,6 @@ export default function ClientHomeBody() {
     })
       .then(response => {
         setDiagnoses(response.data.content);
-        // console.log("Diagnoses:");
-        // console.log(response.data.content);
       })
       .catch(error => {
         // handle the error
@@ -77,9 +73,10 @@ export default function ClientHomeBody() {
       }
     })
       .then(response => {
-        let heartbeatValue = response.data.content[0].heartbeat;
-        setLastHeartbeat(heartbeatValue);
-        setHeartbeatSeverity(response.data.content[0].severity);
+        let heartbeatObject = response.data.content[0];
+        let heartbeatValue = heartbeatObject.heartbeat;
+        setLastHeartbeat(heartbeatObject.heartbeat);
+        setHeartbeatSeverity(heartbeatObject.severity);
 
         // 60 BPM <=> 1 segundo = 1 beat
         // 80 BPM <=> 1 segundo = 1.33 beats
@@ -101,9 +98,9 @@ export default function ClientHomeBody() {
       }
     })
       .then(response => {
-
-        setLastTemperature(response.data.content[0].temperature);
-        setTemperatureSeverity(response.data.content[0].severity);
+        let temperatureObject = response.data.content[0];
+        setLastTemperature(temperatureObject.temperature);
+        setTemperatureSeverity(temperatureObject.severity);
         // console.log("Last Temperature:");
         // console.log(response.data.content);
       })
