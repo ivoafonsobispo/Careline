@@ -63,6 +63,12 @@ public class HeartbeatController {
         return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(),heartbeat.getSeverity()));
     }
 
+    @GetMapping("/date/{date}")
+    public Page<HeartbeatResponseDTO> listHeartbeatsByDate(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
+        Page<HeartbeatEntity> heartbeats = heartbeatService.findAllByDate(pageable, patientId, date);
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(),heartbeat.getSeverity()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<HeartbeatDTO> getHeartbeatById(@PathVariable("id") Long id) {
         Optional<HeartbeatEntity> heartbeat = heartbeatService.getById(id);

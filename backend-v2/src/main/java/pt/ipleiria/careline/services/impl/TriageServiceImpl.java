@@ -2,11 +2,10 @@ package pt.ipleiria.careline.services.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
-import pt.ipleiria.careline.helpers.DataValidation;
+import pt.ipleiria.careline.validations.DataValidation;
 import pt.ipleiria.careline.repositories.TriageRepository;
 import pt.ipleiria.careline.services.TriageService;
 

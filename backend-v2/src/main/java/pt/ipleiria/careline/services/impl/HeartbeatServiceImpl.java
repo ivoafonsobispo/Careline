@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Severity;
-import pt.ipleiria.careline.helpers.DataValidation;
+import pt.ipleiria.careline.utils.DateConversionUtil;
+import pt.ipleiria.careline.validations.DataValidation;
 import pt.ipleiria.careline.repositories.HeartbeatRepository;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,6 +81,16 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     @Override
     public void delete(Long id) {
         heartbeatRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<HeartbeatEntity> findAllByDate(Pageable pageable, Long patientId, String date) {
+        DateConversionUtil dateConversionUtil = new DateConversionUtil();
+        Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
+        Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
+
+        return heartbeatRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(
+                pageable, patientId, startDate, endDate);
     }
 
     private Severity getSeverityCategory(int heartbeat) {

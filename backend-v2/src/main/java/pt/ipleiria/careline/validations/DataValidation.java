@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.helpers;
+package pt.ipleiria.careline.validations;
 
 public class DataValidation {
     public static boolean isHeartbeatValid(Integer heartbeat) {

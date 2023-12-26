@@ -9,6 +9,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public class DiagnosisResponseDTO {
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("created_at")
     public ZonedDateTime createdAt;
     List<String> prescriptions;
@@ -20,10 +21,11 @@ public class DiagnosisResponseDTO {
     public DiagnosisResponseDTO() {
     }
 
-    public DiagnosisResponseDTO(PatientResponseDTO patient,
+    public DiagnosisResponseDTO(Long id, PatientResponseDTO patient,
                                 ProfessionalResponseDTO professional,
                                 String diagnosis, List<String> prescriptions,
                                 Instant createdAt) {
+        this.id = id;
         this.patient = patient;
         this.professional = professional;
         this.diagnosis = diagnosis;

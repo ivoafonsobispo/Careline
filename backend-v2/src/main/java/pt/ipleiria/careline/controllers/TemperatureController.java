@@ -11,6 +11,7 @@ import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
 import pt.ipleiria.careline.domain.dto.responses.HeartbeatResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.TemperatureResponseDTO;
+import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
@@ -58,6 +59,12 @@ public class TemperatureController {
     public Page<TemperatureResponseDTO> listLatestTemperatures(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<TemperatureEntity> temperatureEntities = temperatureService.findAllLatest(pageable, patientId);
         return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt(),temperature.getSeverity()));
+    }
+
+    @GetMapping("/date/{date}")
+    public Page<TemperatureResponseDTO> listTemperaturesByDate(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
+        Page<TemperatureEntity> temperatureEntities = temperatureService.findAllByDate(pageable, patientId, date);
+        return temperatureEntities.map(temperature -> new TemperatureResponseDTO(temperature.getTemperature(), temperature.getCreatedAt(), temperature.getSeverity()));
     }
 
     @GetMapping("/{id}")
