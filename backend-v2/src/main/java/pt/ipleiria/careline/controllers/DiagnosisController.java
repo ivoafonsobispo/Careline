@@ -69,9 +69,7 @@ public class DiagnosisController {
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity<DiagnosisResponseDTO> getByIdProfessional(@PathVariable("id") Long id) {
         Optional<DiagnosisEntity> diagnosis = diagnosisService.getById(id);
-        return diagnosis.map(diagnosisEntity -> {
-            DiagnosisResponseDTO diagnosisDTO =
-                    diagnosisResponseMapper.mapToDTO(diagnosisEntity);
+        return diagnosis.map(diagnosisEntity -> {DiagnosisResponseDTO diagnosisDTO = diagnosisResponseMapper.mapToDTO(diagnosisEntity);
             return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

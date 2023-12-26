@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.exceptions.PatientNotFoundException;
-import pt.ipleiria.careline.helpers.UserValidation;
+import pt.ipleiria.careline.validations.UserValidation;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.services.PatientService;
 

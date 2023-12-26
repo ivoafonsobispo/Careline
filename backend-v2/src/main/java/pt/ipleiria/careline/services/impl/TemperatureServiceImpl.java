@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Severity;
-import pt.ipleiria.careline.helpers.DataValidation;
+import pt.ipleiria.careline.utils.DateConversionUtil;
+import pt.ipleiria.careline.validations.DataValidation;
 import pt.ipleiria.careline.repositories.TemperatureRepository;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.TemperatureService;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -81,6 +83,18 @@ public class TemperatureServiceImpl implements TemperatureService {
     public void delete(Long id) {
         temperatureRepository.deleteById(id);
     }
+
+    @Override
+    public Page<TemperatureEntity> findAllByDate(Pageable pageable, Long patientId, String date) {
+        DateConversionUtil dateConversionUtil = new DateConversionUtil();
+        Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
+        Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
+
+        return temperatureRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(
+                pageable, patientId, startDate, endDate);
+    }
+
+
     private Severity getSeverityCategory(double temperature) {
         if (temperature >= GOOD_MIN && temperature <= GOOD_MAX) {
             return Severity.GOOD;

@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.helpers;
+package pt.ipleiria.careline.validations;
 
 public class UserValidation {
     public static boolean isNusValid(String nus) {
