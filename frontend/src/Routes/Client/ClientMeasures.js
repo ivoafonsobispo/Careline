@@ -13,18 +13,33 @@ import SockJS from 'sockjs-client';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const urlHeartbeats = 'http://localhost:8080/api/patients/1/heartbeats/latest';
-const urlTemperatures = 'http://localhost:8080/api/patients/1/temperatures/latest';
 
 
 export default function ClientMeasures() {
 
   const [selected, setSelected] = useState(new Date());
+  const [date, setDate] = useState("2023-12-25");
+
+  useEffect(() => {
+    if (selected) {
+      const year = selected.getFullYear();
+      const month = String(selected.getMonth() + 1).padStart(2, '0');
+      const day = String(selected.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      setDate(formattedDate);
+      console.log(formattedDate);
+    }
+  }, [selected]);
 
   let footer = <p>Please pick a day.</p>;
   if (selected) {
     footer = <p>You picked {format(selected, 'PP')}.</p>;
   }
+
+  console.log(date);
+
+  const urlHeartbeats = `http://localhost:8080/api/patients/1/heartbeats/date/${date}`;
+  const urlTemperatures = `http://localhost:8080/api/patients/1/temperatures/date/${date}`;
 
   const [heartbeats, setHeartbeats] = useState(null);
   const [temperatures, setTemperatures] = useState(null);
@@ -61,7 +76,7 @@ export default function ClientMeasures() {
       .catch(error => {
         console.log(error);
       });
-  }, []);
+  }, [urlHeartbeats, urlTemperatures]);
 
 
   useEffect(() => {
@@ -85,9 +100,9 @@ export default function ClientMeasures() {
     };
   }, []);
 
-  
-  if (!heartbeats) return null;
-  if (!temperatures) return null;
+
+  // if (!heartbeats) return null;
+  // if (!temperatures) return null;
 
   return (
     <div className="horizontal-container">
