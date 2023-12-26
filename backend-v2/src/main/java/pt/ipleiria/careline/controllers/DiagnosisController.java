@@ -12,14 +12,19 @@ import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.DiagnosisDTO;
 import pt.ipleiria.careline.domain.dto.responses.DiagnosisResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.HeartbeatResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.ProfessionalResponseDTO;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
+import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.utils.PdfGenerator;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.Optional;
 
 @RequestMapping("/api")
@@ -29,28 +34,30 @@ public class DiagnosisController {
     private final DiagnosisService diagnosisService;
     private Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
     private Mapper<DiagnosisEntity, DiagnosisResponseDTO> diagnosisResponseMapper;
+    private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
+    private Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper;
     private SimpMessagingTemplate messagingTemplate;
 
     public DiagnosisController(DiagnosisService diagnosisService,
-                               Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity,DiagnosisResponseDTO> diagnosisResponseMapper, SimpMessagingTemplate messagingTemplate) {
+                               Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity,DiagnosisResponseDTO> diagnosisResponseMapper,Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper,Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper, SimpMessagingTemplate messagingTemplate) {
         this.diagnosisService = diagnosisService;
         this.diagnosisMapper = diagnosisMapper;
         this.diagnosisResponseMapper = diagnosisResponseMapper;
+        this.patientResponseDTOMapper = patientResponseDTOMapper;
+        this.professionalResponseDTOMapper = professionalResponseDTOMapper;
         this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
-    public ResponseEntity<DiagnosisDTO> create(@PathVariable(
+    public ResponseEntity<DiagnosisResponseDTO> create(@PathVariable(
             "professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
         DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
-        DiagnosisDTO createdDiagnosticDTO =
-                diagnosisMapper.mapToDTO(savedDiagnosticEntity);
+        DiagnosisResponseDTO responseDTO = new DiagnosisResponseDTO(savedDiagnosticEntity.getId(),patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), savedDiagnosticEntity.getDiagnosis(), savedDiagnosticEntity.getPrescriptions(), Instant.now());
 
-        messagingTemplate.convertAndSend("/topic/diagnosis",
-                createdDiagnosticDTO);
+        messagingTemplate.convertAndSend("/topic/diagnosis",responseDTO);
 
-        return new ResponseEntity<>(createdDiagnosticDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
