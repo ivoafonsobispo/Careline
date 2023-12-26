@@ -4,6 +4,9 @@ import DigitalTwin from './ClientDigitalTwin';
 import MeasureStatusBox from './MeasureStatusBox'
 import MeasureList from './MeasureList';
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 const baseURL = 'http://localhost:8080/api/patients/1/heartbeats';
@@ -107,6 +110,34 @@ export default function ClientHomeBody() {
       .catch(error => {
         console.log(error);
       });
+  }, []);
+
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/websocket-endpoint');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+      stompClient.subscribe('/topic/heartbeats', (message) => {
+        let newHeartbeat = JSON.parse(message.body);
+        setLastHeartbeat(newHeartbeat.heartbeat);
+        setHeartbeatSeverity(newHeartbeat.severity);
+      });
+
+      stompClient.subscribe('/topic/temperatures', (message) => {
+        let newTemperature = JSON.parse(message.body);
+        setLastTemperature(newTemperature.temperature);
+        setTemperatureSeverity(newTemperature.severity);
+      });
+
+      stompClient.subscribe('/topic/diagnosis', (message) => {
+        let newDiagnosis = JSON.parse(message.body);
+        setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
+      });
+    });
+
+    return () => {
+      stompClient.disconnect();
+    };
   }, []);
 
   if (!measures) return null;

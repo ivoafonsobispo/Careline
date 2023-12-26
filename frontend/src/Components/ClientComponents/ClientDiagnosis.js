@@ -3,9 +3,7 @@ import './ClientBase.css'
 
 import { Paperclip, Pen, Download } from 'react-bootstrap-icons'
 
-
 import axios from 'axios';
-
 
 export default function ClientDiagnosis({ id, description, prescriptions, professional, date }) {
     const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/${id}/pdf`;
@@ -13,6 +11,7 @@ export default function ClientDiagnosis({ id, description, prescriptions, profes
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
         axios.get(urlPdf, {
+            responseType: 'blob',
             headers: {
                 'Access-Control-Allow-Origin': '*',
             },
@@ -21,8 +20,19 @@ export default function ClientDiagnosis({ id, description, prescriptions, profes
             }
         })
             .then(response => {
-                // handle the response
-                console.log(response.data);
+                const blob = new Blob([response.data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+
+                // Temporary anchor element
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Diagnosis_${id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                // Release the object URL
+                window.URL.revokeObjectURL(url);
             })
             .catch(error => {
                 // handle the error

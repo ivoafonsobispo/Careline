@@ -11,6 +11,8 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
 
 import axios from 'axios';
 import { useEffect } from 'react';
@@ -42,6 +44,22 @@ export default function ClientDiagnoses() {
             .catch(error => {
                 console.log(error);
             });
+    }, []);
+
+    useEffect(() => {
+        const socket = new SockJS('http://localhost:8080/websocket-endpoint');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/diagnosis', (message) => {
+                let newDiagnosis = JSON.parse(message.body);
+                setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
+            });
+        });
+
+        return () => {
+            stompClient.disconnect();
+        };
     }, []);
 
     if (!diagnoses) return null;
