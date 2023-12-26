@@ -8,24 +8,16 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
 
-import useWebSocket from 'react-use-websocket';
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
 
 import axios from 'axios';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 const urlHeartbeats = 'http://localhost:8080/api/patients/1/heartbeats/latest';
 const urlTemperatures = 'http://localhost:8080/api/patients/1/temperatures/latest';
 
 
 export default function ClientMeasures() {
-  const socketUrl = 'ws://localhost:8080/app/websocket-endpoint/topic/heartbeats';
-
-  const { lastMessage, readyState, onMessage } = useWebSocket(socketUrl, {
-    onMessage: (event) => {
-      console.log('Received message:', event.data);
-      // You can perform additional actions with the received message here
-    },
-  });
-
 
   const [selected, setSelected] = useState(new Date());
 
@@ -33,14 +25,6 @@ export default function ClientMeasures() {
   if (selected) {
     footer = <p>You picked {format(selected, 'PP')}.</p>;
   }
-
-  // const handleMessage = (event) => {
-  //   console.log('Received message:', event.data);
-
-  // };
-
-  // // Set up the event listener
-  // onMessage(handleMessage);
 
   const [heartbeats, setHeartbeats] = useState(null);
   const [temperatures, setTemperatures] = useState(null);
@@ -77,24 +61,26 @@ export default function ClientMeasures() {
       .catch(error => {
         console.log(error);
       });
-
-    // const socket = new WebSocket("ws://localhost:8080");
-
-    // // Connection opened
-    // socket.addEventListener("open", (event) => {
-    //   socket.send("Connection established")
-    // })
-
-    // // Listen for messages
-    // socket.addEventListener("message", (event) => {
-    //   console.log("Message from server ", event.data)
-    // })
-
-    // connection.current = ws
-
-    // return () => connection.close()
   }, []);
 
+
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/websocket-endpoint');
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, () => {
+      stompClient.subscribe('/topic/heartbeats', (message) => {
+        let newHeartbeat = JSON.parse(message.body);
+        setHeartbeats((prevHeartbeats) => [newHeartbeat, ...prevHeartbeats]);
+      });
+    });
+
+    return () => {
+      stompClient.disconnect();
+    };
+  }, []);
+
+  
   if (!heartbeats) return null;
   if (!temperatures) return null;
 
