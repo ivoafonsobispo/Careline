@@ -9,12 +9,14 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.TemperatureDTO;
+import pt.ipleiria.careline.domain.dto.responses.HeartbeatResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.TemperatureResponseDTO;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.TemperatureService;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/temperatures")
@@ -35,15 +37,15 @@ public class TemperatureController {
     }
 
     @PostMapping
-    public ResponseEntity<TemperatureDTO> createTemperature(@PathVariable("patientId") Long patientId, @RequestBody @Valid TemperatureDTO temperatureDTO) {
+    public ResponseEntity<TemperatureResponseDTO> createTemperature(@PathVariable("patientId") Long patientId, @RequestBody @Valid TemperatureDTO temperatureDTO) {
         TemperatureEntity temperatureEntity = temperatureMapper.mapFrom(temperatureDTO);
         TemperatureEntity createdTemperature =
                 temperatureService.create(patientId, temperatureEntity);
-        TemperatureDTO createdTemperatureDTO = temperatureMapper.mapToDTO(createdTemperature);
+        TemperatureResponseDTO temperatureResponseDTO = new TemperatureResponseDTO(createdTemperature.getTemperature(), Instant.now(), createdTemperature.getSeverity());
 
-        messagingTemplate.convertAndSend("/topic/temperatures", createdTemperatureDTO);
+        messagingTemplate.convertAndSend("/topic/temperatures", temperatureResponseDTO);
 
-        return new ResponseEntity<>(createdTemperatureDTO, HttpStatus.CREATED);
+        return new ResponseEntity<>(temperatureResponseDTO, HttpStatus.CREATED);
     }
 
     @GetMapping

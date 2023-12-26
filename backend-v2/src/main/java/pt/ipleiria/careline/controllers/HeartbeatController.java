@@ -17,6 +17,7 @@ import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")
@@ -40,10 +41,10 @@ public class HeartbeatController {
     }
 
     @PostMapping
-    public ResponseEntity<HeartbeatDTO> create(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
+    public ResponseEntity<HeartbeatResponseDTO> create(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
         HeartbeatEntity heartbeatEntity = heartbeatMapper.mapFrom(heartbeatDTO);
         HeartbeatEntity createdHeartbeat = heartbeatService.create(patientId, heartbeatEntity);
-        HeartbeatDTO createdHeartbeatDTO = heartbeatMapper.mapToDTO(createdHeartbeat);
+        HeartbeatResponseDTO createdHeartbeatDTO = new HeartbeatResponseDTO(createdHeartbeat.getHeartbeat(), Instant.now(), createdHeartbeat.getSeverity());
 
         messagingTemplate.convertAndSend("/topic/heartbeats", createdHeartbeatDTO);
 
