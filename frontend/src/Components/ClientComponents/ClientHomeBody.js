@@ -14,8 +14,14 @@ const urlLastTemperature = 'http://localhost:8080/api/patients/1/temperatures/la
 export default function ClientHomeBody() {
   const [measures, setMeasures] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
+
+  // Heartbeat (value and severity)
   const [lastHeartbeat, setLastHeartbeat] = useState(null);
+  const [heartbeatSeverity, setHeartbeatSeverity] = useState(null);
+
+  // Temperature (value and severity)
   const [lastTemperature, setLastTemperature] = useState(null);
+  const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
   const [animationSpeed, setAnimationSpeed] = useState(1);
   const heartStyle = {
@@ -23,115 +29,105 @@ export default function ClientHomeBody() {
   };
 
   useEffect(() => {
-    axios.get(baseURL, { 
+    axios.get(baseURL, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-      }, 
+      },
       proxy: {
         port: 8080
-      } })
+      }
+    })
       .then(response => {
-        // handle the response
         setMeasures(response.data.content);
-        console.log("Measures:");
-        console.log(response.data.content);
+        // console.log("Measures:");
+        // console.log(response.data.content);
       })
       .catch(error => {
         // handle the error
         console.log(error);
       });
 
-    axios.get(urlDiagnoses, { 
+    axios.get(urlDiagnoses, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-      }, 
+      },
       proxy: {
         port: 8080
-      } })
+      }
+    })
       .then(response => {
-        // handle the response
         setDiagnoses(response.data.content);
-        console.log("Diagnoses:");
-        console.log(response.data.content);
+        // console.log("Diagnoses:");
+        // console.log(response.data.content);
       })
       .catch(error => {
         // handle the error
         console.log(error);
       });
 
-    axios.get(urlLastHeartbeat, { 
+    axios.get(urlLastHeartbeat, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-      }, 
+      },
       proxy: {
         port: 8080
-      } })
+      }
+    })
       .then(response => {
-        // handle the response
-        setLastHeartbeat(response.data.content);
-        console.log("Last Heartbeat:");
-        console.log(response.data.content);
-        let lastHeartbeatValue = Object.values(response.data.content)[0];
-        console.log(lastHeartbeatValue);
+        let heartbeatValue = response.data.content[0].heartbeat;
+        setLastHeartbeat(heartbeatValue);
+        setHeartbeatSeverity(response.data.content[0].severity);
 
         // 60 BPM <=> 1 segundo = 1 beat
         // 80 BPM <=> 1 segundo = 1.33 beats
         // Para tornar mais suave: retirar apenas metade da diferença de 60 para 80
         // ex: 1s - ((80 / 70) - 1s) <=> 1s - (1,14 - 1s) = 1s - 0.14 = 0.86s
-        setAnimationSpeed(1 - ((lastHeartbeatValue.heartbeat/(60 + ((lastHeartbeatValue.heartbeat-60)/2))) - 1));
-        console.log(1 - ((lastHeartbeatValue.heartbeat/(60 + ((lastHeartbeatValue.heartbeat-60)/2))) - 1));
+        setAnimationSpeed(1 - ((heartbeatValue / (60 + ((heartbeatValue - 60) / 2))) - 1));
+        // console.log(1 - ((lastHeartbeat/(60 + ((lastHeartbeat-60)/2))) - 1));
       })
       .catch(error => {
-        // handle the error
         console.log(error);
       });
 
-    axios.get(urlLastTemperature, { 
+    axios.get(urlLastTemperature, {
       headers: {
         'Access-Control-Allow-Origin': '*',
-      }, 
+      },
       proxy: {
         port: 8080
-      } })
+      }
+    })
       .then(response => {
-        // handle the response
-        setLastTemperature(response.data.content);
-        console.log("Last Temperature:");
-        console.log(response.data.content);
+
+        setLastTemperature(response.data.content[0].temperature);
+        setTemperatureSeverity(response.data.content[0].severity);
+        // console.log("Last Temperature:");
+        // console.log(response.data.content);
       })
       .catch(error => {
-        // handle the error
         console.log(error);
       });
   }, []);
 
   if (!measures) return null;
-  let measuresArray = Object.values(measures);
-
   if (!diagnoses) return null;
-  let diagnosesArray = Object.values(diagnoses);
-
   if (!lastHeartbeat) return null;
-  let lastHeartbeatValue = Object.values(lastHeartbeat)[0];
-
   if (!lastTemperature) return null;
-  let lastTemperatureValue = Object.values(lastTemperature)[0];
 
   return (
     <div className='vertical-container gap-vertical' >
       <div className='horizontal-container gap-horizontal' >
-        <DigitalTwin value={lastHeartbeatValue.heartbeat} heartStyle={heartStyle}/>
+        <DigitalTwin value={lastHeartbeat} heartStyle={heartStyle} />
         <div className='vertical-container gap-vertical'>
-          <MeasureStatusBox measure={"Heartbeat"} value={lastHeartbeatValue.heartbeat}/>
-          <MeasureStatusBox measure={"Temperature"} value={lastTemperatureValue.temperature}/>
+          <MeasureStatusBox measure={"Heartbeat"} value={lastHeartbeat} severity={heartbeatSeverity} />
+          <MeasureStatusBox measure={"Temperature"} value={lastTemperature} severity={temperatureSeverity} />
         </div>
       </div>
 
-      <div className='horizontal-container gap-horizontal' style={{maxHeight: "300px"}}>
-        <MeasureList title={"Measures"} dataArray={measuresArray}/>
-        <MeasureList title={"Diagnoses"} dataArray={diagnosesArray}/>
+      <div className='horizontal-container gap-horizontal' style={{ maxHeight: "300px" }}>
+        <MeasureList title={"Measures"} dataArray={measures} />
+        <MeasureList title={"Diagnoses"} dataArray={diagnoses} />
       </div>
     </div>
   );
 }
-  

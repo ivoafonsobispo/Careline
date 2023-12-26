@@ -84,7 +84,14 @@ header {
     max-height: 70px;
     align-items: center;
     color: white;
-    background-color: var(--basecolor);
     font-size: 20px;
+  }
+
+  .header-patient {
+    background-color: var(--basecolor);
+  }
+
+  .header-professional {
+    background-color: var(--professionalBaseColor);
   }
 }

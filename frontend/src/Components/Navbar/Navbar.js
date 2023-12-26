@@ -20,18 +20,31 @@ export default function Navbar({isActive, userType}) {
                         <span className='navbar-item-text'>Home</span>
                     </li>
                 </NavLink>
-                <NavLink to='/measures' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
-                    <li className='navbar-item'>
-                        <HeartFill size={25} className='navbar-svg'/>
-                        <span className='navbar-item-text'>Measures</span>
-                    </li>
-                </NavLink>
-                <NavLink to='/diagnoses' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
-                    <li className='navbar-item'>
-                        <FileBarGraphFill size={25} className='navbar-svg'/>
-                        <span className='navbar-item-text'>Diagnoses</span>
-                    </li>
-                </NavLink>
+                {userType === 'patient' ? 
+                    <>
+                        <NavLink to='/measures' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
+                            <li className='navbar-item'>
+                                <HeartFill size={25} className='navbar-svg'/>
+                                <span className='navbar-item-text'>Measures</span>
+                            </li>
+                        </NavLink>
+                        <NavLink to='/diagnoses' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
+                            <li className='navbar-item'>
+                                <FileBarGraphFill size={25} className='navbar-svg'/>
+                                <span className='navbar-item-text'>Diagnoses</span>
+                            </li>
+                        </NavLink>
+                    </>
+                : 
+                    <>
+                        <NavLink to='/patients' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
+                            <li className='navbar-item'>
+                                <PersonFill size={25} className='navbar-svg'/>
+                                <span className='navbar-item-text'>Patients</span>
+                            </li>
+                        </NavLink>
+                    </>
+                }
                 <NavLink to='/triage' className={classNames(userType === 'patient' ? "navlink-patient" : "navlink-professional")}>
                     <li className='navbar-item'>
                         <FileEarmarkMedicalFill size={25} className='navbar-svg'/>

@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import './ClientEditProfileBody.css'
 
-import {Eye, EyeSlash, Check, X} from 'react-bootstrap-icons';
+import { Eye, EyeSlash, Check, X } from 'react-bootstrap-icons';
 import { useState } from 'react';
 
-export default function ClientEditProfileBody({user, setEditProfileClicked, onEditProfileSuccess}) {
+export default function ClientEditProfileBody({ user, setEditProfileClicked, onEditProfileSuccess }) {
     const isNumber = (value) => /^\d+$/.test(value);
 
     const [name, setName] = useState(user.name);
@@ -48,7 +48,7 @@ export default function ClientEditProfileBody({user, setEditProfileClicked, onEd
             const isValidNus = nusRegex.test(e.target.value);
             setIsValidNus(isValidNus);
         }
-        
+
     };
 
     const handlePostRequest = async () => {
@@ -84,17 +84,17 @@ export default function ClientEditProfileBody({user, setEditProfileClicked, onEd
             const response = await fetch('http://localhost:8080/api/patients/1', {
                 method: 'PATCH',
                 headers: {
-                'Content-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updatedFields),
             });
-        
+
             if (!response.ok) {
                 // Handle non-successful response here
                 console.error('Error:', response.statusText);
                 return;
             }
-    
+
             // Assuming the server responds with JSON data
             const data = await response.json();
             user.name = data.name;
@@ -113,7 +113,7 @@ export default function ClientEditProfileBody({user, setEditProfileClicked, onEd
     return (
         <div className="vertical-container profile-container">
             {/* Name */}
-            <div className="horizontal-container" style={{alignItems: "center"}}>
+            <div className="horizontal-container" style={{ alignItems: "center" }}>
                 <span className="profile-field-title">Name:</span>
                 <input
                     className={classNames('profile-field', isValidName ? '' : 'profile-field-border')}
@@ -124,9 +124,9 @@ export default function ClientEditProfileBody({user, setEditProfileClicked, onEd
                 />
             </div>
             {isValidName ? <></> : <p className='field-error-message'>Name is invalid</p>}
-            
+
             {/* Email */}
-            <div className="horizontal-container" style={{alignItems: "center"}}>
+            <div className="horizontal-container" style={{ alignItems: "center" }}>
                 <span className="profile-field-title">Email:</span>
                 <input
                     className={classNames('profile-field', isValidEmail ? '' : 'profile-field-border')}
@@ -137,27 +137,27 @@ export default function ClientEditProfileBody({user, setEditProfileClicked, onEd
                 />
             </div>
             {isValidEmail ? <></> : <p className='field-error-message'>Email is invalid</p>}
-            
+
             {/* Password */}
-            <div className="horizontal-container" style={{alignItems: "center"}}>
-                <span className="profile-field-title">Password:</span> 
-                <span className={classNames('profile-field', isValidPassword ? '' : 'profile-field-border')} style={{alignItems: "center", display: "flex"}}>
+            <div className="horizontal-container" style={{ alignItems: "center" }}>
+                <span className="profile-field-title">Password:</span>
+                <span className={classNames('profile-field', isValidPassword ? '' : 'profile-field-border')} style={{ alignItems: "center", display: "flex" }}>
                     <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={handlePasswordChange}
-                    style={{border: "0", fontSize: "16px",fontFamily: "inherit", width: "100%"}}
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={handlePasswordChange}
+                        style={{ border: "0", fontSize: "16px", fontFamily: "inherit", width: "100%" }}
                     />
-                    <button type="button" onClick={togglePasswordVisibility} style={{background: "none",  border: "0", cursor: "pointer"}}>
-                        {showPassword ? <EyeSlash size={25} color="var(--basecolor)"/> : <Eye size={25} color="var(--basecolor)"/>}
+                    <button type="button" onClick={togglePasswordVisibility} style={{ background: "none", border: "0", cursor: "pointer" }}>
+                        {showPassword ? <EyeSlash size={25} color="var(--basecolor)" /> : <Eye size={25} color="var(--basecolor)" />}
                     </button>
                 </span>
             </div>
             {isValidPassword ? <></> : <p className='field-error-message'>Password is invalid</p>}
-            
+
             {/* NUS */}
-            <div className="horizontal-container" style={{alignItems: "center"}}>
-                <span className="profile-field-title">NUS:</span> 
+            <div className="horizontal-container" style={{ alignItems: "center" }}>
+                <span className="profile-field-title">NUS:</span>
                 <input
                     className={classNames('profile-field', isValidNus ? '' : 'profile-field-border')}
                     type="type"
@@ -169,12 +169,12 @@ export default function ClientEditProfileBody({user, setEditProfileClicked, onEd
             {isValidNus ? <></> : <p className='field-error-message'>NUS is invalid</p>}
 
             {/* Edit Button */}
-            <div className="horizontal-container" style={{alignItems: "center"}}>
+            <div className="horizontal-container" style={{ alignItems: "center" }}>
                 <button className="profile-button align-line-row" onClick={() => setEditProfileClicked()}>
-                    <X size={25} color="white"/> &nbsp; Back
+                    <X size={25} color="white" /> &nbsp; Back
                 </button>
                 <button className={classNames("profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && isValidPassword) ? "profile-button-disabled" : "")} onClick={handlePostRequest} disabled={!(isValidName && isValidEmail && isValidNus && isValidPassword)}>
-                    <Check size={25} color="white"/> &nbsp; Edit Profile
+                    <Check size={25} color="white" /> &nbsp; Edit Profile
                 </button>
             </div>
         </div>

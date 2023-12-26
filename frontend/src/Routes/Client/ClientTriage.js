@@ -2,7 +2,7 @@ import PageTitle from "../../Components/PageTitle/PageTitle";
 import "../../Components/ClientComponents/ClientBase.css";
 import ClientTriageComponent from "../../Components/ClientComponents/ClientTriageComponent";
 
-import {useState} from 'react';
+import { useState } from 'react';
 
 //Day Picker
 import { format } from 'date-fns';
@@ -18,14 +18,14 @@ export default function ClientTriage() {
         footer = <p>You picked {format(selected, 'PP')}.</p>;
     }
 
-    return(
+    return (
         <div className="horizontal-container">
             <div className="vertical-container">
-                <PageTitle title="Triage"/>
+                <PageTitle title="Triage" />
                 <div className='App-content'>
-                    <div className="vertical-container diagnoses-list" style={{maxHeight: "540px"}}>
-                        <ClientTriageComponent status={"Reviewed"}/>
-                        <ClientTriageComponent status={"Sent"}/>
+                    <div className="vertical-container diagnoses-list" style={{ maxHeight: "540px" }}>
+                        <ClientTriageComponent status={"Reviewed"} />
+                        <ClientTriageComponent status={"Sent"} />
                     </div>
                 </div>
             </div>
