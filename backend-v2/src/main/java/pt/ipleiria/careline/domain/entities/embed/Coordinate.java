@@ -1,5 +1,6 @@
 package pt.ipleiria.careline.domain.entities.embed;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
@@ -10,15 +11,19 @@ import lombok.Setter;
 @Embeddable
 public class Coordinate {
     @Column(name = "departure_latitude")
+    @JsonProperty("departure_latitude")
     private double departureLatitude;
 
     @Column(name = "departure_longitude")
+    @JsonProperty("departure_longitude")
     private double departureLongitude;
 
     @Column(name = "arrival_latitude")
+    @JsonProperty("arrival_latitude")
     private double arrivalLatitude;
 
     @Column(name = "arrival_longitude")
+    @JsonProperty("arrival_longitude")
     private double arrivalLongitude;
 
     public Coordinate() {
