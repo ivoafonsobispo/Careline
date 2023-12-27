@@ -10,26 +10,43 @@ import java.io.IOException;
 
 public class PdfGenerator {
     public byte[] generateDiagnosisPDF(DiagnosisEntity diagnosisEntity) throws DocumentException, IOException {
+        // Create document with A4 size
         Document document = new Document(PageSize.A4);
+
+        // ByteArrayOutputStream for storing the generated PDF
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
         try (byteArrayOutputStream) {
+            // Create PdfWriter instance with the ByteArrayOutputStream
             PdfWriter.getInstance(document, byteArrayOutputStream);
-            document.open();
+
+            // Open the document
             document.open();
 
-            // Necessities
+            // Set up font for the title
             Font fontTitle = FontFactory.getFont(FontFactory.COURIER_BOLD);
-            document.addCreationDate();
-            document.addAuthor("Careline");
-            document.addHeader("Diagnosis", "Diagnosis");
+            fontTitle.setSize(16);
+
+            // Title
             Paragraph title = new Paragraph("Diagnosis: " + diagnosisEntity.getCreatedAt(), fontTitle);
-            Paragraph patient =
-                    new Paragraph("Patient: " + diagnosisEntity.getPatient().getName() + " | email: " + diagnosisEntity.getPatient().getEmail() + " | Numero Utente de Saude: " + diagnosisEntity.getPatient().getNus());
-            Paragraph professional =
-                    new Paragraph("Professional: " + diagnosisEntity.getProfessional().getName() + " | email: " + diagnosisEntity.getProfessional().getEmail() + " | Numero Utente de Saude" + diagnosisEntity.getProfessional().getNus());
+            title.setAlignment(Paragraph.ALIGN_CENTER);
+            title.setSpacingAfter(20);
+
+            // Patient information
+            Paragraph patient = new Paragraph("Patient: " + diagnosisEntity.getPatient().getName()
+                    + " | Email: " + diagnosisEntity.getPatient().getEmail()
+                    + " | Numero Utente de Saude: " + diagnosisEntity.getPatient().getNus());
+
+            // Professional information
+            Paragraph professional = new Paragraph("Professional: " + diagnosisEntity.getProfessional().getName()
+                    + " | Email: " + diagnosisEntity.getProfessional().getEmail()
+                    + " | Numero Utente de Saude: " + diagnosisEntity.getProfessional().getNus());
+
+            // Diagnosis and Prescriptions
             Paragraph diagnosis = new Paragraph("Diagnosis: " + diagnosisEntity.getDiagnosis());
             Paragraph prescriptions = new Paragraph("Prescriptions: " + diagnosisEntity.getPrescriptions());
 
+            // QR Code
             String medication = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
             byte[] qrCodeImage = null;
             try {
@@ -38,22 +55,26 @@ public class PdfGenerator {
                 e.printStackTrace();
             }
 
-            // Styling
-            fontTitle.setSize(16);
-            title.setAlignment(Paragraph.ALIGN_CENTER);
             Image qrCode = Image.getInstance(qrCodeImage);
             qrCode.setAlignment(Paragraph.ALIGN_BOTTOM);
-            title.setSpacingAfter(20);
 
+            // Add elements to the document
+            document.addCreationDate();
+            document.addAuthor("Careline");
+            document.addHeader("Diagnosis", "Diagnosis");
             document.add(title);
             document.add(patient);
             document.add(professional);
             document.add(diagnosis);
             document.add(prescriptions);
             document.add(qrCode);
+
+            // Close the document
             document.close();
         }
-        return byteArrayOutputStream.toByteArray();
 
+        // Return the generated PDF as a byte array
+        return byteArrayOutputStream.toByteArray();
     }
+
 }
