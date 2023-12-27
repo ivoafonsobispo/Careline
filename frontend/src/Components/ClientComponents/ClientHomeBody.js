@@ -9,12 +9,15 @@ import SockJS from 'sockjs-client';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const baseURL = 'http://localhost:8080/api/patients/1/heartbeats';
-const urlDiagnoses = 'http://localhost:8080/api/patients/1/diagnosis';
+
 const urlLastHeartbeat = 'http://localhost:8080/api/patients/1/heartbeats/latest?size=1';
 const urlLastTemperature = 'http://localhost:8080/api/patients/1/temperatures/latest?size=1';
 
-export default function ClientHomeBody() {
+export default function ClientHomeBody({ date }) {
+  console.log(date);
+  const urlHeartbeats = `http://localhost:8080/api/patients/1/heartbeats/date/${date}`;
+  const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis`;
+
   const [measures, setMeasures] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
 
@@ -32,7 +35,7 @@ export default function ClientHomeBody() {
   };
 
   useEffect(() => {
-    axios.get(baseURL, {
+    axios.get(urlHeartbeats, {
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
@@ -42,8 +45,6 @@ export default function ClientHomeBody() {
     })
       .then(response => {
         setMeasures(response.data.content);
-        // console.log("Measures:");
-        // console.log(response.data.content);
       })
       .catch(error => {
         // handle the error
@@ -60,8 +61,6 @@ export default function ClientHomeBody() {
     })
       .then(response => {
         setDiagnoses(response.data.content);
-        // console.log("Diagnoses:");
-        // console.log(response.data.content);
       })
       .catch(error => {
         // handle the error
@@ -77,16 +76,18 @@ export default function ClientHomeBody() {
       }
     })
       .then(response => {
-        let heartbeatValue = response.data.content[0].heartbeat;
-        setLastHeartbeat(heartbeatValue);
-        setHeartbeatSeverity(response.data.content[0].severity);
+        let heartbeatObject = response.data.content[0];
+        if (heartbeatObject) {
+          setLastHeartbeat(heartbeatObject.heartbeat);
+          setHeartbeatSeverity(heartbeatObject.severity);
 
-        // 60 BPM <=> 1 segundo = 1 beat
-        // 80 BPM <=> 1 segundo = 1.33 beats
-        // Para tornar mais suave: retirar apenas metade da diferença de 60 para 80
-        // ex: 1s - ((80 / 70) - 1s) <=> 1s - (1,14 - 1s) = 1s - 0.14 = 0.86s
-        setAnimationSpeed(1 - ((heartbeatValue / (60 + ((heartbeatValue - 60) / 2))) - 1));
-        // console.log(1 - ((lastHeartbeat/(60 + ((lastHeartbeat-60)/2))) - 1));
+          // 60 BPM <=> 1 segundo = 1 beat
+          // 80 BPM <=> 1 segundo = 1.33 beats
+          // Para tornar mais suave: retirar apenas metade da diferença de 60 para 80
+          // ex: 1s - ((80 / 70) - 1s) <=> 1s - (1,14 - 1s) = 1s - 0.14 = 0.86s
+          setAnimationSpeed(1 - ((heartbeatObject.heartbeat / (60 + ((heartbeatObject.heartbeat - 60) / 2))) - 1));
+          // console.log(1 - ((lastHeartbeat/(60 + ((lastHeartbeat-60)/2))) - 1));
+        }
       })
       .catch(error => {
         console.log(error);
@@ -101,16 +102,18 @@ export default function ClientHomeBody() {
       }
     })
       .then(response => {
-
-        setLastTemperature(response.data.content[0].temperature);
-        setTemperatureSeverity(response.data.content[0].severity);
-        // console.log("Last Temperature:");
-        // console.log(response.data.content);
+        let temperatureObject = response.data.content[0];
+        if (temperatureObject) {
+          setLastTemperature(temperatureObject.temperature);
+          setTemperatureSeverity(temperatureObject.severity);
+          // console.log("Last Temperature:");
+          // console.log(response.data.content);
+        }
       })
       .catch(error => {
         console.log(error);
       });
-  }, []);
+  }, [urlHeartbeats, urlDiagnoses]);
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8080/websocket-endpoint');
@@ -140,10 +143,10 @@ export default function ClientHomeBody() {
     };
   }, []);
 
-  if (!measures) return null;
-  if (!diagnoses) return null;
-  if (!lastHeartbeat) return null;
-  if (!lastTemperature) return null;
+  // if (!measures) return null;
+  // if (!diagnoses) return null;
+  // if (!lastHeartbeat) return null;
+  // if (!lastTemperature) return null;
 
   return (
     <div className='vertical-container gap-vertical' >

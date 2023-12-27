@@ -2,7 +2,7 @@ import ClientHomeBody from "../../Components/ClientComponents/ClientHomeBody";
 import PageTitle from '../../Components/PageTitle/PageTitle';
 import "../../Components/ClientComponents/ClientBase.css";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 //Day Picker
 import { format } from 'date-fns';
@@ -13,6 +13,18 @@ import '../../DayPicker.css';
 export default function ClientHome() {
 
     const [selected, setSelected] = useState(new Date());
+    const [date, setDate] = useState("2023-12-25");
+
+    useEffect(() => {
+        if (selected) {
+            const year = selected.getFullYear();
+            const month = String(selected.getMonth() + 1).padStart(2, '0');
+            const day = String(selected.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            setDate(formattedDate);
+            console.log(formattedDate);
+        }
+    }, [selected]);
 
     let footer = <p>Please pick a day.</p>;
     if (selected) {
@@ -24,7 +36,7 @@ export default function ClientHome() {
             <div className="vertical-container">
                 <PageTitle title="Home" />
                 <div className='App-content'>
-                    <ClientHomeBody />
+                    <ClientHomeBody date={date} />
                 </div>
             </div>
             <div className='day-picker'>
