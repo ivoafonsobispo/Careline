@@ -149,22 +149,43 @@ public class DiagnosisController {
         }
     }
 
-    @GetMapping("patient/{patientId}/diagnosis/latest")
+    @GetMapping("patients/{patientId}/diagnosis/latest")
     public Page<DiagnosisResponseDTO> listLatest(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities =
                 diagnosisService.findAllLatest(pageable,
                 patientId);
-        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
+        return diagnosisEntities.map(diagnosisEntity -> {
+            PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
+            ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
+            return new DiagnosisResponseDTO(
+                    diagnosisEntity.getId(),
+                    patientDTO,
+                    professionalDTO,
+                    diagnosisEntity.getDiagnosis(),
+                    diagnosisEntity.getPrescriptions(),
+                    diagnosisEntity.getCreatedAt()
+            );
+        });
     }
 
-    @GetMapping("professionals/{professionalId}/patients/{patientId" +
-            "}/diagnosis/latest")
+    @GetMapping("professionals/{professionalId}/patients/{patientId}/diagnosis/latest")
     public Page<DiagnosisResponseDTO> listLatestProfessional(@PathVariable(
             "patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities =
                 diagnosisService.findAllLatest(pageable,
                         patientId);
-        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
+        return diagnosisEntities.map(diagnosisEntity -> {
+            PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
+            ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
+            return new DiagnosisResponseDTO(
+                    diagnosisEntity.getId(),
+                    patientDTO,
+                    professionalDTO,
+                    diagnosisEntity.getDiagnosis(),
+                    diagnosisEntity.getPrescriptions(),
+                    diagnosisEntity.getCreatedAt()
+            );
+        });
     }
 
     @PutMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
