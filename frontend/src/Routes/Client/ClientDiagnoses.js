@@ -16,11 +16,23 @@ import SockJS from 'sockjs-client';
 
 import axios from 'axios';
 import { useEffect } from 'react';
-const urlDiagnoses = 'http://localhost:8080/api/patients/1/diagnosis';
 
 export default function ClientDiagnoses() {
-
     const [selected, setSelected] = useState(new Date());
+    const [date, setDate] = useState("2023-12-25");
+
+    const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis/date/${date}`;
+
+    useEffect(() => {
+        if (selected) {
+            const year = selected.getFullYear();
+            const month = String(selected.getMonth() + 1).padStart(2, '0');
+            const day = String(selected.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            setDate(formattedDate);
+            console.log(formattedDate);
+        }
+    }, [selected]);
 
     let footer = <p>Please pick a day.</p>;
     if (selected) {
@@ -44,7 +56,7 @@ export default function ClientDiagnoses() {
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+    }, [urlDiagnoses]);
 
     useEffect(() => {
         const socket = new SockJS('http://localhost:8080/websocket-endpoint');

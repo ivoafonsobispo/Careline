@@ -14,9 +14,8 @@ const urlLastHeartbeat = 'http://localhost:8080/api/patients/1/heartbeats/latest
 const urlLastTemperature = 'http://localhost:8080/api/patients/1/temperatures/latest?size=1';
 
 export default function ClientHomeBody({ date }) {
-  console.log(date);
   const urlHeartbeats = `http://localhost:8080/api/patients/1/heartbeats/date/${date}`;
-  const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis`;
+  const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis/date/${date}`;
 
   const [measures, setMeasures] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
