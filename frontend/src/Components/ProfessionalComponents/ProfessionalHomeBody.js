@@ -4,7 +4,7 @@ import InfoList from './InfoList'
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const urlAvailablePatients = 'http://localhost:8080/api/professionals/1/patients/available';
+const urlAvailablePatients = 'http://localhost:8080/api/professionals/1/patients';
 
 export default function ProfessionalHomeBody() {
   const [availablePatients, setAvailablePatients] = useState(null);
@@ -28,9 +28,6 @@ export default function ProfessionalHomeBody() {
         console.log(error);
       });
   }, []);
-
-
-  if (!availablePatients) return null;
 
   return (
     <div className='vertical-container gap-vertical' >

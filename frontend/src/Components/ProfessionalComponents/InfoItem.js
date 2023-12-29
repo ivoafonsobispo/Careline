@@ -58,13 +58,6 @@ export default function InfoItem({ patient }) {
             });
     }, [urlHeartbeat, urlTemperature]);
 
-
-    // if (!heartbeat) return null;
-    // if (!temperature) return null;
-    // if (!heartbeatSeverity) return null;
-    // if (!temperatureSeverity) return null;
-
-
     return (
         <div className="App-professional-info-list-item" style={{ display: "flex", flexDirection: "column" }}>
             <div className='vertical-container' style={{ gap: "10%", paddingBottom: "2%" }}>

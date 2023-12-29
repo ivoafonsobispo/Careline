@@ -2,7 +2,7 @@ import './App.css';
 import Navbar from './Components/Navbar/Navbar';
 import Header from './Components/Header/Header';
 
-import {useState} from 'react';
+import { useState } from 'react';
 
 import { Routes, Route } from 'react-router-dom';
 import ClientHome from './Routes/Client/ClientHome';
@@ -13,10 +13,12 @@ import ClientTriage from './Routes/Client/ClientTriage';
 import ClientProfile from './Routes/Client/ClientProfile';
 
 import ProfessionalHome from './Routes/Professional/ProfessionalHome';
+import ProfessionalPatients from './Routes/Professional/ProfessionalPatients';
+import ProfessionalPatient from './Routes/Professional/ProfessionalPatient';
 import ErrorPage from './Routes/ErrorPage';
 
 export default function App() {
-  const userType = 'patient';
+  const userType = 'professional';
 
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {
@@ -25,12 +27,12 @@ export default function App() {
 
   return (
     <div className='App'>
-      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar} userType={userType}/> 
+      <Header isActive={isToggleActive} toggleNavbar={toggleNavbar} userType={userType} />
 
       <div className='App-body'>
-        <Navbar isActive={isToggleActive} userType={userType}/>
+        <Navbar isActive={isToggleActive} userType={userType} />
         <div className='App-content-div'>
-        <Routes>
+          <Routes>
             {userType === 'patient' && (
               <>
                 <Route path="/" element={<ClientHome />} />
@@ -42,7 +44,11 @@ export default function App() {
               </>
             )}
             {userType === 'professional' && (
-              <Route path="/" element={<ProfessionalHome />} />
+              <>
+                <Route path="/" element={<ProfessionalHome />} />
+                <Route path="/patients" element={<ProfessionalPatients />} />
+                <Route path="/patient" element={<ProfessionalPatient />} />
+              </>
             )}
             <Route path="/*" element={<ErrorPage />} />
           </Routes>
