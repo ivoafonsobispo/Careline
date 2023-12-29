@@ -14,9 +14,8 @@ const urlLastHeartbeat = 'http://localhost:8080/api/patients/1/heartbeats/latest
 const urlLastTemperature = 'http://localhost:8080/api/patients/1/temperatures/latest?size=1';
 
 export default function ClientHomeBody({ date }) {
-  console.log(date);
   const urlHeartbeats = `http://localhost:8080/api/patients/1/heartbeats/date/${date}`;
-  const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis`;
+  const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis/date/${date}`;
 
   const [measures, setMeasures] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
@@ -29,10 +28,10 @@ export default function ClientHomeBody({ date }) {
   const [lastTemperature, setLastTemperature] = useState(null);
   const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-  const [animationSpeed, setAnimationSpeed] = useState(1);
-  const heartStyle = {
-    animation: `growAndFade ${animationSpeed}s ease-in-out infinite alternate`,
-  };
+  // const [animationSpeed, setAnimationSpeed] = useState(1);
+  const [heartStyle, setHeartStyle] = useState({
+    animation: `growAndFade 1s ease-in-out infinite alternate`,
+  });
 
   useEffect(() => {
     axios.get(urlHeartbeats, {
@@ -85,8 +84,10 @@ export default function ClientHomeBody({ date }) {
           // 80 BPM <=> 1 segundo = 1.33 beats
           // Para tornar mais suave: retirar apenas metade da diferença de 60 para 80
           // ex: 1s - ((80 / 70) - 1s) <=> 1s - (1,14 - 1s) = 1s - 0.14 = 0.86s
-          setAnimationSpeed(1 - ((heartbeatObject.heartbeat / (60 + ((heartbeatObject.heartbeat - 60) / 2))) - 1));
-          // console.log(1 - ((lastHeartbeat/(60 + ((lastHeartbeat-60)/2))) - 1));
+          const newAnimationSpeed = 1 - ((heartbeatObject.heartbeat / (60 + ((heartbeatObject.heartbeat - 60) / 2))) - 1);
+          setHeartStyle({
+            animation: `growAndFade ${newAnimationSpeed}s ease-in-out infinite alternate`,
+          });
         }
       })
       .catch(error => {
@@ -115,6 +116,14 @@ export default function ClientHomeBody({ date }) {
       });
   }, [urlHeartbeats, urlDiagnoses]);
 
+
+  // useEffect(() => {
+  //   // console.log(`GGRGRGRGRGGRRGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`);
+  //   setHeartStyle({
+  //     animation: `growAndFade ${animationSpeed}s ease-in-out infinite alternate`,
+  //   });
+  // }, [animationSpeed]);
+
   useEffect(() => {
     const socket = new SockJS('http://localhost:8080/websocket-endpoint');
     const stompClient = Stomp.over(socket);
@@ -124,6 +133,11 @@ export default function ClientHomeBody({ date }) {
         let newHeartbeat = JSON.parse(message.body);
         setLastHeartbeat(newHeartbeat.heartbeat);
         setHeartbeatSeverity(newHeartbeat.severity);
+
+        const newAnimationSpeed = 1 - ((newHeartbeat.heartbeat / (60 + ((newHeartbeat.heartbeat - 60) / 2))) - 1);
+        setHeartStyle({
+          animation: `growAndFade ${newAnimationSpeed}s ease-in-out infinite alternate`,
+        });
       });
 
       stompClient.subscribe('/topic/temperatures', (message) => {
@@ -142,11 +156,6 @@ export default function ClientHomeBody({ date }) {
       stompClient.disconnect();
     };
   }, []);
-
-  // if (!measures) return null;
-  // if (!diagnoses) return null;
-  // if (!lastHeartbeat) return null;
-  // if (!lastTemperature) return null;
 
   return (
     <div className='vertical-container gap-vertical' >

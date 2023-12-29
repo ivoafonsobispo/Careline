@@ -26,10 +26,11 @@ export default function InfoItem({ patient }) {
             }
         })
             .then(response => {
-                console.log(response.data.content[0]);
                 let heartbeatObject = response.data.content[0];
-                setLastHeartbeat(heartbeatObject.heartbeat);
-                setHeartbeatSeverity(heartbeatObject.severity);
+                if (heartbeatObject) {
+                    setLastHeartbeat(heartbeatObject.heartbeat);
+                    setHeartbeatSeverity(heartbeatObject.severity);
+                }
             })
             .catch(error => {
                 // handle the error
@@ -45,11 +46,11 @@ export default function InfoItem({ patient }) {
             }
         })
             .then(response => {
-
-                console.log(response.data.content[0]);
                 let temperatureObject = response.data.content[0];
-                setLastTemperature(temperatureObject.temperature);
-                setTemperatureSeverity(temperatureObject.severity);
+                if (temperatureObject) {
+                    setLastTemperature(temperatureObject.temperature);
+                    setTemperatureSeverity(temperatureObject.severity);
+                }
             })
             .catch(error => {
                 // handle the error
@@ -57,21 +58,16 @@ export default function InfoItem({ patient }) {
             });
     }, [urlHeartbeat, urlTemperature]);
 
-
-    if (!heartbeat) return null;
-    if (!temperature) return null;
-    if (!heartbeatSeverity) return null;
-    if (!temperatureSeverity) return null;
-
-
     return (
         <div className="App-professional-info-list-item" style={{ display: "flex", flexDirection: "column" }}>
-            <div className='vertical-container' style={{gap: "10%", paddingBottom: "2%"}}>
+            <div className='vertical-container' style={{ gap: "10%", paddingBottom: "2%" }}>
                 <span className='patient-info'>{patient.name} </span>
                 <div className='horizontal-container'>
                     {/* <div className='align-line-column patient-info'> */}
                     <span className='horizontal-container' style={{ gap: "10%" }}>
-                        {heartbeatSeverity === 'GOOD' ? (
+                        {!heartbeatSeverity ? (
+                            <Heart size={20} color="black" />
+                        ) : heartbeatSeverity === 'GOOD' ? (
                             <HeartFill size={20} color="var(--lightGreen)" />
                         ) : heartbeatSeverity === 'MEDIUM' ? (
                             <HeartHalf size={20} color="orange" />
@@ -79,17 +75,19 @@ export default function InfoItem({ patient }) {
                             <Heart size={20} color="red" />
                         )}
 
-                        {heartbeat} BPM
+                        {heartbeat ? heartbeat : "---"} BPM
                     </span>
                     <span className='horizontal-container' style={{ gap: "10%" }}>
-                        {temperatureSeverity === 'GOOD' ? (
+                        {!temperatureSeverity ? (
+                            <Thermometer size={20} color="black" />
+                        ) : temperatureSeverity === 'GOOD' ? (
                             <ThermometerHigh size={20} color="var(--lightGreen)" />
                         ) : heartbeatSeverity === 'MEDIUM' ? (
                             <ThermometerHalf size={20} color="orange" />
                         ) : (
                             <Thermometer size={20} color="red" />
                         )}
-                        {temperature} °C
+                        {temperature ? temperature : "---"} °C
                     </span>
                 </div>
                 {/* </div> */}

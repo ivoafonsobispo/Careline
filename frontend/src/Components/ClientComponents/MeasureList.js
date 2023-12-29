@@ -91,19 +91,19 @@ export default function MeasureList({ title, dataArray }) {
             ) : ( // Heartbeat
                 <>
                     <div className="client-measure-list">
-                    {!dataArray || dataArray.length === 0 ? (
+                        {!dataArray || dataArray.length === 0 ? (
                             <div className='no-records'>No records yet.</div>
                         ) : (
                             <>
-                        {dataArray.map((heartbeat, index) => {
-                            return (
-                                <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                                    <span>Heartbeat: {heartbeat.heartbeat} BPM</span>
-                                    <span className='list-item-date'>{heartbeat.created_at} </span>
-                                </div>
-                            )
-                        })}
-                        </>
+                                {dataArray.map((heartbeat, index) => {
+                                    return (
+                                        <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
+                                            <span>Heartbeat: {heartbeat.heartbeat} BPM</span>
+                                            <span className='list-item-date'>{heartbeat.created_at} </span>
+                                        </div>
+                                    )
+                                })}
+                            </>
                         )}
                     </div>
                 </>
