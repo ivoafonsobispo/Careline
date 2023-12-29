@@ -6,18 +6,17 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.DroneDeliveryEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
-import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.domain.enums.Delivery;
+import pt.ipleiria.careline.exceptions.DiagnosisNotFoundException;
 import pt.ipleiria.careline.exceptions.PatientNotFoundException;
-import pt.ipleiria.careline.repositories.DiagnosisRepository;
 import pt.ipleiria.careline.repositories.DroneDeliveryRepository;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.services.DroneDeliveryService;
 import pt.ipleiria.careline.services.PatientService;
-import pt.ipleiria.careline.services.ProfessionalService;
 import pt.ipleiria.careline.utils.DateConversionUtil;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,19 +27,32 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
 
     private DroneDeliveryRepository repository;
     private PatientService patientService;
+    private DiagnosisService diagnosisService;
 
-    public DroneDeliveryServiceImpl(DroneDeliveryRepository repository, PatientService patientService) {
+    public DroneDeliveryServiceImpl(DroneDeliveryRepository repository, PatientService patientService, DiagnosisService diagnosisService) {
         this.repository = repository;
         this.patientService = patientService;
+        this.diagnosisService = diagnosisService;
     }
 
     @Override
-    public DroneDeliveryEntity save(Long patientId, DroneDeliveryEntity delivery) {
+    public DroneDeliveryEntity save(Long patientId, Long diagnosisId, DroneDeliveryEntity delivery) {
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
         if (existingPatient.isPresent()) {
             delivery.setPatient(existingPatient.get());
         } else {
             throw new PatientNotFoundException();
+        }
+
+        Optional<DiagnosisEntity> diagnosis = diagnosisService.getById(diagnosisId);
+        if (diagnosis.isPresent()) {
+            List<String> medications = new ArrayList<>();
+            for (int i = 0; i < diagnosis.get().getMedications().size(); i++) {
+                medications.add(diagnosis.get().getMedications().get(i).getName());
+            }
+            delivery.setMedications(medications);
+        } else {
+            throw new DiagnosisNotFoundException();
         }
 
         delivery.setDeliveryStatus(Delivery.PENDING);
@@ -67,7 +79,7 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
 
     @Override
     public Page<DroneDeliveryEntity> findAll(Pageable pageable, Long patientId) {
-        return repository.findAllByPatientId(pageable,patientId);
+        return repository.findAllByPatientId(pageable, patientId);
     }
 
     @Override
@@ -76,9 +88,39 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
     }
 
     @Override
-    public DroneDeliveryEntity partialUpdate(Long id, DroneDeliveryEntity delivery) {
-        delivery.setId(id);
-        return repository.save(delivery);
+    public DroneDeliveryEntity changeStatusToInTransit(Long id) {
+        Optional<DroneDeliveryEntity> delivery = repository.findById(id);
+        if (delivery.isPresent()) {
+            delivery.get().setDeliveryStatus(Delivery.IN_TRANSIT);
+            delivery.get().setDepartureTime(Instant.now());
+            return repository.save(delivery.get());
+        } else {
+            throw new PatientNotFoundException();
+        }
+    }
+
+    @Override
+    public DroneDeliveryEntity changeStatusToDelivered(Long id) {
+        Optional<DroneDeliveryEntity> delivery = repository.findById(id);
+        if (delivery.isPresent()) {
+            delivery.get().setDeliveryStatus(Delivery.DELIVERED);
+            delivery.get().setArrivalTime(Instant.now());
+            return repository.save(delivery.get());
+        } else {
+            throw new PatientNotFoundException();
+        }
+    }
+
+    @Override
+    public DroneDeliveryEntity changeStatusToFailed(Long id) {
+        Optional<DroneDeliveryEntity> delivery = repository.findById(id);
+        if (delivery.isPresent()) {
+            delivery.get().setDeliveryStatus(Delivery.FAILED);
+            delivery.get().setArrivalTime(Instant.now());
+            return repository.save(delivery.get());
+        } else {
+            throw new PatientNotFoundException();
+        }
     }
 
     @Override
@@ -88,7 +130,7 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
 
     @Override
     public Page<DroneDeliveryEntity> findAllLatest(Pageable pageable, Long patientId) {
-        return repository.findByPatientIdOrderByCreatedAtDesc(patientId,pageable);
+        return repository.findByPatientIdOrderByCreatedAtDesc(patientId, pageable);
     }
 
     @Override

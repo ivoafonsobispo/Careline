@@ -9,14 +9,14 @@ import java.util.List;
 @Setter
 @Getter
 public class DroneDeliveryDTO {
-    private List<String> prescriptions;
+    private List<String> medications;
     private Coordinate coordinate;
 
     public DroneDeliveryDTO() {
     }
 
-    public DroneDeliveryDTO(List<String> prescriptions, Coordinate coordinate) {
-        this.prescriptions = prescriptions;
+    public DroneDeliveryDTO(List<String> medications, Coordinate coordinate) {
+        this.medications = medications;
         this.coordinate = coordinate;
     }
 }

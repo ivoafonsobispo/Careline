@@ -20,7 +20,7 @@ public class DroneDeliveryResponseDTO {
     @JsonProperty("created_at")
     private ZonedDateTime createdAt;
     private PatientResponseDTO patient;
-    private List<String> prescriptions;
+    private List<String> medications;
     private Delivery status;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EEEE, MMM dd 'AT' HH:mm", locale = "en_US")
     @JsonProperty("departure_time")
@@ -33,11 +33,11 @@ public class DroneDeliveryResponseDTO {
     public DroneDeliveryResponseDTO() {
     }
 
-    public DroneDeliveryResponseDTO(Long id, Instant createdAt, PatientResponseDTO patient, List<String> prescriptions, Delivery status, Instant departureTime, Instant arrivalTime, Coordinate coordinate) {
+    public DroneDeliveryResponseDTO(Long id, Instant createdAt, PatientResponseDTO patient, List<String> medications, Delivery status, Instant departureTime, Instant arrivalTime, Coordinate coordinate) {
         this.id = id;
         this.createdAt = ZonedDateTime.ofInstant(createdAt, ZoneId.systemDefault());
         this.patient = patient;
-        this.prescriptions = prescriptions;
+        this.medications = medications;
         this.status = status;
         this.departureTime = ZonedDateTime.ofInstant(departureTime, ZoneId.systemDefault());
         this.arrivalTime = ZonedDateTime.ofInstant(arrivalTime, ZoneId.systemDefault());
