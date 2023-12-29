@@ -5,7 +5,6 @@ import com.lowagie.text.pdf.PdfWriter;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class PdfGenerator {
@@ -44,7 +43,7 @@ public class PdfGenerator {
 
             // Diagnosis and Prescriptions
             Paragraph diagnosis = new Paragraph("Diagnosis: " + diagnosisEntity.getDiagnosis());
-            Paragraph prescriptions = new Paragraph("Prescriptions: " + diagnosisEntity.getPrescriptions());
+            Paragraph prescriptions = new Paragraph("Prescriptions: " + diagnosisEntity.getMedications());
 
             // QR Code
             String medication = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
