@@ -4,11 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.entities.embed.Coordinate;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
-import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.domain.enums.Delivery;
 
 import java.time.Instant;
@@ -22,14 +20,14 @@ public class DroneDeliveryEntity {
     @CurrentTimestamp
     @Column(name = "created_at")
     public Instant createdAt;
+    @NotNull
+    List<String> medications;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "drone_delivery_id_seq")
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
-    @NotNull
-    private List<String> prescriptions;
     @NotNull
     private Delivery deliveryStatus;
     private Instant departureTime;
@@ -47,11 +45,11 @@ public class DroneDeliveryEntity {
     public DroneDeliveryEntity() {
     }
 
-    public DroneDeliveryEntity(Instant createdAt, Long id, PatientEntity patient, List<String> prescriptions, Delivery deliveryStatus, Instant departureTime, Instant arrivalTime, Coordinate coordinate) {
+    public DroneDeliveryEntity(Instant createdAt, Long id, PatientEntity patient, List<String> medications, Delivery deliveryStatus, Instant departureTime, Instant arrivalTime, Coordinate coordinate) {
         this.createdAt = createdAt;
         this.id = id;
         this.patient = patient;
-        this.prescriptions = prescriptions;
+        this.medications = medications;
         this.deliveryStatus = deliveryStatus;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
