@@ -82,10 +82,10 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
     };
 
     return (
-        <div className='align-line-row' style={{gap: "2%"}}>
-            <NavLink to='/patient' className="App-professional-info-list-item" style={{ display: "flex", flexDirection: "column", color: "black" }}>
+        <div className='align-line-row' style={{ gap: "2%" }}>
+            <NavLink to={`/patient/${patient.id}`} className="App-professional-info-list-item" style={{ display: "flex", flexDirection: "column", color: "black" }}>
                 <div className='vertical-container' style={{ gap: "10%", paddingBottom: "2%" }}>
-                    <span className='patient-info'>{patient.name} </span>
+                    <span className='patient-info'>{patient.name} ({patient.nus})</span>
                     <div className='horizontal-container'>
                         {/* <div className='align-line-column patient-info'> */}
                         <span className='horizontal-container' style={{ gap: "10%" }}>

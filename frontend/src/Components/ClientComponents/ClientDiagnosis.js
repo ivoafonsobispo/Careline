@@ -5,8 +5,8 @@ import { Paperclip, Pen, Download } from 'react-bootstrap-icons'
 
 import axios from 'axios';
 
-export default function ClientDiagnosis({ id, description, prescriptions, professional, date }) {
-    const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/${id}/pdf`;
+export default function ClientDiagnosis({ diagnosis }) {
+    const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/${diagnosis.id}/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -26,7 +26,7 @@ export default function ClientDiagnosis({ id, description, prescriptions, profes
                 // Temporary anchor element
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `Diagnosis_${id}.pdf`;
+                a.download = `Diagnosis_${diagnosis.id}.pdf`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -43,33 +43,43 @@ export default function ClientDiagnosis({ id, description, prescriptions, profes
     return (
         <div className="client-diagnosis-box">
             <div className='align-line-row'>
-                <span className='align-line-row'><Paperclip size={20} /> Diagnosis {id}</span>
+                <span className='align-line-row'><Paperclip size={20} /> Diagnosis {diagnosis.id}</span>
                 <span className='diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20} /></span>
             </div>
             <hr className='diagnosis-hr'></hr>
 
-            <div className='horizontal-container client-diagnosis-information-box'>
-                <div >
-                    <span>Description: </span>
-                </div>
-                <div className='client-diagnosis-information'>
-                    <span>{description}</span>
+            <div className='vertical-container client-diagnosis-information-box'>
+                <div className='horizontal-container'>
+                    <div >
+                        <span><b>Description:</b> </span>
+                    </div>
+                    <div className='client-diagnosis-information'>
+                        <span>{diagnosis.diagnosis}</span>
+                    </div>
                 </div>
 
-                <div >
-                    <span>Prescriptions: </span>
-                </div>
-                <div className='client-diagnosis-information'>
-                    <span>{prescriptions.join(', ')}</span>
+                <div className='horizontal-container'>
+                    <div >
+                        <span><b>Medications:</b> </span>
+                    </div>
+                    <div className='client-diagnosis-information'>
+                            {diagnosis.medications.map((medication, index) => {
+                                    return (
+                                        <div key={index}>
+                                            {medication.name} - {medication.dosage} x {medication.frequency} | {medication.duration}
+                                        </div>
+                                    )
+                                })}
+                    </div>
                 </div>
             </div>
             <hr className='diagnosis-hr'></hr>
 
             <div>
-                <span className='align-line-row'><Pen size={15} /> &nbsp; By: {professional}</span>
+                <span className='align-line-row'><Pen size={15} /> &nbsp; By: {diagnosis.professional.name}</span>
             </div>
 
-            <span className='diagnosis-date'>{date}</span>
+            <span className='diagnosis-date'>{diagnosis.created_at}</span>
         </div>
     );
 }

@@ -47,7 +47,7 @@ export default function App() {
               <>
                 <Route path="/" element={<ProfessionalHome />} />
                 <Route path="/patients" element={<ProfessionalPatients />} />
-                <Route path="/patient" element={<ProfessionalPatient />} />
+                <Route path="/patient/:id" element={<ProfessionalPatient />} />
               </>
             )}
             <Route path="/*" element={<ErrorPage />} />

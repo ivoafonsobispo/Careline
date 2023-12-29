@@ -23,7 +23,6 @@
 
 .client-diagnosis-information {
     flex-grow: 1;
-    max-width: 30%;
     word-break: break-all;
     margin: 0% 2%;
 }

@@ -86,7 +86,7 @@ export default function ClientDiagnoses() {
                             <>
                                 {diagnoses.map((diagnosis, index) => {
                                     return (
-                                        <ClientDiagnosis key={index} id={diagnosis.id} description={diagnosis.diagnosis} prescriptions={diagnosis.prescriptions} professional={diagnosis.professional ? diagnosis.professional.name : "Unknown Professional"} date={diagnosis.created_at} />
+                                        <ClientDiagnosis key={index} diagnosis={diagnosis} />
                                     )
                                 })}
                             </>

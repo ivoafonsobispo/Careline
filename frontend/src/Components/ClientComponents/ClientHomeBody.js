@@ -107,22 +107,12 @@ export default function ClientHomeBody({ date }) {
         if (temperatureObject) {
           setLastTemperature(temperatureObject.temperature);
           setTemperatureSeverity(temperatureObject.severity);
-          // console.log("Last Temperature:");
-          // console.log(response.data.content);
         }
       })
       .catch(error => {
         console.log(error);
       });
   }, [urlHeartbeats, urlDiagnoses]);
-
-
-  // useEffect(() => {
-  //   // console.log(`GGRGRGRGRGGRRGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`);
-  //   setHeartStyle({
-  //     animation: `growAndFade ${animationSpeed}s ease-in-out infinite alternate`,
-  //   });
-  // }, [animationSpeed]);
 
   useEffect(() => {
     const socket = new SockJS('http://localhost:8080/websocket-endpoint');
