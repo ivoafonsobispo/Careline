@@ -18,7 +18,7 @@ import ProfessionalPatient from './Routes/Professional/ProfessionalPatient';
 import ErrorPage from './Routes/ErrorPage';
 
 export default function App() {
-  const userType = 'patient';
+  const userType = 'professional';
 
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {

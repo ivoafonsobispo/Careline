@@ -1,12 +1,12 @@
-.digital-twin-box{
+.professional-digital-twin-box{
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: var(--professionalLightColor);
-    width: 40%;
     border-radius: 4%/8%;
     gap: 10%;
+    height: 100%;
 }
 
 .digital-twin-img{
