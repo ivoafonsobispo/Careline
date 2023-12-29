@@ -41,7 +41,7 @@ public class ProfessionalController {
     }
 
     @PatchMapping("{professionalId}/patients/{patientId}") // Set Patient to Professional
-    public ResponseEntity associateProfessionalToPatient(@PathVariable("professionalId") Long professionalId ,@PathVariable("patientId") Long patientId) {
+    public ResponseEntity associateProfessionalToPatient(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId) {
         professionalService.setPatientToProfessional(professionalId, patientId);
         return new ResponseEntity(HttpStatus.ACCEPTED);
     }
@@ -50,6 +50,12 @@ public class ProfessionalController {
     public Page<PatientResponseDTO> getProfessionalPatients(@PathVariable("professionalId") Long professionalId, Pageable pageable) {
         Page<PatientEntity> patientEntities = professionalService.getProfessionalPatients(professionalId, pageable);
         return patientEntities.map(patientResponseMapper::mapToDTO);
+    }
+
+    @GetMapping("{professionalId}/patients/{id}")
+    public PatientResponseDTO getProfessionalGetPatients(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId) {
+        PatientEntity patient = professionalService.getPatientById(professionalId, patientId);
+        return patientResponseMapper.mapToDTO(patient);
     }
 
     @GetMapping("{professionalId}/patients/available") // Patients without Professional
