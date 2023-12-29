@@ -30,4 +30,6 @@ public interface ProfessionalService {
     Page<PatientEntity> getProfessionalPatients(Long professionalId, Pageable pageable);
 
     Page<PatientEntity> getAvailablePatient(Long professionalId, Pageable pageable);
+
+    PatientEntity getPatientById(Long professionalId, Long patientId);
 }

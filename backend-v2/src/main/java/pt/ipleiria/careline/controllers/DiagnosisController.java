@@ -11,11 +11,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.DiagnosisDTO;
 import pt.ipleiria.careline.domain.dto.responses.DiagnosisResponseDTO;
-import pt.ipleiria.careline.domain.dto.responses.HeartbeatResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.ProfessionalResponseDTO;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
-import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.mappers.Mapper;
@@ -39,7 +37,7 @@ public class DiagnosisController {
     private SimpMessagingTemplate messagingTemplate;
 
     public DiagnosisController(DiagnosisService diagnosisService,
-                               Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity,DiagnosisResponseDTO> diagnosisResponseMapper,Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper,Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper, SimpMessagingTemplate messagingTemplate) {
+                               Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity, DiagnosisResponseDTO> diagnosisResponseMapper, Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper, Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper, SimpMessagingTemplate messagingTemplate) {
         this.diagnosisService = diagnosisService;
         this.diagnosisMapper = diagnosisMapper;
         this.diagnosisResponseMapper = diagnosisResponseMapper;
@@ -53,9 +51,9 @@ public class DiagnosisController {
             "professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
         DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
-        DiagnosisResponseDTO responseDTO = new DiagnosisResponseDTO(savedDiagnosticEntity.getId(),patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), savedDiagnosticEntity.getDiagnosis(), savedDiagnosticEntity.getPrescriptions(), Instant.now());
+        DiagnosisResponseDTO responseDTO = new DiagnosisResponseDTO(savedDiagnosticEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), savedDiagnosticEntity.getDiagnosis(), savedDiagnosticEntity.getMedications(), Instant.now());
 
-        messagingTemplate.convertAndSend("/topic/diagnosis",responseDTO);
+        messagingTemplate.convertAndSend("/topic/diagnosis", responseDTO);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.CREATED);
     }
@@ -63,24 +61,47 @@ public class DiagnosisController {
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
     public Page<DiagnosisResponseDTO> listDiagnostics(Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAll(pageable);
-        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
+        return diagnosisEntities.map(diagnosisEntity -> {
+            PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
+            ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
+            return new DiagnosisResponseDTO(
+                    diagnosisEntity.getId(),
+                    patientDTO,
+                    professionalDTO,
+                    diagnosisEntity.getDiagnosis(),
+                    diagnosisEntity.getMedications(),
+                    diagnosisEntity.getCreatedAt()
+            );
+        });
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity<DiagnosisResponseDTO> getByIdProfessional(@PathVariable("id") Long id) {
         Optional<DiagnosisEntity> diagnosis = diagnosisService.getById(id);
-        return diagnosis.map(diagnosisEntity -> {DiagnosisResponseDTO diagnosisDTO = diagnosisResponseMapper.mapToDTO(diagnosisEntity);
+        return diagnosis.map(diagnosisEntity -> {
+            DiagnosisResponseDTO diagnosisDTO = new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt());
             return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/date/{date}")
+    public Page<DiagnosisResponseDTO> professionalListDiagnosisByDate(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosis = diagnosisService.findAllByDate(pageable, patientId, date);
+        return diagnosis.map(diagnosisEntity -> new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt()));
+    }
+
+    @GetMapping("/patients/{patientId}/diagnosis/date/{date}")
+    public Page<DiagnosisResponseDTO> patientListDiagnosisByDate(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosis = diagnosisService.findAllByDate(pageable, patientId, date);
+        return diagnosis.map(diagnosisEntity -> new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt()));
+    }
+
     @GetMapping("/patients/{patientId}/diagnosis/{id}")
     public ResponseEntity<DiagnosisResponseDTO> getByIdPatient(@PathVariable("id") Long id,
-                                            @PathVariable("patientId") Long patientId) {
+                                                               @PathVariable("patientId") Long patientId) {
         Optional<DiagnosisEntity> diagnosis = diagnosisService.getDiagnosisOfPatient(patientId, id);
         return diagnosis.map(diagnosisEntity -> {
-            DiagnosisResponseDTO diagnosisDTO =
-                    diagnosisResponseMapper.mapToDTO(diagnosisEntity);
+            DiagnosisResponseDTO diagnosisDTO = new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt());
             return new ResponseEntity<>(diagnosisDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -127,22 +148,43 @@ public class DiagnosisController {
         }
     }
 
-    @GetMapping("patient/{patientId}/diagnosis/latest")
+    @GetMapping("patients/{patientId}/diagnosis/latest")
     public Page<DiagnosisResponseDTO> listLatest(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities =
                 diagnosisService.findAllLatest(pageable,
-                patientId);
-        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
+                        patientId);
+        return diagnosisEntities.map(diagnosisEntity -> {
+            PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
+            ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
+            return new DiagnosisResponseDTO(
+                    diagnosisEntity.getId(),
+                    patientDTO,
+                    professionalDTO,
+                    diagnosisEntity.getDiagnosis(),
+                    diagnosisEntity.getMedications(),
+                    diagnosisEntity.getCreatedAt()
+            );
+        });
     }
 
-    @GetMapping("professionals/{professionalId}/patients/{patientId" +
-            "}/diagnosis/latest")
+    @GetMapping("professionals/{professionalId}/patients/{patientId}/diagnosis/latest")
     public Page<DiagnosisResponseDTO> listLatestProfessional(@PathVariable(
             "patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities =
                 diagnosisService.findAllLatest(pageable,
                         patientId);
-        return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
+        return diagnosisEntities.map(diagnosisEntity -> {
+            PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
+            ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
+            return new DiagnosisResponseDTO(
+                    diagnosisEntity.getId(),
+                    patientDTO,
+                    professionalDTO,
+                    diagnosisEntity.getDiagnosis(),
+                    diagnosisEntity.getMedications(),
+                    diagnosisEntity.getCreatedAt()
+            );
+        });
     }
 
     @PutMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")

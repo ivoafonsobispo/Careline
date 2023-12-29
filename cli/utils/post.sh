@@ -45,11 +45,11 @@ POST_TEMPERATURE_6='{"temperature":"36.0"}'
 POST_TEMPERATURE_7='{"temperature":"37"}'
 POST_TEMPERATURE_8='{"temperature":"36.9"}'
 
-POST_DIAGNOSIS_1='{"diagnosis": "This is your diagnosis, Alice","prescriptions": ["Med 1","Med 2"]}'
-POST_DIAGNOSIS_2='{"diagnosis": "This is your diagnosis, Bob","prescriptions": ["Med 1","Med 2"]}'
-POST_DIAGNOSIS_3='{"diagnosis": "This is your diagnosis, Eva","prescriptions": ["Med 1","Med 2"]}'
-POST_DIAGNOSIS_4='{"diagnosis": "This is your diagnosis, Eva","prescriptions": ["Med 1","Med 2"]}'
-POST_DIAGNOSIS_5='{"diagnosis": "This is your diagnosis, Bob","prescriptions": ["Med 1","Med 2"]}'
+POST_DIAGNOSIS_1='{"diagnosis": "This is your diagnosis, Alice","medications": [{"name":"vitamina","dosage":"1 pill","frequency":"2 times a day","duration":"5 days"}]}'
+POST_DIAGNOSIS_2='{"diagnosis": "This is your diagnosis, Bob","medications": [{"name":"vitamina","dosage":"1 pill","frequency":"2 times a day","duration":"5 days"}]}'
+POST_DIAGNOSIS_3='{"diagnosis": "This is your diagnosis, Eva","medications": [{"name":"bruffen","dosage":"1 pill","frequency":"2 times a day","duration":"5 days"}]}'
+POST_DIAGNOSIS_4='{"diagnosis": "This is your diagnosis, Eva","medications": [{"name":"ben-u-ron","dosage":"1 pill","frequency":"2 times a day","duration":"5 days"}]}'
+POST_DIAGNOSIS_5='{"diagnosis": "This is your diagnosis, Bob","medications": [{"name":"ben u ron","dosage":"1 pill","frequency":"2 times a day","duration":"5 days"}]}'
 
 # Call the function with user-provided parameters
 send_post_requests "$API_URL/patients" "$POST_PATIENT_1"

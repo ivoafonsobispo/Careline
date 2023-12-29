@@ -7,11 +7,11 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.exceptions.PatientNotFoundException;
 import pt.ipleiria.careline.exceptions.ProfessionalNotFoundException;
-import pt.ipleiria.careline.validations.UserValidation;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.repositories.ProfessionalRepository;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.ProfessionalService;
+import pt.ipleiria.careline.validations.UserValidation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,21 +88,27 @@ public class ProfessionalServiceImpl implements ProfessionalService {
         PatientEntity patient = patientRepository.findById(patientId).orElseThrow(PatientNotFoundException::new);
 
         professional.getPatients().add(patient);
-        patientService.setProfessionalToPatient(professional,patient);
+        patientService.setProfessionalToPatient(professional, patient);
 
-        partialUpdate(professionalId,professional);
+        partialUpdate(professionalId, professional);
     }
 
     @Override
     public Page<PatientEntity> getProfessionalPatients(Long professionalId, Pageable pageable) {
         ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
-        return patientRepository.findByProfessionalsId(professional.getId(),pageable);
+        return patientRepository.findByProfessionalsId(professional.getId(), pageable);
     }
 
     @Override
     public Page<PatientEntity> getAvailablePatient(Long professionalId, Pageable pageable) {
         professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
         return patientRepository.findByProfessionalsIdIsNull(pageable);
+    }
+
+    @Override
+    public PatientEntity getPatientById(Long professionalId, Long patientId) {
+        professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
+        return patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
     }
 
     private void validateProfessional(ProfessionalEntity professionalEntity) {

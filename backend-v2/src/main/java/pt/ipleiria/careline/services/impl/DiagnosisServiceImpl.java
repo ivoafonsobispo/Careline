@@ -10,7 +10,9 @@ import pt.ipleiria.careline.repositories.DiagnosisRepository;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.ProfessionalService;
+import pt.ipleiria.careline.utils.DateConversionUtil;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,5 +104,15 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     @Override
     public Page<DiagnosisEntity> findAllLatest(Pageable pageable, Long patientId) {
         return diagnosisRepository.findAllByPatientIdOrderByCreatedAtDesc(patientId, pageable);
+    }
+
+    @Override
+    public Page<DiagnosisEntity> findAllByDate(Pageable pageable, Long patientId, String date) {
+        DateConversionUtil dateConversionUtil = new DateConversionUtil();
+        Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
+        Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
+
+        return diagnosisRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(
+                pageable, patientId, startDate, endDate);
     }
 }
