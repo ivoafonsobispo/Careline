@@ -26,10 +26,10 @@ export default function ProfessionalPatient() {
 
     return (
         <div className="vertical-container">
-            <PageTitle title="Patient"/>
+            <PageTitle title="Patient" />   
             <div className='App-content'>
                 <div className="vertical-container">
-                    TODO
+                    Alice Johnson
                 </div>
             </div>
         </div>

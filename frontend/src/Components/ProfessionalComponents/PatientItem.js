@@ -61,8 +61,6 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
 
     const associatePatient = async () => {
         try {
-
-
             const response = await fetch(`http://localhost:8080/api/professionals/1/patients/${patient.id}`, {
                 method: 'PATCH',
                 headers: {
