@@ -5,7 +5,7 @@
     align-items: center;
     background-color: var(--lightercolor);
     width: 40%;
-    border-radius: 4%/8%;
+    border-radius: 5px;
     gap: 10%;
 }
 

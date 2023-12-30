@@ -3,7 +3,7 @@
     flex-direction: column;
     background-color: var(--professionalLightColor);
     width: 95%;
-    border-radius: 2%/8%;
+    border-radius: 10px;
     height: fit-content;
     /* gap: 2%; */
     padding: 2%;

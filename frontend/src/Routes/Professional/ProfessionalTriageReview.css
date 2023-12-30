@@ -1,0 +1,31 @@
+.professional-triage-medication-field {
+    border: 1px solid var(--professionalBaseColor);
+    padding: 1%;
+    width: 50%;
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.professional-triage-medication-field:focus {
+    border: 3px solid var(--professionalDarkColor);
+}
+
+
+.professional-triage-medication-span {
+    width: 50%;
+}
+
+.medications-container {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.5s ease-in-out;
+    /* transition: padding 0.5s ease-in-out; */
+    background-color: #e5f2ff;  
+    width: 95%;
+    border-radius: 10px;
+}
+
+.medications-container.show {
+    height: 420px;
+}

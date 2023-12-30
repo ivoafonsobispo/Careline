@@ -83,9 +83,9 @@ export default function ProfessionalTriageComponent({ status }) {
                         <span className='align-line-row professional-triage-diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20} /></span>
                     </div>
                 ) : (
-                    <NavLink to={'/'} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
-                        <span style={{margin: "auto"}}>
-                            <Pencil size={15} /> &nbsp;Review
+                    <NavLink to={'/triage/1/review'} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
+                        <span className='align-line-row' style={{margin: "auto"}}>
+                            <Pencil size={13} /> &nbsp; Review
                         </span>
                     </NavLink>
                 )}

@@ -7,7 +7,11 @@ export default function PageTitle({ title }) {
     return (
         <div className="page-title">
             {title === "Patient" ? (
-                <NavLink to='/patients' style={{minWidth: "auto", marginRight: "1%", fontSize: "18px", height: "66%"}}>
+                <NavLink to='/patients' style={{ minWidth: "auto", marginRight: "1%", fontSize: "18px", height: "66%" }}>
+                    <ChevronLeft color="var(--professionalBaseColor)" />
+                </NavLink>
+            ) : title === "Triage Review" ? (
+                <NavLink to='/triage' style={{ minWidth: "auto", marginRight: "1%", fontSize: "18px", height: "66%" }}>
                     <ChevronLeft color="var(--professionalBaseColor)" />
                 </NavLink>
             ) : (<></>)}

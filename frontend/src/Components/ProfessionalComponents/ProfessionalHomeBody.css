@@ -1,19 +1,19 @@
-.professional-home-information{
+.professional-home-information {
     background-color: var(--professionalLightColor);
     padding: 3%;
-    border-radius: 2%/15%;
+    border-radius: 5px;
     font-size: 18px;
 }
 
-.info-line{
+.info-line {
     display: flex;
 }
 
-.info-line-value{
+.info-line-value {
     margin-left: auto;
 }
 
-.vertical-bar{
+.vertical-bar {
     border-left: 2px solid var(--professionalBaseColor);
     height: 100%;
     width: 1%;
