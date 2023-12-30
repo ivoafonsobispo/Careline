@@ -1,0 +1,11 @@
+.professional-profile-field{
+    border: 1px solid var(--professionalBaseColor);
+    padding: 1.5%;
+    width: 100%;
+    border-radius: 1%/15%;
+}
+
+.profile-field-title{
+    width: 20%;
+    display: inline-flex;
+}

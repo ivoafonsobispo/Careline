@@ -16,6 +16,7 @@ import ProfessionalHome from './Routes/Professional/ProfessionalHome';
 import ProfessionalPatients from './Routes/Professional/ProfessionalPatients';
 import ProfessionalPatient from './Routes/Professional/ProfessionalPatient';
 import ErrorPage from './Routes/ErrorPage';
+import ProfessionalProfile from './Routes/Professional/ProfessionalProfile';
 
 export default function App() {
   const userType = 'professional';
@@ -48,6 +49,7 @@ export default function App() {
                 <Route path="/" element={<ProfessionalHome />} />
                 <Route path="/patients" element={<ProfessionalPatients />} />
                 <Route path="/patient/:id" element={<ProfessionalPatient />} />
+                <Route path="/profile" element={<ProfessionalProfile />} />
               </>
             )}
             <Route path="/*" element={<ErrorPage />} />
