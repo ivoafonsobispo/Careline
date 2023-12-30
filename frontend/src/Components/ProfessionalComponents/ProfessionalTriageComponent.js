@@ -1,13 +1,14 @@
-import './ClientTriageComponent.css'
-import './ClientBase.css'
+import './ProfessionalTriageComponent.css'
+import './ProfessionalBase.css'
 
 import { Pencil, Paperclip, Check, Download, ClockHistory } from 'react-bootstrap-icons'
 
 import axios from 'axios';
+import { NavLink } from 'react-router-dom';
 
-export default function ClientTriageComponent({ status }) {
+export default function ProfessionalTriageComponent({ status }) {
 
-    const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/1/pdf`;
+    const urlPdf = `http://localhost:8080/api/professionals/1/patients/1/diagnosis/1/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -43,12 +44,12 @@ export default function ClientTriageComponent({ status }) {
 
 
     return (
-        <div className="client-triage-box">
+        <div className="professional-client-triage-box">
             <div className='align-line-row'>
                 <span className='align-line-row'><Pencil size={15} /> &nbsp;Triage 1</span>
-                {/* <span className='diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20}/></span> */}
+                <span style={{ marginLeft: "auto", marginRight: "2%" }}>Patient 1</span>
             </div>
-            <hr className='triage-hr'></hr>
+            <hr className='professional-triage-hr'></hr>
 
             <div className='horizontal-container client-triage-information-box'>
                 <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
@@ -69,19 +70,26 @@ export default function ClientTriageComponent({ status }) {
                 </div>
 
             </div>
-            <hr className='triage-hr'></hr>
+            <hr className='professional-triage-hr'></hr>
 
-            <div className='horizontal-container'>
+            <div className='align-line-row'>
                 <div>
-                    {status === "Reviewed" ? <span className='align-line-row' style={{ color: "var(--lightGreen)", fontWeight: "bold" }}><Check size={20} /> &nbsp;Status - Reviewed</span> : <span className='align-line-row' style={{ color: "#eb7c49", fontWeight: "bold" }}><ClockHistory size={15} /> &nbsp; Status - Sent</span>}
+                    {status === "Reviewed" ? <span className='align-line-row' style={{ color: "var(--lightGreen)", fontWeight: "bold" }}><Check size={20} /> &nbsp;Status - Reviewed</span> : <span className='align-line-row' style={{ color: "#eb7c49", fontWeight: "bold" }}><ClockHistory size={15} /> &nbsp; Status - Unreviewed</span>}
                 </div>
 
                 {status === "Reviewed" ? (
                     <div className='align-line-row' style={{ marginLeft: "auto", marginRight: "2%" }}>
                         <span className='align-line-row'><Paperclip size={20} /> &nbsp;Diagnosis 1 &nbsp;</span>
-                        <span className='align-line-row triage-diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20} /></span>
+                        <span className='align-line-row professional-triage-diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20} /></span>
                     </div>
-                ) : (<></>)}
+                ) : (
+                    <NavLink to={'/'} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
+                        <span style={{margin: "auto"}}>
+                            <Pencil size={15} /> &nbsp;Review
+                        </span>
+                    </NavLink>
+                )}
+
             </div>
 
             <span className='triage-date'>WEDNESDAY, 8 OCT AT 15:35 PM</span>

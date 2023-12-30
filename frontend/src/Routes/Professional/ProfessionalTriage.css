@@ -1,0 +1,11 @@
+.professional-triage-button{
+    background-color: var(--professionalBaseColor);
+    color: white;
+    border: none;
+    padding: 1.5%;
+    cursor: pointer;
+}
+
+.professional-triage-button:hover{
+    background-color: var(--professionalDarkColor);
+}
