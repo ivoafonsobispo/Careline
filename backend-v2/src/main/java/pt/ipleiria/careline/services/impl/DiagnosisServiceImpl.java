@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.exceptions.PatientException;
 import pt.ipleiria.careline.repositories.DiagnosisRepository;
 import pt.ipleiria.careline.services.DiagnosisService;
 import pt.ipleiria.careline.services.PatientService;
@@ -21,9 +22,9 @@ import java.util.stream.StreamSupport;
 @Service
 public class DiagnosisServiceImpl implements DiagnosisService {
 
-    private DiagnosisRepository diagnosisRepository;
-    private ProfessionalService professionalService;
-    private PatientService patientService;
+    private final DiagnosisRepository diagnosisRepository;
+    private final ProfessionalService professionalService;
+    private final PatientService patientService;
 
     public DiagnosisServiceImpl(DiagnosisRepository diagnosisRepository, ProfessionalService professionalService, PatientService patientService) {
         this.diagnosisRepository = diagnosisRepository;
@@ -31,7 +32,7 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         this.patientService = patientService;
     }
 
-    // TODO: Missing Validations & Unit Tests
+    // TODO: Unit Tests
 
     @Override
     public DiagnosisEntity save(Long patientId, Long professionalId, DiagnosisEntity diagnosisEntity) {
@@ -41,13 +42,13 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         if (existingPatient.isPresent()) {
             diagnosisEntity.setPatient(existingPatient.get());
         } else {
-            throw new IllegalArgumentException("Patient not found");
+            throw new PatientException();
         }
 
         if (existingProfessional.isPresent()) {
             diagnosisEntity.setProfessional(existingProfessional.get());
         } else {
-            throw new IllegalArgumentException("Professional not found");
+            throw new PatientException();
         }
 
         return diagnosisRepository.save(diagnosisEntity);
@@ -55,7 +56,6 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
     @Override
     public Optional<DiagnosisEntity> getById(Long id) {
-
         return diagnosisRepository.findById(id);
     }
 
