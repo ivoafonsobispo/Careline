@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
-import { Pencil, FileMedical} from 'react-bootstrap-icons'
+import { Pencil, FileMedical } from 'react-bootstrap-icons'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -209,7 +209,8 @@ export default function ProfessionalTriageReview() {
 
                 const droneFields = {};
 
-                droneFields.medications = medications;
+                // const medicationNames = 
+                droneFields.medications = medications.map(medication => medication.name);
                 droneFields.coordinate = {
                     "departure_latitude": startPosition[0],
                     "departure_longitude": startPosition[1],
@@ -262,7 +263,7 @@ export default function ProfessionalTriageReview() {
                 <div className='App-content' >
                     <div className="vertical-container" style={{ gap: "4%" }}>
                         <div className="professional-client-triage-box" style={{ fontSize: "16px" }}>
-                            <span style={{ margin: "0% 0.7%" }} className="align-line-row"><FileMedical size={20}/> &nbsp;Patient: Alice Johnson &nbsp; | &nbsp; Email: alice@mail.com &nbsp; | &nbsp; NUS: 987654321</span>
+                            <span style={{ margin: "0% 0.7%" }} className="align-line-row"><FileMedical size={20} /> &nbsp;Patient: Alice Johnson &nbsp; | &nbsp; Email: alice@mail.com &nbsp; | &nbsp; NUS: 987654321</span>
                             <hr className='professional-triage-hr'></hr>
                             <div className='horizontal-container client-triage-information-box'>
                                 <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
