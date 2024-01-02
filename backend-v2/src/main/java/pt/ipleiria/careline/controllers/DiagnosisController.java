@@ -30,11 +30,11 @@ import java.util.Optional;
 @CrossOrigin
 public class DiagnosisController {
     private final DiagnosisService diagnosisService;
-    private Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
-    private Mapper<DiagnosisEntity, DiagnosisResponseDTO> diagnosisResponseMapper;
-    private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
-    private Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper;
-    private SimpMessagingTemplate messagingTemplate;
+    private final Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper;
+    private final Mapper<DiagnosisEntity, DiagnosisResponseDTO> diagnosisResponseMapper;
+    private final Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
+    private final Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public DiagnosisController(DiagnosisService diagnosisService,
                                Mapper<DiagnosisEntity, DiagnosisDTO> diagnosisMapper, Mapper<DiagnosisEntity, DiagnosisResponseDTO> diagnosisResponseMapper, Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper, Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseDTOMapper, SimpMessagingTemplate messagingTemplate) {
@@ -115,9 +115,6 @@ public class DiagnosisController {
     @GetMapping("/patients/{patientId}/diagnosis/{id}/pdf")
     public void getPDFByIdPatient(@PathVariable("id") Long id, @PathVariable("patientId") Long patientId, HttpServletResponse response) throws DocumentException, IOException {
         Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getDiagnosisOfPatient(patientId, id);
-        if (diagnosisEntity.isEmpty()) {
-            throw new IllegalArgumentException("Diagnosis not found");
-        }
         PdfGenerator generator = new PdfGenerator();
         byte[] pdfContent = generator.generateDiagnosisPDF(diagnosisEntity.get());
         response.setContentType("application/pdf");
@@ -131,11 +128,8 @@ public class DiagnosisController {
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}/pdf")
-    public void getPDFById(@PathVariable("id") Long id, HttpServletResponse response) throws DocumentException, IOException {
-        Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getById(id);
-        if (diagnosisEntity.isEmpty()) {
-            throw new IllegalArgumentException("Diagnosis not found");
-        }
+    public void getPDFById(@PathVariable("patientId") Long patientId, @PathVariable("id") Long id, HttpServletResponse response) throws DocumentException, IOException {
+        Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getDiagnosisOfPatient(patientId, id);
         PdfGenerator generator = new PdfGenerator();
         byte[] pdfContent = generator.generateDiagnosisPDF(diagnosisEntity.get());
         response.setContentType("application/pdf");

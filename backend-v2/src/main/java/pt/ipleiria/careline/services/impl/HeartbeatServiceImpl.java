@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Severity;
-import pt.ipleiria.careline.utils.DateConversionUtil;
-import pt.ipleiria.careline.validations.DataValidation;
+import pt.ipleiria.careline.exceptions.HeartbeatException;
+import pt.ipleiria.careline.exceptions.PatientException;
 import pt.ipleiria.careline.repositories.HeartbeatRepository;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
+import pt.ipleiria.careline.utils.DateConversionUtil;
+import pt.ipleiria.careline.validations.DataValidation;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,27 +27,36 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     private static final int MEDIUM_MIN = 40;
     private static final int MEDIUM_MAX = 59;
     private static final int MEDIUM_MAX_UPPER = 120;
-    private HeartbeatRepository heartbeatRepository;
-    private PatientService patientService;
+    private final HeartbeatRepository heartbeatRepository;
+    private final PatientService patientService;
 
     public HeartbeatServiceImpl(HeartbeatRepository heartbeatRepository, PatientService patientService) {
         this.heartbeatRepository = heartbeatRepository;
         this.patientService = patientService;
     }
 
+    private static void heartbeatBelongsToPatient(Long patientId, Page<HeartbeatEntity> heartbeatEntities) {
+        if (heartbeatEntities.isEmpty()) {
+            throw new HeartbeatException();
+        }
+
+        if (heartbeatEntities.get().anyMatch(heartbeat -> !heartbeat.getPatient().getId().equals(patientId))) {
+            throw new HeartbeatException("Heartbeat does not belong to patient");
+        }
+    }
+
     @Override
     public HeartbeatEntity create(Long patientId, HeartbeatEntity heartbeatEntity) {
         if (!DataValidation.isHeartbeatValid(heartbeatEntity.getHeartbeat())) {
-            throw new IllegalArgumentException("Heartbeat is not valid");
+            throw new HeartbeatException();
         }
 
         Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
-        if (existingPatient.isPresent()) {
-            heartbeatEntity.setPatient(existingPatient.get());
-        } else {
-            throw new IllegalArgumentException("Patient not found");
+        if (existingPatient.isEmpty()) {
+            throw new PatientException();
         }
 
+        heartbeatEntity.setPatient(existingPatient.get());
         Severity severity = getSeverityCategory(heartbeatEntity.getHeartbeat());
         heartbeatEntity.setSeverity(severity);
 
@@ -60,7 +71,10 @@ public class HeartbeatServiceImpl implements HeartbeatService {
 
     @Override
     public Page<HeartbeatEntity> findAll(Pageable pageable, Long patientId) {
-        return heartbeatRepository.findAllByPatientId(pageable, patientId);
+        Page<HeartbeatEntity> heartbeatEntities = heartbeatRepository.findAllByPatientId(pageable, patientId);
+        heartbeatBelongsToPatient(patientId, heartbeatEntities);
+
+        return heartbeatEntities;
     }
 
     @Override
@@ -89,8 +103,11 @@ public class HeartbeatServiceImpl implements HeartbeatService {
         Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
         Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
 
-        return heartbeatRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(
+        Page<HeartbeatEntity> heartbeatEntities = heartbeatRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(
                 pageable, patientId, startDate, endDate);
+        heartbeatBelongsToPatient(patientId, heartbeatEntities);
+
+        return heartbeatEntities;
     }
 
     private Severity getSeverityCategory(int heartbeat) {
