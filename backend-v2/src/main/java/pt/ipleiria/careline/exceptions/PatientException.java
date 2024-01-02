@@ -1,19 +1,19 @@
 package pt.ipleiria.careline.exceptions;
 
-public class PatientNotFoundException extends RuntimeException {
-    public PatientNotFoundException(String nus) {
+public class PatientException extends RuntimeException {
+    public PatientException(String nus) {
         super("Could not find patient with nus: " + nus);
     }
 
-    public PatientNotFoundException(Long id) {
+    public PatientException(Long id) {
         super("Could not find patient with id: " + id);
     }
 
-    public PatientNotFoundException(String email, String password) {
+    public PatientException(String email, String password) {
         super("Could not find patient with email: " + email + " and password: " + password);
     }
 
-    public PatientNotFoundException() {
+    public PatientException() {
         super("Could not find patient");
     }
 }

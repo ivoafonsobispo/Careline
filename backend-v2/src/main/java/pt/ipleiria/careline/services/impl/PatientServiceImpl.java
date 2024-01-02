@@ -5,10 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
-import pt.ipleiria.careline.exceptions.PatientNotFoundException;
-import pt.ipleiria.careline.validations.UserValidation;
+import pt.ipleiria.careline.exceptions.PatientException;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.services.PatientService;
+import pt.ipleiria.careline.validations.UserValidation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
 @Service
 public class PatientServiceImpl implements PatientService {
 
-    private PatientRepository patientRepository;
+    private final PatientRepository patientRepository;
 
     public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
@@ -67,7 +67,7 @@ public class PatientServiceImpl implements PatientService {
             Optional.ofNullable(patientEntity.getNus()).ifPresent(existingPatient::setNus);
             Optional.ofNullable(patientEntity.getProfessionals()).ifPresent(existingPatient::setProfessionals);
             return patientRepository.save(existingPatient);
-        }).orElseThrow(PatientNotFoundException::new);
+        }).orElseThrow(PatientException::new);
     }
 
 

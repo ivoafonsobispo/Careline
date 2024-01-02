@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
-import pt.ipleiria.careline.exceptions.PatientNotFoundException;
-import pt.ipleiria.careline.exceptions.ProfessionalNotFoundException;
+import pt.ipleiria.careline.exceptions.PatientException;
+import pt.ipleiria.careline.exceptions.ProfessionalException;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.repositories.ProfessionalRepository;
 import pt.ipleiria.careline.services.PatientService;
@@ -22,9 +22,9 @@ import java.util.stream.StreamSupport;
 @Service
 public class ProfessionalServiceImpl implements ProfessionalService {
 
-    private ProfessionalRepository professionalRepository;
-    private PatientRepository patientRepository;
-    private PatientService patientService;
+    private final ProfessionalRepository professionalRepository;
+    private final PatientRepository patientRepository;
+    private final PatientService patientService;
 
     public ProfessionalServiceImpl(ProfessionalRepository professionalRepository, PatientRepository patientRepository, PatientService patientService) {
         this.professionalRepository = professionalRepository;
@@ -74,7 +74,7 @@ public class ProfessionalServiceImpl implements ProfessionalService {
             Optional.ofNullable(professionalEntity.getNus()).ifPresent(existingProfessional::setNus);
             Optional.ofNullable(professionalEntity.getPatients()).ifPresent(existingProfessional::setPatients);
             return professionalRepository.save(existingProfessional);
-        }).orElseThrow(ProfessionalNotFoundException::new);
+        }).orElseThrow(ProfessionalException::new);
     }
 
     @Override
@@ -84,8 +84,8 @@ public class ProfessionalServiceImpl implements ProfessionalService {
 
     @Override
     public void setPatientToProfessional(Long professionalId, Long patientId) {
-        ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
-        PatientEntity patient = patientRepository.findById(patientId).orElseThrow(PatientNotFoundException::new);
+        ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalException::new);
+        PatientEntity patient = patientRepository.findById(patientId).orElseThrow(PatientException::new);
 
         professional.getPatients().add(patient);
         patientService.setProfessionalToPatient(professional, patient);
@@ -95,20 +95,20 @@ public class ProfessionalServiceImpl implements ProfessionalService {
 
     @Override
     public Page<PatientEntity> getProfessionalPatients(Long professionalId, Pageable pageable) {
-        ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
+        ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalException::new);
         return patientRepository.findByProfessionalsId(professional.getId(), pageable);
     }
 
     @Override
     public Page<PatientEntity> getAvailablePatient(Long professionalId, Pageable pageable) {
-        professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
+        professionalRepository.findById(professionalId).orElseThrow(ProfessionalException::new);
         return patientRepository.findByProfessionalsIdIsNull(pageable);
     }
 
     @Override
     public PatientEntity getPatientById(Long professionalId, Long patientId) {
-        professionalRepository.findById(professionalId).orElseThrow(ProfessionalNotFoundException::new);
-        return patientService.getPatientById(patientId).orElseThrow(PatientNotFoundException::new);
+        professionalRepository.findById(professionalId).orElseThrow(ProfessionalException::new);
+        return patientService.getPatientById(patientId).orElseThrow(PatientException::new);
     }
 
     private void validateProfessional(ProfessionalEntity professionalEntity) {

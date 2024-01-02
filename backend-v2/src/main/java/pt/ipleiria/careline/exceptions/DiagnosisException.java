@@ -1,11 +1,11 @@
 package pt.ipleiria.careline.exceptions;
 
-public class DiagnosisNotFoundException extends RuntimeException {
-    public DiagnosisNotFoundException(Long id) {
+public class DiagnosisException extends RuntimeException {
+    public DiagnosisException(Long id) {
         super("Could not find diagnosis with id: " + id);
     }
 
-    public DiagnosisNotFoundException() {
+    public DiagnosisException() {
         super("Could not find diagnosis");
     }
 }
