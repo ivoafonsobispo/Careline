@@ -21,7 +21,7 @@ import ProfessionalTriage from './Routes/Professional/ProfessionalTriage';
 import ProfessionalTriageReview from './Routes/Professional/ProfessionalTriageReview';
 
 export default function App() {
-  const userType = 'professional';
+  const userType = 'patient';
 
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {

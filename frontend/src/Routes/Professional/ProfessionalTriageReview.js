@@ -212,10 +212,10 @@ export default function ProfessionalTriageReview() {
                 // const medicationNames = 
                 droneFields.medications = medications.map(medication => medication.name);
                 droneFields.coordinate = {
-                    "departure_latitude": startPosition[0],
-                    "departure_longitude": startPosition[1],
-                    "arrival_latitude": position[0],
-                    "arrival_longitude": position[1],
+                    "departure_latitude": parseFloat(startPosition[0].toFixed(3)),
+                    "departure_longitude": parseFloat(startPosition[1].toFixed(3)),
+                    "arrival_latitude": parseFloat(position[0].toFixed(3)),
+                    "arrival_longitude": parseFloat(position[1].toFixed(3)),
                 };
 
                 console.log(JSON.stringify(droneFields));

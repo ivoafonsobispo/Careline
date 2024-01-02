@@ -3,13 +3,15 @@ import "../../Components/ClientComponents/ClientBase.css";
 import classNames from "classnames";
 import ClientDroneComponent from "../../Components/ClientComponents/ClientDroneComponent";
 
-import { useState } from 'react';
-
 //Day Picker
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
+
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+const urlDrones = `http://localhost:8080/api/patients/1/deliveries`;
 
 export default function ClientDrones() {
     const [selected, setSelected] = useState(new Date());
@@ -19,7 +21,28 @@ export default function ClientDrones() {
         footer = <p>You picked {format(selected, 'PP')}.</p>;
     }
 
-    const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
+    const [selectedButton, setButton] = useState("all"); // all; pdrones; indrones; sdrones
+
+    const [drones, setDrones] = useState(null);
+    
+    useEffect(() => {
+
+        axios.get(urlDrones, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                console.log(response.data.content);
+                setDrones(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, []);
 
     return (
 
@@ -30,22 +53,81 @@ export default function ClientDrones() {
                     <div className="vertical-container">
                         <div className="align-line-row" style={{ marginBottom: "2%", gap: "2%" }}>
                             <button className={classNames("triage-button", selectedButton !== 'all' ? "triage-button-inactive" : "")} onClick={() => setButton("all")}>All Drones</button>
-                            <button className={classNames("triage-button", selectedButton !== 'urtriage' ? "triage-button-inactive" : "")} onClick={() => setButton("urtriage")}>Drones Inshipping</button>
-                            <button className={classNames("triage-button", selectedButton !== 'rtriage' ? "triage-button-inactive" : "")} onClick={() => setButton("rtriage")}>Drones Shipped</button>
+                            <button className={classNames("triage-button", selectedButton !== 'pdrones' ? "triage-button-inactive" : "")} onClick={() => setButton("pdrones")}>Pending Drones</button>
+                            <button className={classNames("triage-button", selectedButton !== 'itdrones' ? "triage-button-inactive" : "")} onClick={() => setButton("itdrones")}>In Transit Drones</button>
+                            <button className={classNames("triage-button", selectedButton !== 'ddrones' ? "triage-button-inactive" : "")} onClick={() => setButton("ddrones")}>Delivered Drones</button>
+                            <button className={classNames("triage-button", selectedButton !== 'fdrones' ? "triage-button-inactive" : "")} onClick={() => setButton("fdrones")}>Failed Drones</button>
                         </div>
                         <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
                             {selectedButton === 'all' ? (
                                 <>
-                                    <ClientDroneComponent />
-                                    <ClientDroneComponent />
+                                    {!drones || drones.length === 0 ? (
+                                        <div className='no-records'>No drones yet.</div>
+                                    ) : (
+                                        <>
+                                            {drones.map((drone, index) => {
+                                                return (
+                                                    <ClientDroneComponent key={index} drone={drone} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
-                            ) : selectedButton === 'urtriage' ? (
+                            ) : selectedButton === 'pdrones' ? (
                                 <>
-                                    <ClientDroneComponent />
+                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'PENDING').length === 0 ? (
+                                        <div className='no-records'>No pending drones.</div>
+                                    ) : (
+                                        <>
+                                            {drones.filter(drone => drone.status === 'PENDING').map((drone, index) => {
+                                                return (
+                                                    <ClientDroneComponent key={index} drone={drone} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
+                                </>
+                            ) : selectedButton === 'itdrones' ? (
+                                <>
+                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'IN_TRANSIT').length === 0 ? (
+                                        <div className='no-records'>No in transit drones.</div>
+                                    ) : (
+                                        <>
+                                            {drones.filter(drone => drone.status === 'IN_TRANSIT').map((drone, index) => {
+                                                return (
+                                                    <ClientDroneComponent key={index} drone={drone} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
+                                </>
+                            ) : selectedButton === 'ddrones' ? (
+                                <>
+                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'DELIVERED').length === 0 ? (
+                                        <div className='no-records'>No delivered drones.</div>
+                                    ) : (
+                                        <>
+                                            {drones.filter(drone => drone.status === 'DELIVERED').map((drone, index) => {
+                                                return (
+                                                    <ClientDroneComponent key={index} drone={drone} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             ) : (
                                 <>
-                                    <ClientDroneComponent />
+                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'FAILED').length === 0 ? (
+                                        <div className='no-records'>No failed drones.</div>
+                                    ) : (
+                                        <>
+                                            {drones.filter(drone => drone.status === 'FAILED').map((drone, index) => {
+                                                return (
+                                                    <ClientDroneComponent key={index} drone={drone} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>
