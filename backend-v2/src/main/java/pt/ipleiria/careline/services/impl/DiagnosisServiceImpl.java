@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
+import pt.ipleiria.careline.exceptions.DroneException;
 import pt.ipleiria.careline.exceptions.PatientException;
 import pt.ipleiria.careline.repositories.DiagnosisRepository;
 import pt.ipleiria.careline.services.DiagnosisService;
@@ -33,6 +34,16 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     }
 
     // TODO: Unit Tests
+
+    private static void diagnosisBelongsToPatient(Long patientId, Page<DiagnosisEntity> diagnosisEntities) {
+        if (diagnosisEntities.isEmpty()) {
+            throw new DroneException();
+        }
+
+        if (diagnosisEntities.get().anyMatch(diagnosis -> !diagnosis.getPatient().getId().equals(patientId))) {
+            throw new DroneException("Diagnosis does not belong to patient");
+        }
+    }
 
     @Override
     public DiagnosisEntity save(Long patientId, Long professionalId, DiagnosisEntity diagnosisEntity) {
@@ -93,17 +104,31 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
     @Override
     public Optional<DiagnosisEntity> getDiagnosisOfPatient(Long patientId, Long id) {
-        return diagnosisRepository.findByIdOfPatient(patientId, id);
+        Optional<DiagnosisEntity> diagnosisEntity = diagnosisRepository.findByIdOfPatient(patientId, id);
+        if (diagnosisEntity.isEmpty()) {
+            throw new DroneException();
+        }
+        if (!diagnosisEntity.get().getPatient().getId().equals(patientId)) {
+            throw new DroneException("Diagnosis does not belong to patient");
+        }
+
+        return diagnosisEntity;
     }
 
     @Override
     public Page<DiagnosisEntity> findAllDiagnosisOfPatient(Long patientId, Pageable pageable) {
-        return diagnosisRepository.findAllByPatientId(patientId, pageable);
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisRepository.findAllByPatientId(patientId, pageable);
+        diagnosisBelongsToPatient(patientId, diagnosisEntities);
+
+        return diagnosisEntities;
     }
 
     @Override
     public Page<DiagnosisEntity> findAllLatest(Pageable pageable, Long patientId) {
-        return diagnosisRepository.findAllByPatientIdOrderByCreatedAtDesc(patientId, pageable);
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisRepository.findAllByPatientIdOrderByCreatedAtDesc(patientId, pageable);
+        diagnosisBelongsToPatient(patientId, diagnosisEntities);
+
+        return diagnosisEntities;
     }
 
     @Override
@@ -112,7 +137,9 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
         Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
 
-        return diagnosisRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(
-                pageable, patientId, startDate, endDate);
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
+        diagnosisBelongsToPatient(patientId, diagnosisEntities);
+
+        return diagnosisEntities;
     }
 }

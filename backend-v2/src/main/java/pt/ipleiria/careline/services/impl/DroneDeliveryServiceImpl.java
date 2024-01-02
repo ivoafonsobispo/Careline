@@ -7,6 +7,7 @@ import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.DroneDeliveryEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Delivery;
+import pt.ipleiria.careline.exceptions.DateException;
 import pt.ipleiria.careline.exceptions.DiagnosisException;
 import pt.ipleiria.careline.exceptions.DroneException;
 import pt.ipleiria.careline.exceptions.PatientException;
@@ -65,6 +66,10 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
             delivery.setMedications(medications);
         } else {
             throw new DiagnosisException();
+        }
+
+        if (diagnosis.get().getPatient() != existingPatient.get()) {
+            throw new DiagnosisException("Diagnosis does not belong to patient");
         }
 
         delivery.setDeliveryStatus(Delivery.PENDING);
@@ -178,7 +183,12 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
         Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
         Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
 
-        Page<DroneDeliveryEntity> droneDeliveryEntities = repository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
+        Page<DroneDeliveryEntity> droneDeliveryEntities = null;
+        try {
+            droneDeliveryEntities = repository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
+        } catch (Exception e) {
+            throw new DateException();
+        }
 
         deliveryBelongsToPatient(patientId, droneDeliveryEntities);
 

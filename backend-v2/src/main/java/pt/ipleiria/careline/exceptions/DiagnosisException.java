@@ -8,4 +8,8 @@ public class DiagnosisException extends RuntimeException {
     public DiagnosisException() {
         super("Could not find diagnosis");
     }
+
+    public DiagnosisException(String message) {
+        super(message);
+    }
 }
