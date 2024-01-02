@@ -1,0 +1,15 @@
+.triage-button{
+    background-color: var(--basecolor);
+    color: white;
+    border: none;
+    padding: 1.5%;
+    cursor: pointer;
+}
+
+.triage-button-inactive{
+    background-color: var(--lightcolor) !important;
+}
+
+.triage-button:hover{
+    background-color: var(--darkcolor) !important;
+}

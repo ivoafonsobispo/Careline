@@ -53,16 +53,16 @@ export default function ClientTriageComponent({ status }) {
             <div className='horizontal-container client-triage-information-box'>
                 <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
                     <div className='align-line-row'>
-                        <span>Heartbeat:&nbsp;</span>
+                        <span><b>Heartbeat:&nbsp;</b></span>
                         <span className='triage-field'>120 BPM</span>
                     </div>
                     <div className='align-line-row'>
-                        <span>Temperature:&nbsp;</span>
+                        <span><b>Temperature:&nbsp;</b></span>
                         <span className='triage-field'>50 °C</span>
                     </div>
                 </div>
                 <div >
-                    <span>Symptoms: </span>
+                    <span><b>Symptoms: </b></span>
                 </div>
                 <div className='client-triage-information'>
                     <span > ahahah ah a u ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwhahahah ah a u hdwuhduwh ahahah ah a u </span>

@@ -21,11 +21,52 @@
     overflow: hidden;
     transition: height 0.5s ease-in-out;
     /* transition: padding 0.5s ease-in-out; */
-    background-color: #e5f2ff;  
+    background-color: #e5f2ff;
     width: 95%;
     border-radius: 10px;
 }
 
 .medications-container.show {
-    height: 420px;
+    height: 480px;
+}
+
+.professional-medication-button {
+    background-color: var(--professionalBaseColor);
+    color: white;
+    border: none;
+    padding: 1.5%;
+    cursor: pointer;
+}
+
+.professional-medication-button-inactive {
+    background-color: var(--professionalLightColor) !important;
+    cursor: unset;
+}
+
+.professional-medication-button:hover {
+    background-color: var(--professionalDarkColor);
+}
+
+.floating-form {
+    position: relative;
+    top: 20px;
+    left: 154px;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    width: fit-content;
+}
+
+.professional-triage-map-search {
+    border: 1px solid var(--professionalBaseColor);
+    border-radius: 5px;
+    font-size: 16px;
+    font-family: 'Nunito', sans-serif;
+    width: 70%;
+    margin-right: 5%;
+}
+
+.professional-triage-map-search:focus {
+    border: 3px solid var(--professionalDarkColor);
 }

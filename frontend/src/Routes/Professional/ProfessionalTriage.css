@@ -8,9 +8,8 @@
 
 .professional-triage-button-inactive{
     background-color: var(--professionalLightColor) !important;
-    cursor: unset;
 }
 
 .professional-triage-button:hover{
-    background-color: var(--professionalDarkColor);
+    background-color: var(--professionalDarkColor) !important;
 }
