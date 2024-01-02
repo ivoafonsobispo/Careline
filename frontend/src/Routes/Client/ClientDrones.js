@@ -1,43 +1,65 @@
 import PageTitle from "../../Components/PageTitle/PageTitle";
 import "../../Components/ClientComponents/ClientBase.css";
+import classNames from "classnames";
+import ClientDroneComponent from "../../Components/ClientComponents/ClientDroneComponent";
 
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-import { Map, TileLayer, Marker, Popup } from 'leaflet';
-import 'leaflet/dist/leaflet.css'
-
+//Day Picker
+import { format } from 'date-fns';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
+import '../../DayPicker.css';
 
 export default function ClientDrones() {
+    const [selected, setSelected] = useState(new Date());
 
-    // useEffect(() => {
-    //     // Create a map
-    //     const map = L.map('map').setView([51.505, -0.09], 13);
+    let footer = <p>Please pick a day.</p>;
+    if (selected) {
+        footer = <p>You picked {format(selected, 'PP')}.</p>;
+    }
 
-    //     // Add a tile layer
-    //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //       attribution: '&copy; OpenStreetMap contributors',
-    //     }).addTo(map);
-
-    //     // Add a marker
-    //     L.marker([51.505, -0.09])
-    //       .addTo(map)
-    //       .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-    //       .openPopup();
-    //   }, []);
+    const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
 
     return (
-        <div className="vertical-container">
-            <PageTitle title="Drones" />
-            <div className='App-content'>
-                {/* <Map center={[51.505, -0.09]} zoom={13} style={{ height: '400px' }}>
-                    <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution='&copy; OpenStreetMap contributors'
-                    />
-                    <Marker position={[51.505, -0.09]}>
-                        <Popup>A pretty CSS3 popup.<br/> Easily customizable.</Popup>
-                    </Marker>
-                </Map> */}
+
+        <div className="horizontal-container">
+            <div className="vertical-container">
+                <PageTitle title="Drones" />
+                <div className='App-content'>
+                    <div className="vertical-container">
+                        <div className="align-line-row" style={{ marginBottom: "2%", gap: "2%" }}>
+                            <button className={classNames("triage-button", selectedButton !== 'all' ? "triage-button-inactive" : "")} onClick={() => setButton("all")}>All Drones</button>
+                            <button className={classNames("triage-button", selectedButton !== 'urtriage' ? "triage-button-inactive" : "")} onClick={() => setButton("urtriage")}>Drones Inshipping</button>
+                            <button className={classNames("triage-button", selectedButton !== 'rtriage' ? "triage-button-inactive" : "")} onClick={() => setButton("rtriage")}>Drones Shipped</button>
+                        </div>
+                        <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
+                            {selectedButton === 'all' ? (
+                                <>
+                                    <ClientDroneComponent />
+                                    <ClientDroneComponent />
+                                </>
+                            ) : selectedButton === 'urtriage' ? (
+                                <>
+                                    <ClientDroneComponent />
+                                </>
+                            ) : (
+                                <>
+                                    <ClientDroneComponent />
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className='day-picker'>
+                <DayPicker
+                    mode="single"
+                    selected={selected}
+                    onSelect={setSelected}
+                    footer={footer}
+                    className='day-picker-style'
+                />
             </div>
         </div>
     );
