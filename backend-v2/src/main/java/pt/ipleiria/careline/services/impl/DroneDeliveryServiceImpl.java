@@ -25,9 +25,9 @@ import java.util.stream.StreamSupport;
 @Service
 public class DroneDeliveryServiceImpl implements DroneDeliveryService {
 
-    private DroneDeliveryRepository repository;
-    private PatientService patientService;
-    private DiagnosisService diagnosisService;
+    private final DroneDeliveryRepository repository;
+    private final PatientService patientService;
+    private final DiagnosisService diagnosisService;
 
     public DroneDeliveryServiceImpl(DroneDeliveryRepository repository, PatientService patientService, DiagnosisService diagnosisService) {
         this.repository = repository;
@@ -90,37 +90,49 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
     @Override
     public DroneDeliveryEntity changeStatusToInTransit(Long id) {
         Optional<DroneDeliveryEntity> delivery = repository.findById(id);
-        if (delivery.isPresent()) {
-            delivery.get().setDeliveryStatus(Delivery.IN_TRANSIT);
-            delivery.get().setDepartureTime(Instant.now());
-            return repository.save(delivery.get());
-        } else {
+        if (delivery.isEmpty()) {
             throw new PatientNotFoundException();
         }
+
+        if (delivery.get().getDeliveryStatus() != Delivery.PENDING) {
+            throw new IllegalStateException("Delivery status must be PENDING");
+        }
+
+        delivery.get().setDeliveryStatus(Delivery.IN_TRANSIT);
+        delivery.get().setDepartureTime(Instant.now());
+        return repository.save(delivery.get());
     }
 
     @Override
     public DroneDeliveryEntity changeStatusToDelivered(Long id) {
         Optional<DroneDeliveryEntity> delivery = repository.findById(id);
-        if (delivery.isPresent()) {
-            delivery.get().setDeliveryStatus(Delivery.DELIVERED);
-            delivery.get().setArrivalTime(Instant.now());
-            return repository.save(delivery.get());
-        } else {
+        if (delivery.isEmpty()) {
             throw new PatientNotFoundException();
         }
+
+        if (delivery.get().getDeliveryStatus() != Delivery.IN_TRANSIT) {
+            throw new IllegalStateException("Delivery status must be IN_TRANSIT");
+        }
+
+        delivery.get().setDeliveryStatus(Delivery.DELIVERED);
+        delivery.get().setArrivalTime(Instant.now());
+        return repository.save(delivery.get());
     }
 
     @Override
     public DroneDeliveryEntity changeStatusToFailed(Long id) {
         Optional<DroneDeliveryEntity> delivery = repository.findById(id);
-        if (delivery.isPresent()) {
-            delivery.get().setDeliveryStatus(Delivery.FAILED);
-            delivery.get().setArrivalTime(Instant.now());
-            return repository.save(delivery.get());
-        } else {
+        if (delivery.isEmpty()) {
             throw new PatientNotFoundException();
         }
+
+        if (delivery.get().getDeliveryStatus() != Delivery.IN_TRANSIT && delivery.get().getDeliveryStatus() != Delivery.PENDING) {
+            throw new IllegalStateException("Delivery status must be IN_TRANSIT or PENDING");
+        }
+
+        delivery.get().setDeliveryStatus(Delivery.FAILED);
+        delivery.get().setArrivalTime(Instant.now());
+        return repository.save(delivery.get());
     }
 
     @Override
