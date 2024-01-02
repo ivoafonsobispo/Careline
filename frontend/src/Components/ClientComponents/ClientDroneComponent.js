@@ -68,11 +68,11 @@ export default function ClientDroneComponent({ drone }) {
                         </span>
                     : drone.status === "DELIVERED" ?
                         <span className='align-line-row' style={{ color: "var(--lightGreen)", fontWeight: "bold" }}>
-                            <Check size={15} /> &nbsp; Status - Delivered
+                            <Check size={20} /> &nbsp; Status - Delivered
                         </span>
                     :
                         <span className='align-line-row' style={{ color: "red", fontWeight: "bold" }}>
-                            <X size={15} /> &nbsp; Status - Failed
+                            <X size={20} /> &nbsp; Status - Failed
                         </span>
                     }
                 </div>

@@ -9,6 +9,7 @@ import ClientHome from './Routes/Client/ClientHome';
 import ClientDiagnoses from './Routes/Client/ClientDiagnoses'
 import ClientMeasures from './Routes/Client/ClientMeasures';
 import ClientDrones from './Routes/Client/ClientDrones';
+import ClientDrone from './Routes/Client/ClientDrone';
 import ClientTriage from './Routes/Client/ClientTriage';
 import ClientProfile from './Routes/Client/ClientProfile';
 
@@ -42,6 +43,7 @@ export default function App() {
                 <Route path="/diagnoses" element={<ClientDiagnoses />} />
                 <Route path="/measures" element={<ClientMeasures />} />
                 <Route path="/drones" element={<ClientDrones />} />
+                <Route path="/drones/:id" element={<ClientDrone />} />
                 <Route path="/triage" element={<ClientTriage />} />
                 <Route path="/profile" element={<ClientProfile />} />
               </>
