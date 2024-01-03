@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pt.ipleiria.careline.domain.entities.DiagnosisEntity;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
@@ -21,7 +20,7 @@ public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
     //get triage by id
     Optional<TriageEntity> findById(Long triageId);
 
-    List<TriageEntity> findAllById( Long trisgeId);
+    List<TriageEntity> findAllById(Long trisgeId);
 
     //get all triage data units at some time
     Page<TriageEntity> findAllByCreatedAt(Pageable pageable, Instant instant);
@@ -30,14 +29,15 @@ public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
     Optional<TriageEntity> findLastTriage();
 
     @Query("SELECT t FROM TriageEntity t WHERE t.patient = patient AND t.createdAt = (SELECT MAX(t2.createdAt) FROM TriageEntity t2)")
-    Optional<TriageEntity> findLastParientTriage( @Param("patient") PatientEntity patient);
+    Optional<TriageEntity> findLastParientTriage(@Param("patient") PatientEntity patient);
 
     @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient")
     Page<TriageEntity> getTriagesByPatient(Pageable pageable, @Param("patient") PatientEntity patient);
 
     @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient AND t.id = :triageId")
-    Optional<TriageEntity> getTriageByPatient( @Param("patient") PatientEntity patient, @Param("triageId") Long triageId);
+    Optional<TriageEntity> getTriageByPatient(@Param("patient") PatientEntity patient, @Param("triageId") Long triageId);
 
+    Page<TriageEntity> findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(Pageable pageable, Long patientId, Instant startDate, Instant endDate);
 
-
+    Page<TriageEntity> findAllByPatientIdOrderByCreatedAtDesc(Pageable pageable, Long patientId);
 }

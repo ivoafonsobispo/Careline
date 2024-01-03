@@ -9,8 +9,10 @@ import pt.ipleiria.careline.exceptions.PatientException;
 import pt.ipleiria.careline.exceptions.ProfessionalException;
 import pt.ipleiria.careline.repositories.PatientRepository;
 import pt.ipleiria.careline.repositories.ProfessionalRepository;
+import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.ProfessionalService;
+import pt.ipleiria.careline.services.TemperatureService;
 import pt.ipleiria.careline.validations.UserValidation;
 
 import java.util.ArrayList;
@@ -21,15 +23,18 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ProfessionalServiceImpl implements ProfessionalService {
-
     private final ProfessionalRepository professionalRepository;
     private final PatientRepository patientRepository;
     private final PatientService patientService;
+    private final HeartbeatService heartbeatService;
+    private final TemperatureService temperatureService;
 
-    public ProfessionalServiceImpl(ProfessionalRepository professionalRepository, PatientRepository patientRepository, PatientService patientService) {
+    public ProfessionalServiceImpl(ProfessionalRepository professionalRepository, PatientRepository patientRepository, PatientService patientService, HeartbeatService heartbeatService, TemperatureService temperatureService) {
         this.professionalRepository = professionalRepository;
         this.patientRepository = patientRepository;
         this.patientService = patientService;
+        this.heartbeatService = heartbeatService;
+        this.temperatureService = temperatureService;
     }
 
     @Override

@@ -8,6 +8,7 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Severity;
 import pt.ipleiria.careline.exceptions.PatientException;
 import pt.ipleiria.careline.exceptions.TemperatureException;
+import pt.ipleiria.careline.helpers.TemperatureSeverity;
 import pt.ipleiria.careline.repositories.TemperatureRepository;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.TemperatureService;
@@ -22,11 +23,6 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class TemperatureServiceImpl implements TemperatureService {
-    private static final double GOOD_MIN = 36.5;
-    private static final double GOOD_MAX = 37.3;
-    private static final double MEDIUM_MIN = 35;
-    private static final double MEDIUM_MAX = 36.4;
-    private static final double MEDIUM_MAX_UPPER = 39.9;
     private final TemperatureRepository temperatureRepository;
     private final PatientService patientService;
 
@@ -55,7 +51,8 @@ public class TemperatureServiceImpl implements TemperatureService {
             throw new PatientException();
         }
 
-        Severity severity = getSeverityCategory(temperature.getTemperature());
+        TemperatureSeverity temperatureSeverity = new TemperatureSeverity();
+        Severity severity = temperatureSeverity.getSeverityCategory(temperature.getTemperature());
         temperature.setSeverity(severity);
 
         return temperatureRepository.save(temperature);
@@ -105,15 +102,5 @@ public class TemperatureServiceImpl implements TemperatureService {
         Page<TemperatureEntity> temperatureEntities = temperatureRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
         temperatureBelongsToPatient(patientId, temperatureEntities);
         return temperatureEntities;
-    }
-
-    private Severity getSeverityCategory(double temperature) {
-        if (temperature >= GOOD_MIN && temperature <= GOOD_MAX) {
-            return Severity.GOOD;
-        } else if ((temperature >= MEDIUM_MIN && temperature <= MEDIUM_MAX) || (temperature >= GOOD_MAX + 1 && temperature <= MEDIUM_MAX_UPPER)) {
-            return Severity.MEDIUM;
-        } else {
-            return Severity.CRITICAL;
-        }
     }
 }

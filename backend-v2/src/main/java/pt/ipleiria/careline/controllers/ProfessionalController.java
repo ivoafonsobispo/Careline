@@ -21,10 +21,10 @@ import java.util.Optional;
 @CrossOrigin
 public class ProfessionalController {
 
-    private ProfessionalService professionalService;
-    private Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper;
-    private Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseMapper;
-    private Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper;
+    private final ProfessionalService professionalService;
+    private final Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper;
+    private final Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseMapper;
+    private final Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper;
 
     public ProfessionalController(ProfessionalService professionalService, Mapper<ProfessionalEntity, ProfessionalDTO> professionalMapper, Mapper<ProfessionalEntity, ProfessionalResponseDTO> professionalResponseMapper, Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper) {
         this.professionalService = professionalService;
@@ -52,7 +52,7 @@ public class ProfessionalController {
         return patientEntities.map(patientResponseMapper::mapToDTO);
     }
 
-    @GetMapping("{professionalId}/patients/{id}")
+    @GetMapping("{professionalId}/patients/{patientId}")
     public PatientResponseDTO getProfessionalGetPatients(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId) {
         PatientEntity patient = professionalService.getPatientById(professionalId, patientId);
         return patientResponseMapper.mapToDTO(patient);

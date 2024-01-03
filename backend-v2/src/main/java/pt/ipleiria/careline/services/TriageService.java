@@ -8,9 +8,9 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import java.util.List;
 import java.util.Optional;
 
-public interface TriageService  {
+public interface TriageService {
 
-    TriageEntity save(TriageEntity triageEntity);
+    TriageEntity save(TriageEntity triageEntity, Long patientId);
 
     Optional<TriageEntity> getTriageById(Long id);
 
@@ -32,4 +32,9 @@ public interface TriageService  {
 
     void delete(Long id);
 
+    Page<TriageEntity> findAllByDate(Pageable pageable, Long patientId, String date);
+
+    Page<TriageEntity> findAllLatest(Pageable pageable, Long patientId);
+
+    TriageEntity setTriageReviewed(Long patientId, Long triageId);
 }

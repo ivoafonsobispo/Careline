@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
+import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.TemperatureService;
+import pt.ipleiria.careline.services.TriageService;
 import pt.ipleiria.careline.utils.CsvGenerator;
 import pt.ipleiria.careline.utils.ZipFileGenerator;
 
@@ -21,19 +23,22 @@ import java.util.List;
 @CrossOrigin
 public class CsvController {
 
-    private HeartbeatService heartbeatService;
-    private TemperatureService temperatureService;
+    private final HeartbeatService heartbeatService;
+    private final TemperatureService temperatureService;
+    private final TriageService triageService;
 
-    public CsvController(HeartbeatService heartbeatService, TemperatureService temperatureService) {
+    public CsvController(HeartbeatService heartbeatService, TemperatureService temperatureService, TriageService triageService) {
         this.heartbeatService = heartbeatService;
         this.temperatureService = temperatureService;
+        this.triageService = triageService;
     }
 
     @GetMapping("/heartbeats")
     public ResponseEntity<String> getHeartbeatsCsv() {
         List<HeartbeatEntity> heartbeatEntityList = heartbeatService.findAll();
+        List<TriageEntity> triageEntitiesList = triageService.findAll();
         CsvGenerator csvGenerator = new CsvGenerator();
-        String heartbeatCsv = csvGenerator.generateHeartbeatCsv(heartbeatEntityList);
+        String heartbeatCsv = csvGenerator.generateHeartbeatCsv(heartbeatEntityList, triageEntitiesList);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=heartbeats_data.csv");
@@ -44,9 +49,10 @@ public class CsvController {
 
     @GetMapping("/temperatures")
     public ResponseEntity<String> getTemperaturesCsv() {
-        List<TemperatureEntity> temperatureEntities= temperatureService.findAll();
+        List<TemperatureEntity> temperatureEntities = temperatureService.findAll();
+        List<TriageEntity> triageEntitiesList = triageService.findAll();
         CsvGenerator csvGenerator = new CsvGenerator();
-        String temperatureCsv = csvGenerator.generateTemperatureCsv(temperatureEntities);
+        String temperatureCsv = csvGenerator.generateTemperatureCsv(temperatureEntities, triageEntitiesList);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=temperatures_data.csv");
@@ -58,14 +64,15 @@ public class CsvController {
     @GetMapping
     public ResponseEntity<byte[]> getCsv() {
         List<HeartbeatEntity> heartbeatEntityList = heartbeatService.findAll();
-        List<TemperatureEntity> temperatureEntities= temperatureService.findAll();
+        List<TemperatureEntity> temperatureEntities = temperatureService.findAll();
+        List<TriageEntity> triageEntities = triageService.findAll();
         CsvGenerator csvGenerator = new CsvGenerator();
 
-        String heartbeatCsv = csvGenerator.generateHeartbeatCsv(heartbeatEntityList);
-        String temperatureCsv = csvGenerator.generateTemperatureCsv(temperatureEntities);
+        String heartbeatCsv = csvGenerator.generateHeartbeatCsv(heartbeatEntityList, triageEntities);
+        String temperatureCsv = csvGenerator.generateTemperatureCsv(temperatureEntities, triageEntities);
 
         ZipFileGenerator zipFileGenerator = new ZipFileGenerator();
-        byte[] zipFile = zipFileGenerator.createZipFile(heartbeatCsv,temperatureCsv);
+        byte[] zipFile = zipFileGenerator.createZipFile(heartbeatCsv, temperatureCsv);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=data.zip");

@@ -8,95 +8,75 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.data.TriageDTO;
+import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
+import pt.ipleiria.careline.domain.dto.responses.TriageResponseDTO;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
-import pt.ipleiria.careline.domain.enums.Tag;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.TriageService;
 
 import java.util.Optional;
 
-@RequestMapping("/api")
+@RequestMapping("/api/patients/{patientId}")
 @RestController
 public class TriageController {
     private final Mapper<TriageEntity, TriageDTO> triageMapper;
+    private final Mapper<TriageEntity, TriageResponseDTO> triageResponseMapper;
+    private final Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper;
     private final TriageService triageService;
     private final PatientService patientService;
-    private SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public TriageController(Mapper<TriageEntity, TriageDTO> triageMapper,
-                            TriageService triageService,
-                            PatientService patientService, SimpMessagingTemplate messagingTemplate) {
+    public TriageController(Mapper<TriageEntity, TriageDTO> triageMapper, Mapper<TriageEntity, TriageResponseDTO> triageResponseMapper, Mapper<PatientEntity, PatientResponseDTO> patientResponseMapper, TriageService triageService, PatientService patientService, SimpMessagingTemplate messagingTemplate) {
         this.triageMapper = triageMapper;
         this.triageService = triageService;
         this.patientService = patientService;
         this.messagingTemplate = messagingTemplate;
+        this.triageResponseMapper = triageResponseMapper;
+        this.patientResponseMapper = patientResponseMapper;
     }
 
     @PostMapping("/triages")
-    public ResponseEntity<TriageDTO> create(@RequestBody @Valid TriageDTO triageDTO) {
-            TriageEntity triageEntity = new TriageEntity();
-            //Define triage data
-            triageEntity.setTemperature(triageDTO.getTemperature());
-            triageEntity.setHeartbeat(triageDTO.getHeartbeat());
-            triageEntity.setSymptoms(triageDTO.getSymptoms());
-            triageEntity.setTagSeverity(Tag.getTagByName(triageDTO.getTagSeverity()));
-            Optional<TriageEntity> lastTriage = triageService.findLastTriage();
-            if(lastTriage.isPresent())
-                triageEntity.setTagOrder(lastTriage.get().getTagOrder()+1);
-            if(!lastTriage.isPresent())
-                triageEntity.setTagOrder(1L);
-            Optional<PatientEntity> patient = patientService.getPatientById(triageDTO.getPatient().getId());
-            //Get associated patient
-            if(patient.isPresent())
-                triageEntity.setPatient(patient.get());
-            TriageEntity savedtriageEntity = triageService.save(triageEntity);
-            TriageDTO createdtriageDTO = triageMapper.mapToDTO(savedtriageEntity);
+    public ResponseEntity<TriageResponseDTO> create(@RequestBody @Valid TriageDTO triageDTO, @PathVariable("patientId") Long patientId) {
+        TriageEntity triageEntity = triageMapper.mapFrom(triageDTO);
+        TriageEntity savedTriageEntity = triageService.save(triageEntity, patientId);
 
-            messagingTemplate.convertAndSend("/topic/triages",
-                    createdtriageDTO);
+        PatientResponseDTO patientResponseDTO = patientResponseMapper.mapToDTO(savedTriageEntity.getPatient());
+        TriageResponseDTO createdTriageDTO = new TriageResponseDTO(patientResponseDTO, savedTriageEntity.getCreatedAt(), savedTriageEntity.getTemperature(), savedTriageEntity.getHeartbeat(), savedTriageEntity.getSymptoms(), savedTriageEntity.getSeverity(), savedTriageEntity.getStatus(), savedTriageEntity.getReviewDate());
 
-            return new ResponseEntity<>(createdtriageDTO, HttpStatus.CREATED);
+        messagingTemplate.convertAndSend("/topic/triages", createdTriageDTO);
+
+        return new ResponseEntity<>(createdTriageDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("/triages")
-    public Page<TriageDTO> listTriages(Pageable pageable) {
+    public Page<TriageResponseDTO> listTriages(Pageable pageable) {
         Page<TriageEntity> triageEntities = triageService.findAll(pageable);
-        return triageEntities.map(triageMapper::mapToDTO);
+        return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
+    }
+
+    @GetMapping("/triages/latest")
+    public Page<TriageResponseDTO> listLatestTriages(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<TriageEntity> triageEntities = triageService.findAllLatest(pageable, patientId);
+        return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
+    }
+
+    @GetMapping("/triages/date/{date}")
+    public Page<TriageResponseDTO> listLatestTriages(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
+        Page<TriageEntity> triageEntities = triageService.findAllByDate(pageable, patientId, date);
+        return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
     @GetMapping("/triages/{id}")
-    public ResponseEntity<TriageDTO> getTriageById(@PathVariable("id") Long id) {
+    public ResponseEntity<TriageResponseDTO> getTriageById(@PathVariable("id") Long id) {
         Optional<TriageEntity> triage = triageService.getTriageById(id);
-        return triage.map(triageEntity -> {
-            TriageDTO triageDTO = triageMapper.mapToDTO(triageEntity);
+        return triage.map(savedTriageEntity -> {
+            PatientResponseDTO patientResponseDTO = patientResponseMapper.mapToDTO(savedTriageEntity.getPatient());
+            TriageResponseDTO triageDTO = new TriageResponseDTO(patientResponseDTO, savedTriageEntity.getCreatedAt(), savedTriageEntity.getTemperature(), savedTriageEntity.getHeartbeat(), savedTriageEntity.getSymptoms(), savedTriageEntity.getSeverity(), savedTriageEntity.getStatus(), savedTriageEntity.getReviewDate());
             return new ResponseEntity<>(triageDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-
-    @GetMapping("patients/{id}/triages")
-    public Page<TriageDTO> getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId) {
-        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-        Page<TriageEntity> triages = triageService.getTriagesByPatient(pageable, patient.get());
-        return triages.map(triageMapper::mapToDTO);
-    }
-
-    @GetMapping("patients/{id}/triage")
-    public ResponseEntity<TriageDTO> getLastPatientTriage(@PathVariable("id") Long patientId) {
-        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-        Optional<TriageEntity> triage = triageService.findLastParientTriage(patient.get());
-        return new ResponseEntity<>(triageMapper.mapToDTO(triage.get()), HttpStatus.OK);
-    }
-
-    @GetMapping("patients/{id}/triages/{triageId}")
-    public TriageDTO getTriagesByPatient(Pageable pageable, @PathVariable("id") Long patientId, @PathVariable("triageId") Long triageId ) {
-        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-        Optional<TriageEntity> triage = triageService.getTriageByPatient(patient.get(),triageId);
-        return triageMapper.mapToDTO(triage.get());
-
-    }
-
 
     @PutMapping("/triages/{id}")
     public ResponseEntity<TriageDTO> fullUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
@@ -106,7 +86,6 @@ public class TriageController {
         triageEntity.setSymptoms(triageDTO.getSymptoms());
         triageEntity.setHeartbeat(triageDTO.getHeartbeat());
         triageEntity.setSymptoms(triageDTO.getSymptoms());
-        triageEntity.setTagSeverity(Tag.getTagByName(triageDTO.getTagSeverity()));
         TriageEntity savedTriageEntity = triageService.partialUpdate(id, triageEntity);
         return new ResponseEntity<>(
                 triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
@@ -125,13 +104,15 @@ public class TriageController {
     @PatchMapping("/triages/tags")
     public ResponseEntity resetTagOrder() {
         Optional<TriageEntity> t = triageService.findLastTriage();
-        if (t.isPresent()) {
-            t.get().setTagOrder(1L);
-            TriageEntity savedTriageEntity = triageService.partialUpdate(t.get().getId(), t.get());
-            return new ResponseEntity<>(
-                    triageMapper.mapToDTO(savedTriageEntity), HttpStatus.OK);
-        }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tese is the first triage in line");
+    }
+
+    @PatchMapping("/triages/{id}/reviewed")
+    public ResponseEntity<TriageResponseDTO> setTriageReviewed(@PathVariable("patientId") Long patientId, @PathVariable("id") Long triageId) {
+        TriageEntity triage = triageService.setTriageReviewed(patientId, triageId);
+        PatientResponseDTO patientResponseDTO = patientResponseMapper.mapToDTO(triage.getPatient());
+        TriageResponseDTO triageResponseDTO = new TriageResponseDTO(patientResponseDTO, triage.getCreatedAt(), triage.getTemperature(), triage.getHeartbeat(), triage.getSymptoms(), triage.getSeverity(), triage.getStatus(), triage.getReviewDate());
+        return new ResponseEntity<>(triageResponseDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/triages/{id}")
