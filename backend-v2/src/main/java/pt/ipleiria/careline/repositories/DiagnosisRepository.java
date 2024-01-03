@@ -27,4 +27,6 @@ public interface DiagnosisRepository extends JpaRepository<DiagnosisEntity, Long
     Page<DiagnosisEntity> findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(Pageable pageable, Long patientId, Instant startDate, Instant endDate);
 
     Page<DiagnosisEntity> findAllByProfessionalIdOrderByCreatedAtDesc(Long professionalId, Pageable pageable);
+
+    Page<DiagnosisEntity> findAllByProfessionalIdAndCreatedAtBetweenOrderByCreatedAtDesc(Pageable pageable, Long professionalId, Instant startDate, Instant endDate);
 }

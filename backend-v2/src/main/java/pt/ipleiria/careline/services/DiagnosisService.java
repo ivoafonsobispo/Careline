@@ -32,5 +32,7 @@ public interface DiagnosisService {
 
     Page<DiagnosisEntity> findAllByDate(Pageable pageable, Long patientId, String date);
 
+    Page<DiagnosisEntity> findAllByDateFromProfessional(Pageable pageable, Long professionalId, String date);
+
     Page<DiagnosisEntity> findAllLatestFromProfessional(Pageable pageable, Long professionalId);
 }

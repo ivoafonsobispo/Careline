@@ -164,9 +164,6 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
         Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
         Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
 
-        Page<DroneDeliveryEntity> droneDeliveryEntities = repository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
-        deliveryBelongsToPatient(patientId, droneDeliveryEntities);
-
-        return droneDeliveryEntities;
+        return repository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
     }
 }

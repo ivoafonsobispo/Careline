@@ -140,6 +140,15 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     }
 
     @Override
+    public Page<DiagnosisEntity> findAllByDateFromProfessional(Pageable pageable, Long professionalId, String date) {
+        DateConversionUtil dateConversionUtil = new DateConversionUtil();
+        Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
+        Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
+
+        return diagnosisRepository.findAllByProfessionalIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, professionalId, startDate, endDate);
+    }
+
+    @Override
     public Page<DiagnosisEntity> findAllLatestFromProfessional(Pageable pageable, Long professionalId) {
         return diagnosisRepository.findAllByProfessionalIdOrderByCreatedAtDesc(professionalId, pageable);
     }
