@@ -36,10 +36,6 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     // TODO: Unit Tests
 
     private static void diagnosisBelongsToPatient(Long patientId, Page<DiagnosisEntity> diagnosisEntities) {
-        if (diagnosisEntities.isEmpty()) {
-            throw new DroneException();
-        }
-
         if (diagnosisEntities.get().anyMatch(diagnosis -> !diagnosis.getPatient().getId().equals(patientId))) {
             throw new DroneException("Diagnosis does not belong to patient");
         }

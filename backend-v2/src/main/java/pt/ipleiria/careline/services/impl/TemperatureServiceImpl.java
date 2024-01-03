@@ -37,9 +37,6 @@ public class TemperatureServiceImpl implements TemperatureService {
     }
 
     private static void temperatureBelongsToPatient(Long patientId, Page<TemperatureEntity> temperatureEntities) {
-        if (temperatureEntities.isEmpty()) {
-            throw new TemperatureException();
-        }
         if (temperatureEntities.get().anyMatch(temperature -> !temperature.getPatient().getId().equals(patientId))) {
             throw new TemperatureException("Temperature does not belong to patient");
         }
