@@ -1,0 +1,7 @@
+.leaflet-marker-icon{
+    filter: hue-rotate(140deg) !important;
+}
+
+.leaflet-marker-icon:nth-child(3){
+    filter: hue-rotate(280deg) !important;
+}

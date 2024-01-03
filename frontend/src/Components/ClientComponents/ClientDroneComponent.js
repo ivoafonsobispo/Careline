@@ -51,8 +51,6 @@ export default function ClientDroneComponent({ drone }) {
                 <div className='client-triage-information'>
                     <span > {drone.medications.join(', ')} </span>
                 </div>
-
-
             </div>
             <hr className='triage-hr'></hr>
 
@@ -64,7 +62,7 @@ export default function ClientDroneComponent({ drone }) {
                         </span>
                     : drone.status === "IN_TRANSIT" ?
                         <span className='align-line-row' style={{ color: "#eb7c49", fontWeight: "bold" }}>
-                            <ClockHistory size={15} /> &nbsp; Status - Inshipping
+                            <ClockHistory size={15} /> &nbsp; Status - In Transit
                         </span>
                     : drone.status === "DELIVERED" ?
                         <span className='align-line-row' style={{ color: "var(--lightGreen)", fontWeight: "bold" }}>

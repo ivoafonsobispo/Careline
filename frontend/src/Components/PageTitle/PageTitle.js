@@ -14,6 +14,10 @@ export default function PageTitle({ title }) {
                 <NavLink to='/triage' style={{ minWidth: "auto", marginRight: "1%", fontSize: "18px", height: "66%" }}>
                     <ChevronLeft color="var(--professionalBaseColor)" />
                 </NavLink>
+            ) : title === "Drone" ? (
+                <NavLink to='/drones' style={{ minWidth: "auto", marginRight: "1%", fontSize: "18px", height: "66%" }}>
+                    <ChevronLeft color="var(--basecolor)" />
+                </NavLink>
             ) : (<></>)}
             {title}
         </div>
