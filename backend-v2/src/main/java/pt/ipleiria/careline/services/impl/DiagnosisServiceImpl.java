@@ -36,10 +36,6 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     // TODO: Unit Tests
 
     private static void diagnosisBelongsToPatient(Long patientId, Page<DiagnosisEntity> diagnosisEntities) {
-        if (diagnosisEntities.isEmpty()) {
-            throw new DroneException();
-        }
-
         if (diagnosisEntities.get().anyMatch(diagnosis -> !diagnosis.getPatient().getId().equals(patientId))) {
             throw new DroneException("Diagnosis does not belong to patient");
         }
@@ -141,5 +137,19 @@ public class DiagnosisServiceImpl implements DiagnosisService {
         diagnosisBelongsToPatient(patientId, diagnosisEntities);
 
         return diagnosisEntities;
+    }
+
+    @Override
+    public Page<DiagnosisEntity> findAllByDateFromProfessional(Pageable pageable, Long professionalId, String date) {
+        DateConversionUtil dateConversionUtil = new DateConversionUtil();
+        Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
+        Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
+
+        return diagnosisRepository.findAllByProfessionalIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, professionalId, startDate, endDate);
+    }
+
+    @Override
+    public Page<DiagnosisEntity> findAllLatestFromProfessional(Pageable pageable, Long professionalId) {
+        return diagnosisRepository.findAllByProfessionalIdOrderByCreatedAtDesc(professionalId, pageable);
     }
 }

@@ -36,10 +36,6 @@ public class HeartbeatServiceImpl implements HeartbeatService {
     }
 
     private static void heartbeatBelongsToPatient(Long patientId, Page<HeartbeatEntity> heartbeatEntities) {
-        if (heartbeatEntities.isEmpty()) {
-            throw new HeartbeatException();
-        }
-
         if (heartbeatEntities.get().anyMatch(heartbeat -> !heartbeat.getPatient().getId().equals(patientId))) {
             throw new HeartbeatException("Heartbeat does not belong to patient");
         }
