@@ -20,9 +20,11 @@ import ErrorPage from './Routes/ErrorPage';
 import ProfessionalProfile from './Routes/Professional/ProfessionalProfile';
 import ProfessionalTriage from './Routes/Professional/ProfessionalTriage';
 import ProfessionalTriageReview from './Routes/Professional/ProfessionalTriageReview';
+import ProfessionalDiagnoses from './Routes/Professional/ProfessionalDiagnoses';
+import ProfessionalDiagnosis from './Routes/Professional/ProfessionalDiagnosis';
 
 export default function App() {
-  const userType = 'patient';
+  const userType = 'professional';
 
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {
@@ -54,6 +56,8 @@ export default function App() {
                 <Route path="/patients" element={<ProfessionalPatients />} />
                 <Route path="/patient/:id" element={<ProfessionalPatient />} />
                 <Route path="/profile" element={<ProfessionalProfile />} />
+                <Route path="/diagnoses" element={<ProfessionalDiagnoses />} />
+                <Route path="/diagnosis" element={<ProfessionalDiagnosis />} />
                 <Route path="/triage" element={<ProfessionalTriage />} />
                 <Route path="/triage/:id/review" element={<ProfessionalTriageReview />} />
               </>

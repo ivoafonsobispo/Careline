@@ -1,0 +1,6 @@
+.diagnoses-list{
+    overflow-y: scroll;
+    max-height: 65%;
+    gap: 4%;
+    width: 100%;
+}

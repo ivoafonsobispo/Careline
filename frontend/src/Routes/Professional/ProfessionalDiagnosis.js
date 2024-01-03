@@ -1,6 +1,6 @@
 import PageTitle from "../../Components/PageTitle/PageTitle";
 import "../../Components/ClientComponents/ClientBase.css";
-import "./ProfessionalTriage.css"
+import "./ProfessionalDiagnosis.css"
 import "./ProfessionalTriageReview.css"
 import ProfessionalMedicationList from "../../Components/ProfessionalComponents/ProfessionalMedicationList";
 
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
-import { Pencil, FileMedical } from 'react-bootstrap-icons'
+import { Pen } from 'react-bootstrap-icons'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,9 +33,7 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 
-export default function ProfessionalTriageReview() {
-
-    const { id } = useParams();
+export default function ProfessionalDiagnosis() {
     const navigate = useNavigate();
 
     const [medications, setMedications] = useState([]);
@@ -43,6 +41,9 @@ export default function ProfessionalTriageReview() {
 
     const [isSendDroneChecked, setIsSendDroneChecked] = useState(false);
 
+    const [nus, setNus] = useState("");
+    const [nusMessageError, setNusMessageError] = useState("NA");
+    const [isValidNus, setIsValidNus] = useState(false);
     const [diagnosis, setDiagnosis] = useState("");
     const [isValidDiagnosis, setIsValidDiagnosis] = useState(false);
 
@@ -76,7 +77,6 @@ export default function ProfessionalTriageReview() {
                 setPosition([parseFloat(lat), parseFloat(lon)]);
                 setMapKey((prevKey) => prevKey + 1);
             } else {
-                console.log("WATNING");
                 toast.error('Error finding location. Please try again.');
             }
         } catch (error) {
@@ -119,6 +119,17 @@ export default function ProfessionalTriageReview() {
 
     const handleCheckboxDroneChange = () => {
         setIsSendDroneChecked(!isSendDroneChecked);
+    };
+
+    const handleNUSChange = (e) => {
+        setNus(e.target.value);
+        const nusRegex = /^[^\s@]/;
+        const isValidNus = nusRegex.test(e.target.value);
+        setIsValidNus(isValidNus);
+
+        if (nusMessageError !== 'NA'){
+            setNusMessageError('NA');
+        }
     };
 
     const handleDiagnosisChange = (e) => {
@@ -187,9 +198,23 @@ export default function ProfessionalTriageReview() {
             console.log(diganosisFields);
             console.log(JSON.stringify(diganosisFields));
 
-            //TODO - Fazer patch para alterar estado da triagem para reviewed
+            const responseNUS = await fetch(`http://localhost:8080/api/patients/nus/${nus}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-            const response = await fetch('http://localhost:8080/api/professionals/1/patients/1/diagnosis', {
+            if (!responseNUS.ok) {
+                setIsValidNus(false); // do not exist
+                setNusMessageError("NUS does not exit.")
+                console.error('Error:', responseNUS.statusText);
+                return;
+            }
+
+            const patient = await responseNUS.json();
+
+            const response = await fetch(`http://localhost:8080/api/professionals/1/patients/${patient.id}/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -236,7 +261,7 @@ export default function ProfessionalTriageReview() {
                 onReviewSuccess('Drone set up successfully!');
             }
 
-            onReviewSuccess('Triage reviewed successfully!');
+            onReviewSuccess('Diagnosis prescribed successfully!');
         } catch (error) {
             // Handle errors during the fetch
             console.error('Error:', error);
@@ -250,7 +275,7 @@ export default function ProfessionalTriageReview() {
             },
             onClose: () => {
                 // Delay the navigation or navigate here after the toast is closed
-                navigate('/triage');
+                navigate('/diagnoses');
             },
         });
     };
@@ -259,36 +284,26 @@ export default function ProfessionalTriageReview() {
         <div className="horizontal-container">
             <div className="vertical-container">
                 <ToastContainer />
-                <PageTitle title="Triage Review" />
+                <PageTitle title="Diagnosis Prescription" />
                 <div className='App-content' >
-                    <div className="vertical-container" style={{ gap: "4%" }}>
-                        <div className="professional-client-triage-box" style={{ fontSize: "16px" }}>
-                            <span style={{ margin: "0% 0.7%" }} className="align-line-row"><FileMedical size={20} /> &nbsp;Patient: Alice Johnson &nbsp; | &nbsp; Email: alice@mail.com &nbsp; | &nbsp; NUS: 987654321</span>
-                            <hr className='professional-triage-hr'></hr>
-                            <div className='horizontal-container client-triage-information-box'>
-                                <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
-                                    <div className='align-line-row'>
-                                        <span>Heartbeat:&nbsp;</span>
-                                        <span className='triage-field'>120 BPM</span>
-                                    </div>
-                                    <div className='align-line-row'>
-                                        <span>Temperature:&nbsp;</span>
-                                        <span className='triage-field'>50 °C</span>
-                                    </div>
-                                </div>
-                                <div >
-                                    <span>Symptoms: </span>
-                                </div>
-                                <div className='client-triage-information'>
-                                    <span > ahahah ah a u ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwhahahah ah a u hdwuhduwh ahahah ah a u </span>
-                                </div>
-
-                            </div>
-                            <span className='triage-date'>WEDNESDAY, 8 OCT AT 15:35 PM</span>
-
+                    <div className="vertical-container" style={{ gap: "2%" }}>
+                        <div className="align-line-row" style={{ fontSize: "18px" }}>
+                            <div>Patient NUS:</div>
+                            <input
+                                onChange={handleNUSChange}
+                                className="professional-diagnosis-field"
+                                id="input"
+                                style={{ fontSize: "16px", marginLeft: "1.5%" }}
+                            ></input>
                         </div>
-                        <div className="align-line-column" style={{ fontSize: "16px" }}>
-                            <div style={{marginBottom: "1%"}}>Diagnosis:</div>
+                        {nusMessageError !== 'NA' ? (
+                            <div className='field-error-message' style={{margin: "0", marginLeft: "2%"}}>{nusMessageError}</div>
+                        ) : (
+                            <></>
+                        )}
+
+                        <div className="align-line-column" style={{ fontSize: "18px" }}>
+                            <div style={{ marginBottom: "1%" }}>Diagnosis:</div>
                             <textarea
                                 style={{ minWidth: "98%", maxWidth: "98%", fontSize: "16px", minHeight: "100px" }}
                                 onChange={handleDiagnosisChange}
@@ -296,7 +311,7 @@ export default function ProfessionalTriageReview() {
                             ></textarea>
                         </div>
 
-                        <div className="align-line-row" style={{ fontSize: "16px" }}>
+                        <div className="align-line-row" style={{ fontSize: "18px" }}>
                             <input
                                 type="checkbox"
                                 id="medications" name="medications"
@@ -391,10 +406,10 @@ export default function ProfessionalTriageReview() {
 
                         <div className="align-line-row">
                             <button
-                                className={classNames("professional-medication-button align-line-row", !isValidDiagnosis ? "professional-medication-button-inactive" : "")}
+                                className={classNames("professional-medication-button align-line-row", !isValidDiagnosis || !isValidNus ? "professional-medication-button-inactive" : "")}
                                 style={{ margin: "auto" }}
                                 onClick={postDiagnosis}
-                            ><Pencil size={13} /> &nbsp; Review</button>
+                            ><Pen size={13} /> &nbsp; Prescribe Diagnosis</button>
                         </div>
                     </div>
                 </div>

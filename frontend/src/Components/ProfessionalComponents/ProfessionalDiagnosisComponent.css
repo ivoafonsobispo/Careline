@@ -1,0 +1,46 @@
+.professional-diagnosis-box{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--professionalLightColor);
+    width: 95%;
+    border-radius: 5px;
+    height: fit-content;
+    /* gap: 2%; */
+    padding: 2%;
+    font-size: 18px;
+}
+
+.diagnosis-date{
+    font-size: 12px;
+    color: #868686;
+    margin-top: 2%;
+}
+
+.client-diagnosis-information-box{
+    padding: 1%;
+    align-items: baseline;
+}
+
+.client-diagnosis-information {
+    flex-grow: 1;
+    word-break: break-all;
+    margin: 0% 2%;
+}
+
+.professional-diagnosis-hr{
+    width: 97%;
+    height: 1px;
+    min-height: 1px;
+    background-color: var(--professionalBaseColor);
+    border: none;
+}
+
+.professional-diagnosis-download-button{
+    margin-left: auto;
+    margin-right: 2%;
+    cursor: pointer;
+}
+
+.professional-diagnosis-download-button:hover{
+    color: var(--professionalBaseColor);
+}
