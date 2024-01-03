@@ -71,10 +71,9 @@ export default function ProfessionalTriageReview() {
             const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${destination}`);
             console.log(response.data);
 
-
             if (response.data.length > 0) {
                 const { lat, lon } = response.data[0];
-                setPosition([lat, lon]);
+                setPosition([parseFloat(lat), parseFloat(lon)]);
                 setMapKey((prevKey) => prevKey + 1);
             } else {
                 console.log("WATNING");
@@ -208,6 +207,7 @@ export default function ProfessionalTriageReview() {
             if (isSendDroneChecked && medications.length !== 0) {
 
                 const droneFields = {};
+                console.log(position);
 
                 // const medicationNames = 
                 droneFields.medications = medications.map(medication => medication.name);

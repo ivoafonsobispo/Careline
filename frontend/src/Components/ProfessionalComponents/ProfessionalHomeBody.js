@@ -39,15 +39,9 @@ export default function ProfessionalHomeBody() {
         </div>
         <div className='vertical-bar'></div>
         <div className='vertical-container' style={{ margin: "0 2%" }}>
-          <span className='info-line'>Total patients: <span className='info-line-value'>3</span></span>
+          <span className='info-line'>Total patients: <span className='info-line-value'>{availablePatients === null || availablePatients.length === 0 ? '---' : availablePatients.length}</span></span>
           <span className='info-line'>Seriously ill patients: <span className='info-line-value'>1</span></span>
           <span className='info-line'>Healthy patients: <span className='info-line-value'>2</span></span>
-        </div>
-        <div className='vertical-bar'></div>
-        <div className='vertical-container' style={{ margin: "0 2%" }}>
-          <span className='info-line'>Total drones: <span className='info-line-value'>3</span></span>
-          <span className='info-line'>Drones in shipping: <span className='info-line-value'>1</span></span>
-          <span className='info-line'>Drones shipped: <span className='info-line-value'>2</span></span>
         </div>
       </div>
 
