@@ -18,7 +18,7 @@ import pt.ipleiria.careline.services.TriageService;
 
 import java.util.Optional;
 
-@RequestMapping("/api/patients/{patientId}")
+@RequestMapping("/api")
 @RestController
 public class TriageController {
     private final Mapper<TriageEntity, TriageDTO> triageMapper;
@@ -37,7 +37,7 @@ public class TriageController {
         this.patientResponseMapper = patientResponseMapper;
     }
 
-    @PostMapping("/triages")
+    @PostMapping("/patients/{patientId}/triages")
     public ResponseEntity<TriageResponseDTO> create(@RequestBody @Valid TriageDTO triageDTO, @PathVariable("patientId") Long patientId) {
         TriageEntity triageEntity = triageMapper.mapFrom(triageDTO);
         TriageEntity savedTriageEntity = triageService.save(triageEntity, patientId);
@@ -57,14 +57,20 @@ public class TriageController {
     }
 
     @GetMapping("/triages/latest")
-    public Page<TriageResponseDTO> listLatestTriages(@PathVariable("patientId") Long patientId, Pageable pageable) {
-        Page<TriageEntity> triageEntities = triageService.findAllLatest(pageable, patientId);
+    public Page<TriageResponseDTO> listLatestTriages(Pageable pageable) {
+        Page<TriageEntity> triageEntities = triageService.findAllLatest(pageable);
+        return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
+    }
+
+    @GetMapping("/triages/unreviewed")
+    public Page<TriageResponseDTO> listUnreviewedTriages(Pageable pageable) {
+        Page<TriageEntity> triageEntities = triageService.findAllUnreviewed(pageable);
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
     @GetMapping("/triages/date/{date}")
-    public Page<TriageResponseDTO> listLatestTriages(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
-        Page<TriageEntity> triageEntities = triageService.findAllByDate(pageable, patientId, date);
+    public Page<TriageResponseDTO> listLatestTriages(@PathVariable("date") String date, Pageable pageable) {
+        Page<TriageEntity> triageEntities = triageService.findAllByDate(pageable, date);
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
@@ -107,7 +113,7 @@ public class TriageController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tese is the first triage in line");
     }
 
-    @PatchMapping("/triages/{id}/reviewed")
+    @PatchMapping("patients/{patientId}/triages/{id}/reviewed")
     public ResponseEntity<TriageResponseDTO> setTriageReviewed(@PathVariable("patientId") Long patientId, @PathVariable("id") Long triageId) {
         TriageEntity triage = triageService.setTriageReviewed(patientId, triageId);
         PatientResponseDTO patientResponseDTO = patientResponseMapper.mapToDTO(triage.getPatient());

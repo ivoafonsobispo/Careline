@@ -122,17 +122,17 @@ public class TriageServiceImpl implements TriageService {
     }
 
     @Override
-    public Page<TriageEntity> findAllByDate(Pageable pageable, Long patientId, String date) {
+    public Page<TriageEntity> findAllByDate(Pageable pageable, String date) {
         DateConversionUtil dateConversionUtil = new DateConversionUtil();
         Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
         Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
 
-        return triageRepository.findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(pageable, patientId, startDate, endDate);
+        return triageRepository.findAllByCreatedAtBetweenOrderByCreatedAtDesc(pageable, startDate, endDate);
     }
 
     @Override
-    public Page<TriageEntity> findAllLatest(Pageable pageable, Long patientId) {
-        return triageRepository.findAllByPatientIdOrderByCreatedAtDesc(pageable, patientId);
+    public Page<TriageEntity> findAllLatest(Pageable pageable) {
+        return triageRepository.findAllOrderByCreatedAtDesc(pageable);
     }
 
     @Override
@@ -144,5 +144,10 @@ public class TriageServiceImpl implements TriageService {
         triage.get().setStatus(Status.REVIEWED);
         triage.get().setReviewDate(Instant.now());
         return partialUpdate(triageId, triage.get());
+    }
+
+    @Override
+    public Page<TriageEntity> findAllUnreviewed(Pageable pageable) {
+        return triageRepository.findAllByStatusOrderByCreatedAtDesc(pageable, Status.UNREVIEWED);
     }
 }

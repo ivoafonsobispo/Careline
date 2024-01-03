@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import pt.ipleiria.careline.domain.enums.Status;
 
 import java.time.Instant;
 import java.util.List;
@@ -37,7 +38,10 @@ public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
     @Query("SELECT t FROM TriageEntity t WHERE t.patient = :patient AND t.id = :triageId")
     Optional<TriageEntity> getTriageByPatient(@Param("patient") PatientEntity patient, @Param("triageId") Long triageId);
 
-    Page<TriageEntity> findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(Pageable pageable, Long patientId, Instant startDate, Instant endDate);
+    Page<TriageEntity> findAllByCreatedAtBetweenOrderByCreatedAtDesc(Pageable pageable, Instant startDate, Instant endDate);
 
-    Page<TriageEntity> findAllByPatientIdOrderByCreatedAtDesc(Pageable pageable, Long patientId);
+    @Query("SELECT t FROM TriageEntity t ORDER BY t.createdAt DESC")
+    Page<TriageEntity> findAllOrderByCreatedAtDesc(Pageable pageable);
+
+    Page<TriageEntity> findAllByStatusOrderByCreatedAtDesc(Pageable pageable, Status status);
 }

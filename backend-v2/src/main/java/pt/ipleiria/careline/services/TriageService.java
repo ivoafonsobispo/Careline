@@ -32,9 +32,11 @@ public interface TriageService {
 
     void delete(Long id);
 
-    Page<TriageEntity> findAllByDate(Pageable pageable, Long patientId, String date);
+    Page<TriageEntity> findAllByDate(Pageable pageable, String date);
 
-    Page<TriageEntity> findAllLatest(Pageable pageable, Long patientId);
+    Page<TriageEntity> findAllLatest(Pageable pageable);
 
     TriageEntity setTriageReviewed(Long patientId, Long triageId);
+
+    Page<TriageEntity> findAllUnreviewed(Pageable pageable);
 }
