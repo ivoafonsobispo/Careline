@@ -21,7 +21,10 @@ public interface DiagnosisRepository extends JpaRepository<DiagnosisEntity, Long
     @Query("SELECT d FROM DiagnosisEntity d WHERE d.patient.id = :patientId")
     Page<DiagnosisEntity> findAllByPatientId(@Param("patientId") Long patientId,
                                              Pageable pageable);
+
     Page<DiagnosisEntity> findAllByPatientIdOrderByCreatedAtDesc(Long patientId, Pageable pageable);
 
     Page<DiagnosisEntity> findAllByPatientIdAndCreatedAtBetweenOrderByCreatedAtDesc(Pageable pageable, Long patientId, Instant startDate, Instant endDate);
+
+    Page<DiagnosisEntity> findAllByProfessionalIdOrderByCreatedAtDesc(Long professionalId, Pageable pageable);
 }

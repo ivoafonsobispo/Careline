@@ -138,4 +138,9 @@ public class DiagnosisServiceImpl implements DiagnosisService {
 
         return diagnosisEntities;
     }
+
+    @Override
+    public Page<DiagnosisEntity> findAllLatestFromProfessional(Pageable pageable, Long professionalId) {
+        return diagnosisRepository.findAllByProfessionalIdOrderByCreatedAtDesc(professionalId, pageable);
+    }
 }

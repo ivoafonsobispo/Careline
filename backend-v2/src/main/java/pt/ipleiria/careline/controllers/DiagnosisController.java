@@ -161,6 +161,24 @@ public class DiagnosisController {
         });
     }
 
+    @GetMapping("professionals/{professionalId}/diagnosis/latest")
+    public Page<DiagnosisResponseDTO> listLatestDiagnosisFromProfessional(
+            @PathVariable("professionalId") Long professionalId, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAllLatestFromProfessional(pageable, professionalId);
+        return diagnosisEntities.map(diagnosisEntity -> {
+            PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
+            ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
+            return new DiagnosisResponseDTO(
+                    diagnosisEntity.getId(),
+                    patientDTO,
+                    professionalDTO,
+                    diagnosisEntity.getDiagnosis(),
+                    diagnosisEntity.getMedications(),
+                    diagnosisEntity.getCreatedAt()
+            );
+        });
+    }
+
     @GetMapping("professionals/{professionalId}/patients/{patientId}/diagnosis/latest")
     public Page<DiagnosisResponseDTO> listLatestProfessional(@PathVariable(
             "patientId") Long patientId, Pageable pageable) {

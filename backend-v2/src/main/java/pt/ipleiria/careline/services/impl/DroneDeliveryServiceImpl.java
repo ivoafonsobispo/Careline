@@ -76,21 +76,7 @@ public class DroneDeliveryServiceImpl implements DroneDeliveryService {
 
     @Override
     public Optional<DroneDeliveryEntity> getById(Long patientId, Long deliveryId) {
-        Optional<PatientEntity> existingPatient = patientService.getPatientById(patientId);
-        if (existingPatient.isPresent()) {
-            throw new PatientException();
-        }
-
-        Optional<DroneDeliveryEntity> droneDeliveryEntity = repository.findById(deliveryId);
-        if (droneDeliveryEntity.isEmpty()) {
-            throw new DroneException(deliveryId);
-        }
-
-        if (!Objects.equals(droneDeliveryEntity.get().getPatient().getId(), patientId)) {
-            throw new DroneException("Delivery does not belong to patient");
-        }
-
-        return droneDeliveryEntity;
+        return repository.findById(deliveryId);
     }
 
     @Override
