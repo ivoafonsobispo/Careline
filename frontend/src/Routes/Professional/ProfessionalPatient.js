@@ -27,6 +27,9 @@ export default function ProfessionalPatient() {
     const [lastTemperature, setLastTemperature] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
+    const urlDiagnoses = `http://localhost:8080/api/professionals/1/patients/${id}/diagnosis`;
+    const [diagnoses, setDiagnoses] = useState(null);
+
     const [heartStyle, setHeartStyle] = useState({
         animation: `growAndFade 1s ease-in-out infinite alternate`,
     });
@@ -95,15 +98,32 @@ export default function ProfessionalPatient() {
             .catch(error => {
                 console.log(error);
             });
+
+        axios.get(urlDiagnoses, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                console.log(response.data.content);
+                setDiagnoses(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }, [id, urlLastHeartbeat, urlLastTemperature, urlPatient]);
 
     const handleListChange = (list) => {
+        console.log(list);
         setCurrentList(list);
     }
 
     useEffect(() => {
-        if (currentList === 'Diagnoses'){
-
+        if (currentList === 'Pending Drones') {
+            // Apply sort/map
         }
     }, [currentList]);
 
@@ -133,14 +153,14 @@ export default function ProfessionalPatient() {
                                     <div>Unreviewed triage: 1</div>
                                     <div>Reviewd triage: 1</div>
                                 </div>
-                                <PatientInfoList title={currentList === 'urtriage' ? "Unreviewed Triage" : "Reviewed Triage"} setCurrentList={handleListChange}/>
+                                <PatientInfoList title={currentList === 'urtriage' ? "Unreviewed Triage" : "Reviewed Triage"} setCurrentList={handleListChange} />
                             </>
                         ) : currentList === "diagnoses" ? (
                             <>
                                 <div className="align-line-row" style={{ gap: "8%" }}>
                                     <div>Total diagnoses: 2</div>
                                 </div>
-                                <PatientInfoList title={"Diagnoses"} />
+                                <PatientInfoList title={"Diagnoses"} dataArray={diagnoses}/>
                             </>
                         ) : (
                             <>
@@ -149,13 +169,13 @@ export default function ProfessionalPatient() {
                                     <div>Drones inshipping: 1</div>
                                     <div>Drones shipped: 1</div>
                                 </div>
-                                <PatientInfoList title={currentList === "isdrones" ? "Drones Inshipping" : "Drones Shipped"}  setCurrentList={handleListChange}/>
+                                <PatientInfoList title={currentList === "pdrones" ? "Pending Drones" : currentList === "itdrones" ? "Drones In Transit" : currentList === "ddrones" ? "Delivered Drones" : "Failed Drones"} setCurrentList={handleListChange} />
                             </>
                         )}
                         <div className="align-line-row" style={{ gap: "2%" }}>
                             <button className="professional-patient-page-button" onClick={() => setCurrentList("urtriage")}>Triage</button>
                             <button className="professional-patient-page-button" onClick={() => setCurrentList("diagnoses")}>Diagnoses</button>
-                            <button className="professional-patient-page-button" onClick={() => setCurrentList("isdrones")}>Drones</button>
+                            <button className="professional-patient-page-button" onClick={() => setCurrentList("pdrones")}>Drones</button>
                         </div>
                     </div>
 
