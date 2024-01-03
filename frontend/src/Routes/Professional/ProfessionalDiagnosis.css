@@ -1,0 +1,6 @@
+.professional-diagnosis-field{
+    border: 1px solid var(--professionalBaseColor);
+    border-radius: 3px;
+    padding: 0.5%;
+    font-size: 16px;
+}

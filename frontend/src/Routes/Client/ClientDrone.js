@@ -39,44 +39,44 @@ export default function ClientDrone() {
     const urlDrone = `http://localhost:8080/api/patients/1/deliveries/${id}`;
 
     useEffect(() => {
-        // axios.get(urlDrone, {
-        //     headers: {
-        //         'Access-Control-Allow-Origin': '*',
-        //     },
-        //     proxy: {
-        //         port: 8080
-        //     }
-        // })
-        //     .then(response => {
-        //         console.log(response.data);
-        //         setDrone(response.data);
-        //     })
-        //     .catch(error => {
-        //         console.log(error);
-        //     });
+        axios.get(urlDrone, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                console.log(response.data);
+                setDrone(response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
 
-        setDrone({
-            "id": 1,
-            "patient": {
-                "id": 1,
-                "name": "Alice Johnson",
-                "email": "alice@mail.com",
-                "nus": "987654321"
-            },
-            "medications": [
-                "a"
-            ],
-            "status": "IN_TRANSIT",
-            "coordinate": {
-                "departure_latitude": 39.734,
-                "departure_longitude": -8.821,
-                "arrival_latitude": 39.742,
-                "arrival_longitude": -8.775
-            },
-            "created_at": "Wed, Jan 03 AT 11:06",
-            "departure_time": "Wed, Jan 03 AT 11:06",
-            "arrival_time": "Thu, Jan 01 AT 01:00"
-        });
+        // setDrone({
+        //     "id": 1,
+        //     "patient": {
+        //         "id": 1,
+        //         "name": "Alice Johnson",
+        //         "email": "alice@mail.com",
+        //         "nus": "987654321"
+        //     },
+        //     "medications": [
+        //         "a"
+        //     ],
+        //     "status": "DELIVERED",
+        //     "coordinate": {
+        //         "departure_latitude": 39.734,
+        //         "departure_longitude": -8.821,
+        //         "arrival_latitude": 39.742,
+        //         "arrival_longitude": -8.775
+        //     },
+        //     "created_at": "Wed, Jan 03 AT 11:06",
+        //     "departure_time": "Wed, Jan 03 AT 11:06",
+        //     "arrival_time": "Thu, Jan 01 AT 01:00"
+        // });
     }, []);
 
 
