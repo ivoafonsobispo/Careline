@@ -7,6 +7,8 @@
 
 import SwiftUI
 import RealityKit
+import UnityFramework // Import UnityFramework
+
 
 struct HowToReadTextView: View {
     var body: some View {
@@ -24,11 +26,11 @@ struct HowToReadTextView: View {
     }
 }
 
-struct ARFrameView: UIViewRepresentable {
+struct UnityARView: UIViewRepresentable {
     
-    func makeUIView(context: Context) -> some UIView {
-        let view = ARView()
-        return view
+    func makeUIView(context: Context) -> UIView {
+        let unityView = UnityFrameworkGetMainView()
+        return unityView!
     }
     
     func updateUIView(_ uiView: UIViewType, context: Context) {
@@ -84,7 +86,7 @@ struct ARHelpView: View{
                 .font(.title3)
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .frame(maxWidth: .infinity,alignment: .leading)
-            ARFrameView()
+            UnityARView()
                 .ignoresSafeArea()
             HelpPhraseView(measure: measure)
         }.navigationBarBackButtonHidden(true)
