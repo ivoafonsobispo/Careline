@@ -1,0 +1,25 @@
+.professional-digital-twin-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--professionalLightColor);
+    border-radius: 5px;
+    gap: 10%;
+    height: 100%;
+}
+
+.digital-twin-img{
+    max-width: 50%; /* Ensure the image doesn't exceed its container */
+    max-height: 50%;
+    animation: growAndFade 1s ease-in-out infinite alternate;
+}
+
+@keyframes growAndFade {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.3);
+    }
+}

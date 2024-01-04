@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.PatientDTO;
 import pt.ipleiria.careline.domain.dto.data.HeartbeatDTO;
@@ -15,49 +17,65 @@ import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.HeartbeatService;
 import pt.ipleiria.careline.services.PatientService;
-import pt.ipleiria.careline.utils.CsvGenerator;
 
-import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
 
 @RequestMapping("/api/patients/{patientId}/heartbeats")
 @RestController
+@CrossOrigin
 public class HeartbeatController {
 
-    private Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper;
-    private Mapper<PatientEntity, PatientDTO> patientMapper;
+    private final Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper;
+    private final Mapper<PatientEntity, PatientDTO> patientMapper;
     private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
-    private HeartbeatService heartbeatService;
-    private PatientService patientService;
+    private final HeartbeatService heartbeatService;
+    private final PatientService patientService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper) {
+    public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper, SimpMessagingTemplate messagingTemplate) {
         this.heartbeatMapper = heartbeatMapper;
         this.patientMapper = patientMapper;
         this.heartbeatService = heartbeatService;
         this.patientService = patientService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping
-    public ResponseEntity<HeartbeatDTO> create(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
+    @PreAuthorize("hasRole('PATIENT')")
+    public ResponseEntity<HeartbeatResponseDTO> create(@PathVariable("patientId") Long patientId, @RequestBody @Valid HeartbeatDTO heartbeatDTO) {
         HeartbeatEntity heartbeatEntity = heartbeatMapper.mapFrom(heartbeatDTO);
         HeartbeatEntity createdHeartbeat = heartbeatService.create(patientId, heartbeatEntity);
-        HeartbeatDTO createdHeartbeatDTO = heartbeatMapper.mapToDTO(createdHeartbeat);
+        HeartbeatResponseDTO createdHeartbeatDTO = new HeartbeatResponseDTO(createdHeartbeat.getHeartbeat(), Instant.now(), createdHeartbeat.getSeverity());
+
+        messagingTemplate.convertAndSend("/topic/heartbeats", createdHeartbeatDTO);
+
         return new ResponseEntity<>(createdHeartbeatDTO, HttpStatus.CREATED);
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('PATIENT') or hasRole('PROFESSIONAL')")
     public Page<HeartbeatResponseDTO> listHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAll(pageable, patientId);
-        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(), heartbeat.getSeverity()));
     }
 
     @GetMapping("/latest")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('PROFESSIONAL')")
     public Page<HeartbeatResponseDTO> listLatestHeartbeats(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<HeartbeatEntity> heartbeats = heartbeatService.findAllLatest(pageable, patientId);
-        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt()));
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(), heartbeat.getSeverity()));
+    }
+
+    @GetMapping("/date/{date}")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('PROFESSIONAL')")
+    public Page<HeartbeatResponseDTO> listHeartbeatsByDate(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
+        Page<HeartbeatEntity> heartbeats = heartbeatService.findAllByDate(pageable, patientId, date);
+        return heartbeats.map(heartbeat -> new HeartbeatResponseDTO(heartbeat.getHeartbeat(), heartbeat.getCreatedAt(), heartbeat.getSeverity()));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('PROFESSIONAL')")
     public ResponseEntity<HeartbeatDTO> getHeartbeatById(@PathVariable("id") Long id) {
         Optional<HeartbeatEntity> heartbeat = heartbeatService.getById(id);
         return heartbeat.map(heartbeatEntity -> {
@@ -67,6 +85,7 @@ public class HeartbeatController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('PATIENT') or hasRole('PROFESSIONAL')")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         if (!heartbeatService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

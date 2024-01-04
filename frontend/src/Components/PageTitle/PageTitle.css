@@ -1,4 +1,8 @@
 .page-title {
-    margin: 2% 3%;
+    margin: 2% 7%;
     margin-bottom: 0;
+    font-size: 22px;
+    display: flex;
+    flex-direction: row;
+    align-items: center !important;
 }

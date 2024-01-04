@@ -1,0 +1,19 @@
+.professional-patient-page-button{
+    background-color: var(--professionalBaseColor);
+    color: white;
+    cursor: pointer;
+    border: none;
+    padding: 2%;
+    font-size: 16px;
+}
+
+.professional-patient-page-button:hover{
+    background-color: var(--professionalDarkColor);
+}
+
+.patient-page-container{
+    background-color: #e5f2ff;
+    padding: 3%;
+    height: 90%;
+    border-radius: 5%;
+}

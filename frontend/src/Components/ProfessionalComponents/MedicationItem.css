@@ -1,0 +1,7 @@
+.medication-item-button{
+    cursor: pointer;
+}
+
+.medication-item-button:hover{
+    color: var(--professionalBaseColor);
+}

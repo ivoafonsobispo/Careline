@@ -5,8 +5,15 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import pt.ipleiria.careline.domain.entities.users.PatientEntity;
+import lombok.*;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "temperatures")
 public class TemperatureEntity extends DataEntity {
@@ -14,21 +21,4 @@ public class TemperatureEntity extends DataEntity {
     @Min(25)
     @Max(50)
     private Float temperature;
-
-
-    public TemperatureEntity() {
-    }
-
-    public TemperatureEntity(Float temperature, PatientEntity patient) {
-        super(patient);
-        this.temperature = temperature;
-    }
-
-    public Float getTemperature() {
-        return temperature;
-    }
-
-    public void setTemperature(Float temperature) {
-        this.temperature = temperature;
-    }
 }
