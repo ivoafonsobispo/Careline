@@ -11,7 +11,7 @@ import pt.ipleiria.careline.services.impl.AuthenticationService;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@CrossOrigin
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
