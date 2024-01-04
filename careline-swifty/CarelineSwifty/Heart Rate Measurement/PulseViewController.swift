@@ -62,7 +62,6 @@ class PulseViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         deinitCaptureSession()
-        toggleTorch(status: false)
     }
     
     // MARK: - Setup Views
@@ -94,6 +93,7 @@ class PulseViewController: UIViewController {
     
     private func deinitCaptureSession() {
         heartRateManager.stopCapture()
+        toggleTorch(status: false)
     }
     
     private func toggleTorch(status: Bool) {
@@ -101,37 +101,49 @@ class PulseViewController: UIViewController {
         device.toggleTorch(on: status)
     }
     
+    private var countdownTimer: Timer?
+    private var measurementDuration: TimeInterval = 30 // Duration in seconds
+    private var isMeasurementInProgress = false
+    
     // MARK: - Measurement
     private func startMeasurement() {
-        DispatchQueue.main.async {
-            self.toggleTorch(status: true)
-            self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [weak self] (timer) in
-                guard let self = self else { return }
-                let average = self.pulseDetector.getAverage()
-                let pulse = 60.0/average
-                if pulse == -60 {
-                    UIView.animate(withDuration: 0.2, animations: {
-                        self.pulseLabel.alpha = 0
-                    }) { (finished) in
-                        self.pulseLabel.isHidden = finished
-                    }
+        //let measurementDuration: TimeInterval = 30 // Duration in seconds
+        guard !isMeasurementInProgress else { return }
+        
+        isMeasurementInProgress = true
+            
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            guard let self = self else {
+                timer.invalidate()
+                return
+            }
+            
+            let average = pulseDetector.getAverage()
+            let pulse = (average != 0) ? 60.0 / average : -60
+                
+            if pulse == -60 {
+                pulseLabel.alpha = 0
+                pulseLabel.isHidden = true
+            } else {
+                pulseLabel.alpha = 1.0
+                pulseLabel.isHidden = false
+                pulseLabel.text = "\(lroundf(pulse)) BPM"
+                
+                if self.secondsRemaining > 0 {
+                    self.secondsRemaining -= 1
+                    self.dataToSend = [self.secondsRemaining, lroundf(pulse)]
+                    self.sendDataToSwiftUI()
                 } else {
-                    UIView.animate(withDuration: 0.2, animations: {
-                        self.pulseLabel.alpha = 1.0
-                    }) { (_) in
-                        self.pulseLabel.isHidden = false
-                        self.pulseLabel.text = "\(lroundf(pulse)) BPM"
-                        
-                        self.secondsRemaining -= 1
-                        self.dataToSend = [self.secondsRemaining, lroundf(pulse)]
-                        self.sendDataToSwiftUI()
-                        if(self.secondsRemaining == 0){
-                            self.deinitCaptureSession()
-                        }
-                    }
+                    timer.invalidate()
+                    self.deinitCaptureSession()
+                    self.isMeasurementInProgress = false
+                    self.toggleTorch(status: false)
                 }
-            })
+            }
+            
         }
+        
+        toggleTorch(status: false)
     }
     
     func sendDataToSwiftUI(){
@@ -182,7 +194,7 @@ extension PulseViewController {
         
         let hsv = rgb2hsv((red: redmean, green: greenmean, blue: bluemean, alpha: 1.0))
         // Do a sanity check to see if a finger is placed over the camera
-        if (hsv.1 > 0.5 && hsv.2 > 0.5) {
+        if ((hsv.1 > 0.5 && hsv.2 > 0.5) && secondsRemaining != 0) {
             DispatchQueue.main.async {
                 self.thresholdLabel.text = "Hold your index finger ☝️ still."
                 self.toggleTorch(status: true)

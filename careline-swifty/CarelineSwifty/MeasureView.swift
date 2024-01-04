@@ -167,10 +167,14 @@ struct MeasureView: View{
     @StateObject private var heartRateManager  = HeartRateManager(cameraType: .back, preferredSpec: nil, previewContainer: nil)
     
     @State private var secondsRemaining = 30
+    
     @State private var heartRateValue = 0
     @State private var heartRateAverage = 0
     
+    @State private var temperatureMeasurements: [Double] = []
     @State private var temperatureValue = 0.0
+    @State private var isMeasuring = false
+    @State private var startClicked = false
     
     
     var body: some View {
@@ -206,34 +210,51 @@ struct MeasureView: View{
                                     dismissView()
                                 }
                             }
-                        Text("Value meausred: \(self.heartRateAverage/30)")
+                        Text("Value measured: \(self.heartRateAverage/30) BPM")
                     }
                 }
             } else {
                 VStack{
-                    Image(systemName: measure.symbol)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 75.0, height: 75.0)
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0))
-                    Text("\(temperatureValue, specifier: "%.2f") ºC")
-                        .font(.title)
-                        .fontWeight(.bold)
-                    Text("Time remaining: \(secondsRemaining) seconds")
-                    
-                    Button(action: {
-                        TemperatureAPI().getTemperature { temperature in
-                            temperatureValue = temperature
-                        }}) {
-                        HStack{
-                            Text("Start")
-                        }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
-                            .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
-                            .foregroundColor(Color.black)
-                    }.background(Color("Salmon"))
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .cornerRadius(15)
-                        .frame(minHeight: 0, maxHeight: .infinity, alignment: .bottom)
+                    if secondsRemaining > 0{
+                        Image(systemName: measure.symbol)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 75.0, height: 75.0)
+                            .padding(EdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0))
+                        Text("\(temperatureValue, specifier: "%.2f") ºC")
+                            .font(.title)
+                            .fontWeight(.bold)
+                        Text("Time remaining: \(secondsRemaining) seconds")
+                        
+                        if !startClicked{
+                            Button(action: {
+                                startClicked = true
+                                temperatureMeasurements = []
+                                measureTemperatureForDuration()
+                            }) {
+                                HStack{
+                                    Text("Start")
+                                }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
+                                    .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
+                                    .foregroundColor(Color.black)
+                            }.background(Color("Salmon"))
+                                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                                .cornerRadius(15)
+                                .frame(minHeight: 0, maxHeight: .infinity, alignment: .bottom)
+                        }
+                    } else {
+                        Text("Measurement Completed")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .padding()
+                            .onAppear(){
+                                makeTemperaturePostRequest()
+                                DispatchQueue.main.asyncAfter(deadline: .now()+2){
+                                    dismissView()
+                                }
+                            }
+                        Text("Value measured: \(String(format: "%.2f", temperatureValue)) ºC")
+                    }
                 }
             }
             
@@ -244,6 +265,38 @@ struct MeasureView: View{
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: btnBack)
     }
+    
+    func measureTemperatureForDuration() {
+           isMeasuring = true
+           let measurementDuration: TimeInterval = 30 // Duration in seconds
+           
+           DispatchQueue.global().async {
+               let startTime = Date()
+               while Date().timeIntervalSince(startTime) < measurementDuration {
+                   TemperatureAPI().getTemperature { temperature in
+                       temperatureMeasurements.append(temperature)
+                       temperatureValue = temperature
+                   }
+                   Thread.sleep(forTimeInterval: 1)
+                   secondsRemaining = secondsRemaining - 1
+               }
+               
+               // Calculate average temperature
+               let totalTemperature = temperatureMeasurements.reduce(0, +)
+               let averageTemperature = totalTemperature / Double(temperatureMeasurements.count)
+               
+               // Update UI on the main queue
+               DispatchQueue.main.async {
+                   temperatureValue = averageTemperature
+                   isMeasuring = false
+               }
+               
+               // Perform any post-calculation tasks here
+               // For instance, send the average temperature to an API
+            
+               //sendAverageTemperatureToAPI(averageTemperature)
+           }
+       }
     
     func dismissView(){
         self.presentationMode.wrappedValue.dismiss()
@@ -257,6 +310,48 @@ struct MeasureView: View{
         
         let requestData: [String: Any] = [
             "heartbeat": String(self.heartRateAverage/30)
+        ]
+        
+        do {
+            // Convert the requestData to JSON data
+            let jsonData = try JSONSerialization.data(withJSONObject: requestData)
+
+            // Create the URLRequest with the specified URL and method
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+
+            // Set the request body with the JSON data
+            request.httpBody = jsonData
+
+            // Set the content type to JSON
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            // Create a URLSession task for the request
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                } else if let response = response as? HTTPURLResponse {
+                    if(response.statusCode == 201) {
+                        print("POST request successful")
+                    } else {
+                        print("POST request failed with status code: \(response.statusCode)")
+                    }
+                }
+            }.resume()
+        } catch {
+            print("Error converting requestData to JSON data: \(error)")
+        }
+        
+    }
+    
+    func makeTemperaturePostRequest(){
+        guard let url = URL(string: "http://10.20.229.2/api/patients/1/temperatures") else {
+            print("Invalid URL")
+            return
+        }
+        
+        let requestData: [String: Any] = [
+            "temperature": String(String(format: "%.2f", temperatureValue))
         ]
         
         do {
