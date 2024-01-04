@@ -10,16 +10,13 @@ public class ZipFileGenerator {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
 
-            // Add heartbeat CSV to the ZIP file
             addToZipFile(zipOutputStream, "heartbeat_data.csv", heartbeatCsv.getBytes());
-
-            // Add temperature CSV to the ZIP file
             addToZipFile(zipOutputStream, "temperature_data.csv", temperatureCsv.getBytes());
+            zipOutputStream.close();
 
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle exception appropriately
             return null;
         }
     }

@@ -5,28 +5,58 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
-import pt.ipleiria.careline.validations.DataValidation;
+import pt.ipleiria.careline.domain.enums.Severity;
+import pt.ipleiria.careline.domain.enums.Status;
+import pt.ipleiria.careline.exceptions.PatientException;
+import pt.ipleiria.careline.helpers.HeartbeatSeverity;
+import pt.ipleiria.careline.helpers.TemperatureSeverity;
 import pt.ipleiria.careline.repositories.TriageRepository;
+import pt.ipleiria.careline.services.PatientService;
 import pt.ipleiria.careline.services.TriageService;
+import pt.ipleiria.careline.utils.DateConversionUtil;
 
-import java.util.ArrayList;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TriageServiceImpl implements TriageService {
+    private final TriageRepository triageRepository;
+    private final PatientService patientService;
 
-    private TriageRepository triageRepository;
-
-
-    public TriageServiceImpl(TriageRepository triageRepository) {
+    public TriageServiceImpl(TriageRepository triageRepository, PatientService patientService) {
         this.triageRepository = triageRepository;
-        DataValidation dataValidation = new DataValidation();
+        this.patientService = patientService;
     }
 
     @Override
-    public TriageEntity save(TriageEntity triageEntity) {
-        validateTriage(triageEntity);
+    public TriageEntity save(TriageEntity triageEntity, Long patientId) {
+        // Set Patient
+        Optional<PatientEntity> patient = patientService.getPatientById(patientId);
+        if (patient.isEmpty())
+            throw new PatientException();
+
+        triageEntity.setPatient(patient.get());
+
+        // Set Severity
+        HeartbeatSeverity heartbeatSeverity = new HeartbeatSeverity();
+        TemperatureSeverity temperatureSeverity = new TemperatureSeverity();
+
+        Severity heartbeatSeverityCategory = heartbeatSeverity.getSeverityCategory(triageEntity.getHeartbeat());
+        Severity temperatureSeverityCategory = temperatureSeverity.getSeverityCategory(triageEntity.getTemperature());
+
+        if (heartbeatSeverityCategory == Severity.CRITICAL || temperatureSeverityCategory == Severity.CRITICAL) {
+            triageEntity.setSeverity(Severity.CRITICAL);
+        } else if (heartbeatSeverityCategory == Severity.MEDIUM || temperatureSeverityCategory == Severity.MEDIUM) {
+            triageEntity.setSeverity(Severity.MEDIUM);
+        } else {
+            triageEntity.setSeverity(Severity.GOOD);
+        }
+
+        // Set Status
+        triageEntity.setStatus(Status.UNREVIEWED);
+        triageEntity.setReviewDate(Instant.EPOCH);
+
         return triageRepository.save(triageEntity);
     }
 
@@ -62,15 +92,12 @@ public class TriageServiceImpl implements TriageService {
 
     @Override
     public Optional<TriageEntity> findLastTriage() {
-        Optional<TriageEntity> t = triageRepository.findLastTriage();
-        return t;
+        return triageRepository.findLastTriage();
     }
 
     @Override
     public boolean isExists(Long id) {
-        if (!triageRepository.existsById(id))
-            return false;
-        return true;
+        return triageRepository.existsById(id);
     }
 
     @Override
@@ -81,8 +108,9 @@ public class TriageServiceImpl implements TriageService {
             Optional.ofNullable(triageEntity.getTemperature()).ifPresent(existingTriage::setTemperature);
             Optional.ofNullable(triageEntity.getSymptoms()).ifPresent(existingTriage::setSymptoms);
             Optional.ofNullable(triageEntity.getPatient()).ifPresent(existingTriage::setPatient);
-            Optional.ofNullable(triageEntity.getTagOrder()).ifPresent(existingTriage::setTagOrder);
             Optional.ofNullable(triageEntity.getSeverity()).ifPresent(existingTriage::setSeverity);
+            Optional.ofNullable(triageEntity.getStatus()).ifPresent(existingTriage::setStatus);
+            Optional.ofNullable(triageEntity.getReviewDate()).ifPresent(existingTriage::setReviewDate);
             return triageRepository.save(existingTriage);
         }).orElseThrow(() -> new RuntimeException("Triage not found"));
     }
@@ -90,16 +118,36 @@ public class TriageServiceImpl implements TriageService {
     @Override
     public void delete(Long id) {
         Optional<TriageEntity> opt = triageRepository.findById(id);
-        if (opt.isPresent())
-            triageRepository.delete(opt.get());
+        opt.ifPresent(triageRepository::delete);
     }
 
-    private void validateTriage(TriageEntity triageEntity) {
-        List<String> errors = new ArrayList<>();
-        //TODO validar se o cliente existe, integrar com dados de saúde e validar
-        if (!(triageRepository.findAllById(triageEntity.getId()).isEmpty()))
-            errors.add("Triage Id already exists");
-        if (!errors.isEmpty())
-            throw new IllegalArgumentException(String.join(", ", errors));
+    @Override
+    public Page<TriageEntity> findAllByDate(Pageable pageable, String date) {
+        DateConversionUtil dateConversionUtil = new DateConversionUtil();
+        Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
+        Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
+
+        return triageRepository.findAllByCreatedAtBetweenOrderByCreatedAtDesc(pageable, startDate, endDate);
+    }
+
+    @Override
+    public Page<TriageEntity> findAllLatest(Pageable pageable) {
+        return triageRepository.findAllOrderByCreatedAtDesc(pageable);
+    }
+
+    @Override
+    public TriageEntity setTriageReviewed(Long patientId, Long triageId) {
+        Optional<TriageEntity> triage = triageRepository.findById(triageId);
+        if (triage.isEmpty())
+            throw new RuntimeException("Triage not found");
+
+        triage.get().setStatus(Status.REVIEWED);
+        triage.get().setReviewDate(Instant.now());
+        return partialUpdate(triageId, triage.get());
+    }
+
+    @Override
+    public Page<TriageEntity> findAllUnreviewed(Pageable pageable) {
+        return triageRepository.findAllByStatusOrderByCreatedAtDesc(pageable, Status.UNREVIEWED);
     }
 }

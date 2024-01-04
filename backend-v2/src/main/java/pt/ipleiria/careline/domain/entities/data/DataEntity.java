@@ -11,7 +11,7 @@ import java.time.Instant;
 @MappedSuperclass
 public abstract class DataEntity {
     @CurrentTimestamp
-    @Column(name = "created_at")
+    @Column(updatable = false, name = "created_at")
     public Instant createdAt;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "health_data_id_seq")
