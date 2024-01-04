@@ -1,10 +1,7 @@
 package pt.ipleiria.careline.controllers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.JwtAuthenticationResponse;
 import pt.ipleiria.careline.domain.dto.SignInRequest;
 import pt.ipleiria.careline.domain.dto.SignUpRequest;
@@ -14,6 +11,7 @@ import pt.ipleiria.careline.services.impl.AuthenticationService;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@CrossOrigin
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
