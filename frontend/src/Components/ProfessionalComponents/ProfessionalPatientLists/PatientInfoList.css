@@ -1,4 +1,4 @@
-.professional-measure-list{
+.professional-measure-list {
     width: 85%;
     height: 100%;
     display: flex;
@@ -10,12 +10,12 @@
     margin: auto;
 }
 
-.two-columns{
+.two-columns {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
 }
 
-.professional-info-list-box{
+.professional-info-list-box {
     background-color: var(--professionalLightColor);
     width: 100%;
     height: 100%;
@@ -26,7 +26,7 @@
     font-size: 16px;
     border-radius: 5px;
     border-bottom: 10px solid var(--professionalLightColor);
-    
+
 }
 
 
@@ -36,7 +36,7 @@
     padding: 2% 4%;
     border-bottom: 0px;
     transition: border-bottom 100ms ease-in-out;
-    transform-origin:  0% 50%;
+    transform-origin: 0% 50%;
     border-radius: 5px;
     word-break: break-all;
     height: fit-content;
@@ -47,7 +47,7 @@
     border-bottom: 4px solid var(--professionalBaseColor);
 }
 
-.list-title{
+.list-title {
     font-size: 18px;
     padding: 3% 4% 0% 5%;
 }
@@ -58,21 +58,36 @@
     margin-top: 2%;
 }
 
-.info-list-navlink{
+.info-list-navlink {
     color: var(--professionalBaseColor);
     font-size: 14px;
 }
 
-.patient-info{
+.patient-info {
     flex-grow: 1;
 }
 
-.patient-change-list-button{
+.patient-change-list-button {
     background-color: var(--professionalBaseColor);
     border: none;
     color: white;
     margin-left: auto;
     padding: 1%;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.patient-info-list-select {
+    margin-left: auto;
+    background-color: var(--professionalBaseColor);
+    color: white;
+    border: none;
+    padding: 1%;
+    cursor: pointer;
+}
+
+
+.patient-info-list-select-option:hover{
+    background-color: white !important;
     cursor: pointer;
 }
