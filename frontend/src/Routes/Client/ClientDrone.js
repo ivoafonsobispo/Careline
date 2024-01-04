@@ -54,29 +54,6 @@ export default function ClientDrone() {
             .catch(error => {
                 console.log(error);
             });
-
-        // setDrone({
-        //     "id": 1,
-        //     "patient": {
-        //         "id": 1,
-        //         "name": "Alice Johnson",
-        //         "email": "alice@mail.com",
-        //         "nus": "987654321"
-        //     },
-        //     "medications": [
-        //         "a"
-        //     ],
-        //     "status": "DELIVERED",
-        //     "coordinate": {
-        //         "departure_latitude": 39.734,
-        //         "departure_longitude": -8.821,
-        //         "arrival_latitude": 39.742,
-        //         "arrival_longitude": -8.775
-        //     },
-        //     "created_at": "Wed, Jan 03 AT 11:06",
-        //     "departure_time": "Wed, Jan 03 AT 11:06",
-        //     "arrival_time": "Thu, Jan 01 AT 01:00"
-        // });
     }, []);
 
 
@@ -132,7 +109,7 @@ export default function ClientDrone() {
                     <div className='align-line-row client-triage-information-box'>
                         <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "40%", marginRight: "3%" }}>
                             <div className='align-line-row'>
-                                <span><b>&#91;</b>{drone.coordinate.departure_latitude}, {drone.coordinate.departure_longitude}<b>&#93;</b> &nbsp; &#8594; &nbsp; <b>&#91;</b>{drone.coordinate.arrival_latitude}, {drone.coordinate.arrival_longitude}<b>&#93;</b></span>
+                            <span><b>&#91;</b>{(drone.coordinate.departure_latitude).toFixed(3)}, {(drone.coordinate.departure_longitude).toFixed(3)}<b>&#93;</b> &nbsp; &#8594; &nbsp; <b>&#91;</b>{(drone.coordinate.arrival_latitude).toFixed(3)}, {(drone.coordinate.arrival_longitude).toFixed(3)}<b>&#93;</b></span>    
                             </div>
                             <div className='align-line-column'>
                                 <div className='align-line-row'>

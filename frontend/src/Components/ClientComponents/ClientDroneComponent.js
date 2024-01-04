@@ -18,7 +18,7 @@ export default function ClientDroneComponent({ drone }) {
             <div className='horizontal-container client-triage-information-box'>
                 <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "40%", marginRight: "3%" }}>
                     <div className='align-line-row'>
-                        <span><b>&#91;</b>{drone.coordinate.departure_latitude}, {drone.coordinate.departure_longitude}<b>&#93;</b> &nbsp; &#8594; &nbsp; <b>&#91;</b>{drone.coordinate.arrival_latitude}, {drone.coordinate.arrival_longitude}<b>&#93;</b></span>
+                    <span><b>&#91;</b>{(drone.coordinate.departure_latitude).toFixed(3)}, {(drone.coordinate.departure_longitude).toFixed(3)}<b>&#93;</b> &nbsp; &#8594; &nbsp; <b>&#91;</b>{(drone.coordinate.arrival_latitude).toFixed(3)}, {(drone.coordinate.arrival_longitude).toFixed(3)}<b>&#93;</b></span>
                     </div>
                     <div className='align-line-column'>
                         <div className='align-line-row'>
@@ -75,7 +75,7 @@ export default function ClientDroneComponent({ drone }) {
                     }
                 </div>
 
-                <NavLink to={'/drones/1'} className='triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
+                <NavLink to={`/drones/${drone.id}`} className='triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
                     <span className='align-line-row' style={{ margin: "auto" }}>
                         <Eye size={15} /> &nbsp; View
                     </span>

@@ -9,6 +9,7 @@ import SockJS from 'sockjs-client';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 
 const urlLastHeartbeat = 'http://localhost:8080/api/patients/1/heartbeats/latest?size=1';
 const urlLastTemperature = 'http://localhost:8080/api/patients/1/temperatures/latest?size=1';
@@ -102,7 +103,7 @@ export default function ClientHomeBody({ date }) {
         port: 8080
       }
     })
-      .then(response => {
+      .then(response => { 
         let temperatureObject = response.data.content[0];
         if (temperatureObject) {
           setLastTemperature(temperatureObject.temperature);
@@ -128,12 +129,23 @@ export default function ClientHomeBody({ date }) {
         setHeartStyle({
           animation: `growAndFade ${newAnimationSpeed}s ease-in-out infinite alternate`,
         });
+
+        toast.success('Heartbeat updated successfully!', {
+          style: {
+            fontSize: '16px',
+          },
+        });
       });
 
       stompClient.subscribe('/topic/temperatures', (message) => {
         let newTemperature = JSON.parse(message.body);
         setLastTemperature(newTemperature.temperature);
         setTemperatureSeverity(newTemperature.severity);
+        toast.success('Temperature updated successfully!', {
+          style: {
+            fontSize: '16px',
+          },
+        });
       });
 
       stompClient.subscribe('/topic/diagnosis', (message) => {
@@ -161,6 +173,7 @@ export default function ClientHomeBody({ date }) {
         <MeasureList title={"Measures"} dataArray={measures} />
         <MeasureList title={"Diagnoses"} dataArray={diagnoses} />
       </div>
+      <ToastContainer/>
     </div>
   );
 }
