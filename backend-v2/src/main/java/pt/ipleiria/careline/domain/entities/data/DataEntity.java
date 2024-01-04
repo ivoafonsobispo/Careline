@@ -2,12 +2,16 @@ package pt.ipleiria.careline.domain.entities.data;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Severity;
 
 import java.time.Instant;
 
+@Getter
+@Setter
 @MappedSuperclass
 public abstract class DataEntity {
     @CurrentTimestamp
@@ -27,40 +31,6 @@ public abstract class DataEntity {
 
     public DataEntity(PatientEntity patient, Severity severity) {
         this.patient = patient;
-        this.createdAt = Instant.now();
-        this.severity = severity;
-
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public PatientEntity getPatient() {
-        return patient;
-    }
-
-    public void setPatient(PatientEntity patient) {
-        this.patient = patient;
-    }
-
-    public Severity getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(Severity severity) {
         this.severity = severity;
     }
 }

@@ -1,4 +1,4 @@
-package pt.ipleiria.careline.domain.entities.data;
+package pt.ipleiria.careline.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import pt.ipleiria.careline.domain.entities.data.DataEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import pt.ipleiria.careline.domain.enums.Severity;
@@ -30,6 +31,7 @@ public class TriageEntity extends DataEntity {
     private Integer heartbeat;
     private String symptoms;
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Status status;
     @Column(name = "review_date")
     private Instant reviewDate;

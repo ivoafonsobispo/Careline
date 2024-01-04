@@ -1,46 +1,66 @@
 package pt.ipleiria.careline.domain.entities.users;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import pt.ipleiria.careline.domain.entities.TriageEntity;
+import pt.ipleiria.careline.domain.enums.Role;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "professionals")
 public class ProfessionalEntity extends UserEntity {
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "professional_patient",
-            joinColumns = { @JoinColumn(name = "professional_id") },
-            inverseJoinColumns = { @JoinColumn(name = "patient_id") }
+            joinColumns = {@JoinColumn(name = "professional_id")},
+            inverseJoinColumns = {@JoinColumn(name = "patient_id")}
     )
     private List<PatientEntity> patients;
     @ManyToMany
     private List<TriageEntity> triages;
 
     public ProfessionalEntity() {
+        super();
     }
 
-    public ProfessionalEntity(String name, String email, String password, String nus) {
-        super(name, email, password, nus);
-        patients = new ArrayList<>();
+    public ProfessionalEntity(String name, String nus, String email, String password) {
+        super(name, nus, email, password, Role.ROLE_PROFESSIONAL);
     }
 
-    public List<PatientEntity> getPatients() {
-        return patients;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public void setPatients(List<PatientEntity> patients) {
-        this.patients = patients;
+    @Override
+    public String getUsername() {
+        return getNus();
     }
 
-    public List<TriageEntity> getTriages() {
-        return triages;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setTriages(List<TriageEntity> triages) {
-        this.triages = triages;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

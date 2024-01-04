@@ -2,7 +2,7 @@ package pt.ipleiria.careline.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import pt.ipleiria.careline.domain.entities.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 
 import java.util.List;

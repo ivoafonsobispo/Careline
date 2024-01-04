@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.data.TriageDTO;
 import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
 import pt.ipleiria.careline.domain.dto.responses.TriageResponseDTO;
-import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import pt.ipleiria.careline.domain.entities.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 import pt.ipleiria.careline.services.PatientService;

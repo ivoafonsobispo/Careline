@@ -8,6 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.DiagnosisDTO;
 import pt.ipleiria.careline.domain.dto.responses.DiagnosisResponseDTO;
@@ -47,8 +50,13 @@ public class DiagnosisController {
     }
 
     @PostMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
-    public ResponseEntity<DiagnosisResponseDTO> create(@PathVariable(
-            "professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
+    @PreAuthorize("hasRole('PROFESSIONAL')")
+    public ResponseEntity<DiagnosisResponseDTO> create(@PathVariable("professionalId") Long professionalId,
+                                                       @PathVariable("patientId") Long patientId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
+        // Log roles
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("User roles: " + authentication.getAuthorities());
+
         DiagnosisEntity diagnosisEntity = diagnosisMapper.mapFrom(diagnosisDTO);
         DiagnosisEntity savedDiagnosticEntity = diagnosisService.save(patientId, professionalId, diagnosisEntity);
         DiagnosisResponseDTO responseDTO = new DiagnosisResponseDTO(savedDiagnosticEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), savedDiagnosticEntity.getDiagnosis(), savedDiagnosticEntity.getMedications(), Instant.now());
@@ -59,6 +67,7 @@ public class DiagnosisController {
     }
 
     @PutMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public ResponseEntity<DiagnosisDTO> fullUpdate(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @PathVariable("id") Long diagnosisId, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         if (!diagnosisService.isExists(diagnosisId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -71,6 +80,7 @@ public class DiagnosisController {
     }
 
     @PatchMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public ResponseEntity<DiagnosisDTO> partialUpdate(@PathVariable("id") Long id, @RequestBody @Valid DiagnosisDTO diagnosisDTO) {
         if (!diagnosisService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -83,6 +93,7 @@ public class DiagnosisController {
     }
 
     @DeleteMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public ResponseEntity delete(@PathVariable("id") Long id) {
         if (!diagnosisService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -93,6 +104,7 @@ public class DiagnosisController {
 
     // GET - Related to Professional Diagnosis
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public Page<DiagnosisResponseDTO> listDiagnostics(Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAll(pageable);
         return diagnosisEntities.map(diagnosisEntity -> {
@@ -110,6 +122,7 @@ public class DiagnosisController {
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public ResponseEntity<DiagnosisResponseDTO> getByIdProfessional(@PathVariable("id") Long id) {
         Optional<DiagnosisEntity> diagnosis = diagnosisService.getById(id);
         return diagnosis.map(diagnosisEntity -> {
@@ -119,12 +132,14 @@ public class DiagnosisController {
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/date/{date}")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public Page<DiagnosisResponseDTO> professionalListDiagnosisByDate(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
         Page<DiagnosisEntity> diagnosis = diagnosisService.findAllByDate(pageable, patientId, date);
         return diagnosis.map(diagnosisEntity -> new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt()));
     }
 
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis/{id}/pdf")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public void getPDFById(@PathVariable("patientId") Long patientId, @PathVariable("id") Long id, HttpServletResponse response) throws DocumentException, IOException {
         Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getDiagnosisOfPatient(patientId, id);
         PdfGenerator generator = new PdfGenerator();
@@ -140,6 +155,7 @@ public class DiagnosisController {
     }
 
     @GetMapping("professionals/{professionalId}/diagnosis/latest")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public Page<DiagnosisResponseDTO> listLatestDiagnosisFromProfessional(@PathVariable("professionalId") Long professionalId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAllLatestFromProfessional(pageable, professionalId);
         return diagnosisEntities.map(diagnosisEntity -> {
@@ -157,12 +173,14 @@ public class DiagnosisController {
     }
 
     @GetMapping("/professionals/{professionalId}/diagnosis/date/{date}")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public Page<DiagnosisResponseDTO> professionalListDiagnosisByDate(@PathVariable("professionalId") Long professionalId, @PathVariable("date") String date, Pageable pageable) {
         Page<DiagnosisEntity> diagnosis = diagnosisService.findAllByDateFromProfessional(pageable, professionalId, date);
         return diagnosis.map(diagnosisEntity -> new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt()));
     }
 
     @GetMapping("professionals/{professionalId}/patients/{patientId}/diagnosis/latest")
+    @PreAuthorize("hasRole('PROFESSIONAL')")
     public Page<DiagnosisResponseDTO> listLatestProfessional(@PathVariable(
             "patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities =
@@ -184,12 +202,14 @@ public class DiagnosisController {
 
     // GET - Related to Patient Diagnosis
     @GetMapping("/patients/{patientId}/diagnosis/date/{date}")
+    @PreAuthorize("hasRole('PATIENT')")
     public Page<DiagnosisResponseDTO> patientListDiagnosisByDate(@PathVariable("patientId") Long patientId, @PathVariable("date") String date, Pageable pageable) {
         Page<DiagnosisEntity> diagnosis = diagnosisService.findAllByDate(pageable, patientId, date);
         return diagnosis.map(diagnosisEntity -> new DiagnosisResponseDTO(diagnosisEntity.getId(), patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient()), professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional()), diagnosisEntity.getDiagnosis(), diagnosisEntity.getMedications(), diagnosisEntity.getCreatedAt()));
     }
 
     @GetMapping("/patients/{patientId}/diagnosis/{id}")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<DiagnosisResponseDTO> getByIdPatient(@PathVariable("id") Long id,
                                                                @PathVariable("patientId") Long patientId) {
         Optional<DiagnosisEntity> diagnosis = diagnosisService.getDiagnosisOfPatient(patientId, id);
@@ -200,12 +220,14 @@ public class DiagnosisController {
     }
 
     @GetMapping("/patients/{patientId}/diagnosis")
+    @PreAuthorize("hasRole('PATIENT')")
     public Page<DiagnosisResponseDTO> listDiagnosticsPatient(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAllDiagnosisOfPatient(patientId, pageable);
         return diagnosisEntities.map(diagnosisResponseMapper::mapToDTO);
     }
 
     @GetMapping("/patients/{patientId}/diagnosis/{id}/pdf")
+    @PreAuthorize("hasRole('PATIENT')")
     public void getPDFByIdPatient(@PathVariable("id") Long id, @PathVariable("patientId") Long patientId, HttpServletResponse response) throws DocumentException, IOException {
         Optional<DiagnosisEntity> diagnosisEntity = diagnosisService.getDiagnosisOfPatient(patientId, id);
         PdfGenerator generator = new PdfGenerator();
@@ -221,6 +243,7 @@ public class DiagnosisController {
     }
 
     @GetMapping("patients/{patientId}/diagnosis/latest")
+    @PreAuthorize("hasRole('PATIENT')")
     public Page<DiagnosisResponseDTO> listLatest(@PathVariable("patientId") Long patientId, Pageable pageable) {
         Page<DiagnosisEntity> diagnosisEntities =
                 diagnosisService.findAllLatest(pageable,

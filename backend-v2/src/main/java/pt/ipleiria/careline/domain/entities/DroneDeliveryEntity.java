@@ -2,8 +2,7 @@ package pt.ipleiria.careline.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.entities.embed.Coordinate;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
@@ -12,6 +11,10 @@ import pt.ipleiria.careline.domain.enums.Delivery;
 import java.time.Instant;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -29,6 +32,7 @@ public class DroneDeliveryEntity {
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
     @NotNull
+    @Enumerated(EnumType.STRING)
     private Delivery deliveryStatus;
     private Instant departureTime;
     private Instant arrivalTime;
@@ -42,17 +46,4 @@ public class DroneDeliveryEntity {
     })
     private Coordinate coordinate;
 
-    public DroneDeliveryEntity() {
-    }
-
-    public DroneDeliveryEntity(Instant createdAt, Long id, PatientEntity patient, List<String> medications, Delivery deliveryStatus, Instant departureTime, Instant arrivalTime, Coordinate coordinate) {
-        this.createdAt = createdAt;
-        this.id = id;
-        this.patient = patient;
-        this.medications = medications;
-        this.deliveryStatus = deliveryStatus;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
-        this.coordinate = coordinate;
-    }
 }
