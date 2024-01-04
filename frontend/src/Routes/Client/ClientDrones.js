@@ -9,6 +9,9 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -56,6 +59,22 @@ export default function ClientDrones() {
             .catch(error => {
                 console.log(error);
             });
+    }, []);
+
+    useEffect(() => {
+        const socket = new SockJS('http://localhost:8080/websocket-endpoint');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/deliveries', (message) => {
+                let newDrone = JSON.parse(message.body);
+                setDrones((prevDrones) => [newDrone, ...prevDrones]);
+            });
+        });
+
+        return () => {
+            stompClient.disconnect();
+        };
     }, []);
 
     return (

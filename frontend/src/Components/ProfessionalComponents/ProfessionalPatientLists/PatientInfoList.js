@@ -4,6 +4,7 @@ import '../ProfessionalBase.css'
 import { FileEarmarkMedical, Paperclip, BoxSeam } from 'react-bootstrap-icons';
 import TriageItem from './TriageItem';
 import DiagnosisItem from './DiagnosisItem';
+import DroneItem from './DroneItem';
 
 export default function PatientInfoList({ title, dataArray, setCurrentList }) {
     return (
@@ -72,39 +73,15 @@ export default function PatientInfoList({ title, dataArray, setCurrentList }) {
                             )
                         })}
                     </>
-                ) : title === "Drones In Transit" ? (
+                ) : (
                     <>
-                        {dataArray.map((triage, index) => {
+                        {dataArray.map((drone, index) => {
                             return (
-                                <TriageItem key={index} triage={triage} />
+                                <DroneItem key={index} drone={drone} />
                             )
                         })}
                     </>
-                ) : title === "Drones Delivered" ? (
-                    <>
-                        {dataArray.map((triage, index) => {
-                            return (
-                                <TriageItem key={index} triage={triage} />
-                            )
-                        })}
-                    </>
-                ) : title === "Pending Drones" ? (
-                    <>
-                        {dataArray.map((triage, index) => {
-                            return (
-                                <TriageItem key={index} triage={triage} />
-                            )
-                        })}
-                    </>
-                ) : title === "Failed Drones" ? (
-                    <>
-                        {dataArray.map((triage, index) => {
-                            return (
-                                <TriageItem key={index} triage={triage} />
-                            )
-                        })}
-                    </>
-                ) : (<></>)}
+                )}
 
             </div>
 

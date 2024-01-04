@@ -5,6 +5,9 @@ import DigitalTwin from "../../Components/ProfessionalComponents/ProfessionalDig
 
 import { ThermometerHalf, Heart } from 'react-bootstrap-icons';
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -14,8 +17,9 @@ export default function ProfessionalPatient() {
     const { id } = useParams();
     const [patient, setPatient] = useState(null);
     const [currentList, setCurrentList] = useState("urtriage");
+    const [currentDroneStatusFilter, setcurrentDroneStatusFilter] = useState('PENDING');
 
-    const urlPatient = `http://localhost:8080/api/patients/${id}`;
+    const urlPatient = `http://localhost:8080/api/professionals/1/patients/${id}`;
     const urlLastHeartbeat = `http://localhost:8080/api/patients/${id}/heartbeats/latest?size=1`;
     const urlLastTemperature = `http://localhost:8080/api/patients/${id}/temperatures/latest?size=1`;
 
@@ -27,12 +31,15 @@ export default function ProfessionalPatient() {
     const [lastTemperature, setLastTemperature] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    const urlDiagnoses = `http://localhost:8080/api/professionals/1/patients/${id}/diagnosis`;
+    const urlDiagnoses = `http://localhost:8080/api/professionals/1/patients/${id}/diagnosis/latest`;
     const [diagnoses, setDiagnoses] = useState(null);
 
     const [heartStyle, setHeartStyle] = useState({
         animation: `growAndFade 1s ease-in-out infinite alternate`,
     });
+
+    const urlDrones = `http://localhost:8080/api/patients/${id}/deliveries`;
+    const [drones, setDrones] = useState(null);
 
     useEffect(() => {
         axios.get(urlPatient, {
@@ -44,8 +51,6 @@ export default function ProfessionalPatient() {
             }
         })
             .then(response => {
-
-                console.log(response.data);
                 setPatient(response.data);
             })
             .catch(error => {
@@ -108,13 +113,54 @@ export default function ProfessionalPatient() {
             }
         })
             .then(response => {
-                console.log(response.data.content);
+                // console.log(response.data.content);
                 setDiagnoses(response.data.content);
             })
             .catch(error => {
                 console.log(error);
             });
-    }, [id, urlLastHeartbeat, urlLastTemperature, urlPatient]);
+
+        axios.get(urlDrones, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                // console.log(response.data.content);
+                setDrones(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, [id, urlLastHeartbeat, urlLastTemperature, urlPatient, urlDrones]);
+
+    useEffect(() => {
+        const socket = new SockJS('http://localhost:8080/websocket-endpoint');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/deliveries', (message) => {
+                let newDrone = JSON.parse(message.body);
+                if (newDrone.patient.id === parseInt(id)) {
+                    setDrones((prevDrones) => [newDrone, ...prevDrones]);
+                }
+            });
+
+            stompClient.subscribe('/topic/diagnosis', (message) => {
+                let newDiagnosis = JSON.parse(message.body);
+                if (newDiagnosis.patient.id === parseInt(id)) {
+                    setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
+                }
+            });
+        });
+
+        return () => {
+            stompClient.disconnect();
+        };
+    }, []);
 
     const handleListChange = (list) => {
         console.log(list);
@@ -122,8 +168,14 @@ export default function ProfessionalPatient() {
     }
 
     useEffect(() => {
-        if (currentList === 'Pending Drones') {
-            // Apply sort/map
+        if (currentList === 'pdrones') {
+            setcurrentDroneStatusFilter('PENDING');
+        } else if (currentList === 'itdrones') {
+            setcurrentDroneStatusFilter('IN_TRANSIT');
+        } else if (currentList === 'ddrones') {
+            setcurrentDroneStatusFilter('DELIVERED');
+        } else if (currentList === 'fdrones') {
+            setcurrentDroneStatusFilter('FAILED');
         }
     }, [currentList]);
 
@@ -158,18 +210,30 @@ export default function ProfessionalPatient() {
                         ) : currentList === "diagnoses" ? (
                             <>
                                 <div className="align-line-row" style={{ gap: "8%" }}>
-                                    <div>Total diagnoses: 2</div>
+                                    <div>Total diagnoses: {!diagnoses || diagnoses.length === 0 ? 0 : diagnoses.length}</div>
                                 </div>
-                                <PatientInfoList title={"Diagnoses"} dataArray={diagnoses}/>
+                                <PatientInfoList title={"Diagnoses"} dataArray={diagnoses} />
                             </>
                         ) : (
                             <>
-                                <div className="align-line-row" style={{ gap: "8%" }}>
-                                    <div>Total drones: 2</div>
-                                    <div>Drones inshipping: 1</div>
-                                    <div>Drones shipped: 1</div>
+                                <div className="align-line-column">
+                                    <div className="align-line-row" style={{ gap: "11%" }}>
+                                        <div>Total drones: {!drones || drones.length === 0 ? 0 : drones.length}</div>
+                                        <div>Pending Drones: {!drones || drones.length === 0 ? 0 : drones.filter(drone => drone.status === 'PENDING').length}</div>
+                                        <div>Drones In Transit: {!drones || drones.length === 0 ? 0 : drones.filter(drone => drone.status === 'IN_TRANSIT').length}</div>
+                                    </div>
+                                    <div className="align-line-row" style={{ gap: "4%", }}>
+                                        <div>Delivered Drones: {!drones || drones.length === 0 ? 0 : drones.filter(drone => drone.status === 'DELIVERED').length}</div>
+                                        <div>Failed Drones: {!drones || drones.length === 0 ? 0 : drones.filter(drone => drone.status === 'FAILED').length}</div>
+                                    </div>
                                 </div>
-                                <PatientInfoList title={currentList === "pdrones" ? "Pending Drones" : currentList === "itdrones" ? "Drones In Transit" : currentList === "ddrones" ? "Delivered Drones" : "Failed Drones"} setCurrentList={handleListChange} />
+                                <PatientInfoList title={
+                                    currentList === "pdrones" ? "Pending Drones" :
+                                        currentList === "itdrones" ? "Drones In Transit" :
+                                            currentList === "ddrones" ? "Delivered Drones" :
+                                                "Failed Drones"}
+                                    setCurrentList={handleListChange}
+                                    dataArray={drones.filter(drone => drone.status === currentDroneStatusFilter)} />
                             </>
                         )}
                         <div className="align-line-row" style={{ gap: "2%" }}>
