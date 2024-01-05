@@ -1,16 +1,11 @@
 import './ProfessionalTriageComponent.css'
 import './ProfessionalBase.css'
 
-import { Pencil, Paperclip, Check, Download, ClockHistory, FileMedical } from 'react-bootstrap-icons'
+import { Pencil, Check, ClockHistory, FileMedical } from 'react-bootstrap-icons'
 
-import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 
-import { useSelector } from 'react-redux';
-
 export default function ProfessionalTriageComponent({ triage }) {
-    const token = useSelector((state) => state.auth.token);
-    const user = useSelector((state) => state.auth.user);	
 
     return (
         <div className="professional-client-triage-box">
@@ -21,7 +16,7 @@ export default function ProfessionalTriageComponent({ triage }) {
             <hr className='professional-triage-hr'></hr>
 
             <div className='horizontal-container client-triage-information-box'>
-                <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
+                <div className='vertical-container' style={{ gap: "10%", width: "30%", minWidth: "30%", marginRight: "3%" }}>
                     <div className='align-line-row'>
                         <span><b>Heartbeat:&nbsp;</b></span>
                         <span className='triage-field'>{triage.heartbeat} BPM</span>
@@ -58,7 +53,7 @@ export default function ProfessionalTriageComponent({ triage }) {
 
             </div>
 
-            <span className='triage-date'>WEDNESDAY, 8 OCT AT 15:35 PM</span>
+            <span className='triage-date'>{triage.created_at}</span>
         </div>
     );
 }
