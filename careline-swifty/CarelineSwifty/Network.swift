@@ -99,13 +99,13 @@ class APITemperatureGET: ObservableObject {
                         let json = try JSONSerialization.jsonObject(with: value, options: []) as? [String: Any]
                         
                         if let temperatureValue = json?["value"] as? Double {
-                            print("Temperatureeeeeeeeeeeeee \(temperatureValue)")
+                            print("Temperature: \(temperatureValue)")
                             completion(temperatureValue)
                         } else {
                             print("Error: Unable to extract temperature value from the JSON.")
                         }
                     } catch {
-                        print("Error WOWOWOWOWOWOWWOW. \(error)")
+                        print("Error \(error)")
                     }
                 }
             }
@@ -124,8 +124,9 @@ class APITemperaturePOST: ObservableObject {
             return
         }
         
+        let formattedTemperature = String(format: "%.2f", temperature)
         let requestData: [String: Any] = [
-            "temperature": String(String(format: "%.2f", temperature))
+            "temperature": formattedTemperature
         ]
         
         do {
@@ -144,7 +145,10 @@ class APITemperaturePOST: ObservableObject {
             
             // Set the authorization header with the bearer token
             request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-
+            
+            print("RequestData: \(requestData)")
+            print("request: \(request)")
+            
             // Create a URLSession task for the request
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {

@@ -79,7 +79,7 @@ struct MeasuringHeartRateView: View {
             RoundedRectangle(cornerRadius: 15.0)
                 .padding()
         }
-           
+        
     }
 }
 
@@ -118,7 +118,7 @@ struct PulseViewControllerRepresentable: UIViewControllerRepresentable {
         pulseViewController.delegate = context.coordinator
         return pulseViewController
     }
-
+    
     func updateUIViewController(_ uiViewController: PulseViewController, context: Context) {
         // Update the view controller if needed
     }
@@ -176,36 +176,52 @@ struct MeasureView: View{
     @State private var startClicked = false
     
     
-
+    
     
     func measureTemperatureForDuration() {
-           isMeasuring = true
-           let measurementDuration: TimeInterval = 30 // Duration in seconds
-           
-           DispatchQueue.global().async {
-               let startTime = Date()
-               while Date().timeIntervalSince(startTime) < measurementDuration {
-                   // TODO: Get Temperature
-                   Thread.sleep(forTimeInterval: 1)
-                   secondsRemaining = secondsRemaining - 1
-               }
-               
-               // Calculate average temperature
-               let totalTemperature = temperatureMeasurements.reduce(0, +)
-               let averageTemperature = totalTemperature / Double(temperatureMeasurements.count)
-               
-               // Update UI on the main queue
-               DispatchQueue.main.async {
-                   temperatureValue = averageTemperature
-                   isMeasuring = false
-               }
-               
-               // Perform any post-calculation tasks here
-               // For instance, send the average temperature to an API
+        isMeasuring = true
+        let measurementDuration: TimeInterval = 30 // Duration in seconds
+        
+        DispatchQueue.global().async {
+            let startTime = Date()
+            while Date().timeIntervalSince(startTime) < measurementDuration {
+                // TODO: Get Temperature
+                let apiTemperature = APITemperatureGET()
+                apiTemperature.getTemperature { temperature in
+                    temperatureMeasurements.append(temperature)
+                    temperatureValue = temperature
+                }
+                Thread.sleep(forTimeInterval: 1)
+                secondsRemaining = secondsRemaining - 1
+            }
             
-               //sendAverageTemperatureToAPI(averageTemperature)
-           }
-       }
+            // Calculate average temperature
+            let totalTemperature = temperatureMeasurements.reduce(0, +)
+            let averageTemperature = totalTemperature / Double(temperatureMeasurements.count)
+            
+            // Post Temperature
+            let api = APITemperaturePOST()
+            api.bearerToken = token
+            api.makeTemperaturePostRequest(temperature: averageTemperature) { error in
+                if let error = error {
+                    print("Error posting heartbeat in: \(error)")
+                } else {
+                    print("Posted Temperature: \(averageTemperature)")
+                }
+            }
+            
+            // Update UI on the main queue
+            DispatchQueue.main.async {
+                temperatureValue = averageTemperature
+                isMeasuring = false
+            }
+            
+            // Perform any post-calculation tasks here
+            // For instance, send the average temperature to an API
+            
+            //sendAverageTemperatureToAPI(averageTemperature)
+        }
+    }
     
     func dismissView(){
         self.presentationMode.wrappedValue.dismiss()
@@ -248,9 +264,9 @@ struct MeasureView: View{
                                         print("Error posting heartbeat in: \(error)")
                                     } else {
                                         print("Posted Heartbeat: \(measuredHeartrate)")
-                                            }
-                                        }
-                                    
+                                    }
+                                }
+                                
                                 DispatchQueue.main.asyncAfter(deadline: .now()+2){
                                     dismissView()
                                 }
@@ -258,7 +274,7 @@ struct MeasureView: View{
                             }
                     }
                 }
-                } else {
+            } else {
                 VStack{
                     if secondsRemaining > 0{
                         Image(systemName: measure.symbol)
@@ -305,9 +321,9 @@ struct MeasureView: View{
             
             ARHelpButtonView(measure: measure)
         }
-            .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
-            .navigationBarHidden(false)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(leading: btnBack)
+        .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
+        .navigationBarHidden(false)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: btnBack)
     }
 }
