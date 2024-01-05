@@ -44,4 +44,6 @@ public interface TriageRepository extends JpaRepository<TriageEntity, Long>,
     Page<TriageEntity> findAllOrderByCreatedAtDesc(Pageable pageable);
 
     Page<TriageEntity> findAllByStatusOrderByCreatedAtDesc(Pageable pageable, Status status);
+
+    Page<TriageEntity> findAllByPatientIdOrderByCreatedAtDesc(Pageable pageable, Long patientId);
 }
