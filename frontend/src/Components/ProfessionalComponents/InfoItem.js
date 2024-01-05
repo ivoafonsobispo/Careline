@@ -66,7 +66,7 @@ export default function InfoItem({ patient }) {
     return (
         <div className="App-professional-info-list-item" style={{ display: "flex", flexDirection: "column" }}>
             <div className='vertical-container' style={{ gap: "10%", paddingBottom: "2%" }}>
-                <span className='patient-info'>{patient.name} </span>
+                <span className='patient-info'>{patient.name} ({patient.nus}) </span>
                 <div className='horizontal-container'>
                     {/* <div className='align-line-column patient-info'> */}
                     <span className='horizontal-container' style={{ gap: "10%" }}>

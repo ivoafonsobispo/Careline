@@ -13,7 +13,13 @@ import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
 import classNames from "classnames";
 
+import axios from "axios";
+import { useEffect } from "react";
+
+import { useSelector } from "react-redux";
+
 export default function ProfessionalTriage() {
+    const token = useSelector((state) => state.auth.token);
     const [selected, setSelected] = useState(new Date());
 
     let footer = <p>Please pick a day.</p>;
@@ -22,6 +28,39 @@ export default function ProfessionalTriage() {
     }
 
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
+
+    // useEffect(() => {
+    //     if (selected) {
+    //         const year = selected.getFullYear();
+    //         const month = String(selected.getMonth() + 1).padStart(2, '0');
+    //         const day = String(selected.getDate()).padStart(2, '0');
+    //         const formattedDate = `${year}-${month}-${day}`;
+    //         setDate(formattedDate);
+    //         console.log(formattedDate);
+    //     }
+    // }, [selected]);
+
+
+    const urlTriage = `http://10.20.229.55/api/triages`;
+    const [triages, setTriages] = useState(null);
+    useEffect(() => {
+        axios.get(urlTriage, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                setTriages(response.data.content);
+                // console.log(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, [urlTriage, token]);
 
     return (
         <div className="horizontal-container">
@@ -37,16 +76,45 @@ export default function ProfessionalTriage() {
                         <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
                             {selectedButton === 'all' ? (
                                 <>
-                                    <ProfessionalTriageComponent status={"Reviewed"} />
-                                    <ProfessionalTriageComponent status={"Unreviewed"} />
+                                    {!triages || triages.length === 0 ? (
+                                        <div className='no-records'>No triage yet.</div>
+                                    ) : (
+                                        <>
+                                            {triages.map((triage, index) => {
+                                                return (
+                                                    <ProfessionalTriageComponent key={index} triage={triage} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             ) : selectedButton === 'urtriage' ? (
                                 <>
-                                    <ProfessionalTriageComponent status={"Unreviewed"} />
+                                    {!triages || triages.filter(triage => triage.status === 'UNREVIEWED').length === 0 ? (
+                                        <div className='no-records'>No unreviewed triage.</div>
+                                    ) : (
+                                        <>
+                                            {triages.filter(triage => triage.status === 'UNREVIEWED').map((triage, index) => {
+                                                return (
+                                                    <ProfessionalTriageComponent key={index} triage={triage} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             ) : (
                                 <>
-                                    <ProfessionalTriageComponent status={"Reviewed"} />
+                                    {!triages || triages.filter(triage => triage.status === 'REVIEWED').length === 0 ? (
+                                        <div className='no-records'>No reviewed triage.</div>
+                                    ) : (
+                                        <>
+                                            {triages.filter(triage => triage.status === 'REVIEWED').map((triage, index) => {
+                                                return (
+                                                    <ProfessionalTriageComponent key={index} triage={triage} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>
