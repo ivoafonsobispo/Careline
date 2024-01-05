@@ -56,7 +56,7 @@ public class PatientController {
     }
 
     @GetMapping("/nus/{nus}")
-    @PreAuthorize("hasRole('PROFESSIONAL')")
+    @PreAuthorize("hasRole('PROFESSIONAL') and hasRole('PATIENT')")
     public ResponseEntity<PatientResponseDTO> getPatientById(@PathVariable("nus") String nus) {
         Optional<PatientEntity> patient = patientService.getPatientByNus(nus);
         return patient.map(patientEntity -> {
