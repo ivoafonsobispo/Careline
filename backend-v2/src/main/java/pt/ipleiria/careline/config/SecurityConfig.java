@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/signup/**", "/api/signin/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/deliveries/**", "/api/deliveries/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/csv/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/api/signup/**", "/api/signin/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()

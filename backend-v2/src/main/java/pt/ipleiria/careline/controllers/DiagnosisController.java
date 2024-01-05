@@ -105,8 +105,8 @@ public class DiagnosisController {
     // GET - Related to Professional Diagnosis
     @GetMapping("/professionals/{professionalId}/patients/{patientId}/diagnosis")
     @PreAuthorize("hasRole('PROFESSIONAL')")
-    public Page<DiagnosisResponseDTO> listDiagnostics(Pageable pageable) {
-        Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAll(pageable);
+    public Page<DiagnosisResponseDTO> listDiagnostics(@PathVariable("professionalId") Long professionalId, @PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<DiagnosisEntity> diagnosisEntities = diagnosisService.findAll(professionalId, patientId, pageable);
         return diagnosisEntities.map(diagnosisEntity -> {
             PatientResponseDTO patientDTO = patientResponseDTOMapper.mapToDTO(diagnosisEntity.getPatient());
             ProfessionalResponseDTO professionalDTO = professionalResponseDTOMapper.mapToDTO(diagnosisEntity.getProfessional());
