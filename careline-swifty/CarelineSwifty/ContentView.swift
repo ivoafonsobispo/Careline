@@ -9,11 +9,12 @@ import SwiftUI
 
 struct SummaryView: View {
     var userName: String
+    var latestHeartbeatCreatedAt: String
     
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
-                Text ("WEDNESDAY, OCT 18")
+                Text (latestHeartbeatCreatedAt)
                     .foregroundColor(.gray)
                     .font(.caption)
                 Text("Summary")
@@ -32,6 +33,8 @@ struct SummaryView: View {
 struct LastHeartbeatView: View {
     
     @State private var isAnimating = false
+    var latestHeartbeatValue: Int
+    var latestHeartbeatCreatedAt: String
     
     var animation: Animation {
         Animation.easeInOut(duration: 0.6) // Mudar o ritmo da animaçâo aqui
@@ -43,12 +46,12 @@ struct LastHeartbeatView: View {
             VStack(alignment: .leading){
                 Text("Last Heartbeat:")
                 HStack{
-                    Text("70")
+                    Text(String(latestHeartbeatValue))
                         .font(.custom("", fixedSize: 50))
                         .fontWeight(.bold)
                     Text("BPM")
                 }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                Text ("WEDNESDAY, OCT 18 AT 15:35")
+                Text (latestHeartbeatCreatedAt)
                     .foregroundColor(.gray)
                     .font(.caption)
             }
@@ -63,7 +66,7 @@ struct LastHeartbeatView: View {
                         }
                     }
                 }
-
+            
         }.padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
             .frame(minWidth:  0, maxWidth: .infinity, minHeight: 0, maxHeight: 130, alignment: .topLeading)
             .background(Color("Salmon"))
@@ -73,12 +76,13 @@ struct LastHeartbeatView: View {
 
 struct MeasureTextView: View {
     var measures: [Measure]
+    var token: String
     
     var body: some View {
         HStack{
             Text("Measure")
                 .fontWeight(.bold)
-            NavigationLink(destination: ShowMoreView(measures: measures)){
+            NavigationLink(destination: ShowMoreView(measures: measures, token:token)){
                 Text("Show More")
             }.foregroundColor(.red)
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
@@ -89,20 +93,22 @@ struct MeasureTextView: View {
 
 struct MeasureButtonsListView: View{
     var measures: [Measure]
+    var token: String
     
     var body: some View {
         ForEach(measures){measure in
-            MeasureButtonView(measure: measure)
+            MeasureButtonView(measure: measure, token:token)
         }
-        TriageButtonView(measures: measures)
+        TriageButtonView(measures: measures, token:token)
     }
 }
 
 struct TriageButtonView: View{
     var measures: [Measure]
+    var token: String
     
     var body: some View {
-        NavigationLink(destination: TriageView(measures: measures)) {
+        NavigationLink(destination: TriageView(measures: measures, token:token)) {
             HStack{
                 Image(systemName: "checkmark.square")
                     .resizable()
@@ -120,15 +126,16 @@ struct TriageButtonView: View{
         }.background(Color("Salmon"))
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .cornerRadius(15)
-            
+        
     }
 }
 
 struct MeasureButtonView: View{
     var measure: Measure
+    var token: String
     
     var body: some View {
-        NavigationLink(destination: MeasureView(measure: measure)) {
+        NavigationLink(destination: MeasureView(measure: measure, token:token)) {
             HStack{
                 Image(systemName: measure.symbol)
                     .resizable()
@@ -147,34 +154,59 @@ struct MeasureButtonView: View{
         }.background(Color("Salmon"))
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .cornerRadius(15)
-            
+        
     }
 }
 
 struct ContentView: View {
-    var user: User = User()
+    @StateObject var user: User = User()
+    @State private var isLoading = true
+    var apiToken = APIToken()
+    var apiGetLatestHeartbeat = APIHeartbeatGET()
     
     var body: some View {
         NavigationView{
-            VStack{
-                SummaryView(userName: user.name)
-                Text("Quick Status")
-                    .font(.title3)
-                    .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                    .frame(maxWidth: .infinity,alignment: .leading)
-                LastHeartbeatView()
-                MeasureTextView(measures: user.measures)
-                MeasureButtonsListView(measures: user.measures)
+            VStack {
+                if isLoading {
+                    Text("Loading...")
+                } else {
+                    
+                    VStack{
+                        SummaryView(userName: user.name,latestHeartbeatCreatedAt:apiGetLatestHeartbeat.latestHeartbeatCreatedAt ?? "")
+                        Text("Quick Status")
+                            .font(.title3)
+                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                            .frame(maxWidth: .infinity,alignment: .leading)
+                        LastHeartbeatView(latestHeartbeatValue:apiGetLatestHeartbeat.latestHeartbeatValue ?? 0, latestHeartbeatCreatedAt:apiGetLatestHeartbeat.latestHeartbeatCreatedAt ?? "")
+                        MeasureTextView(measures: user.measures, token:user.token)
+                        MeasureButtonsListView(measures: user.measures, token:user.token)
+                    }
+                }
             }
-                .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
-                .navigationBarHidden(true)
-                .navigationBarTitle("", displayMode: .inline)
+            .onAppear {
+                apiToken.signInPatient(nus: "123456789", password: "password") { error in
+                    if let error = error {
+                        print("Error signing in: \(error)")
+                    } else {
+                        print("Bearer token received:", apiToken.bearerToken ?? "No token received")
+                        user.token = apiToken.bearerToken ?? ""
+                        apiGetLatestHeartbeat.bearerToken = user.token
+                        apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
+                            switch result {
+                            case .success:
+                                print("Heartbeat request successful")
+                                isLoading = false
+                            case .failure(let error):
+                                print("Heartbeat request failed with error: \(error)")
+                            }
+                        }
+                    }
+                }
+            }
+            .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
+            .navigationBarHidden(true)
+            .navigationBarTitle("", displayMode: .inline)
         }.padding(EdgeInsets(top: 30, leading: 20, bottom: 40, trailing: 20))
             .foregroundColor(.black)
     }
 }
-
-#Preview {
-    ContentView()
-}
-

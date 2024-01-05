@@ -25,9 +25,10 @@ struct TriageTextView: View {
 
 struct TriageMeasureButtonView: View{
     var measure: Measure
+    var token: String
     
     var body: some View {
-        NavigationLink(destination: MeasureView(measure: measure)) {
+        NavigationLink(destination: MeasureView(measure: measure, token:token)) {
             HStack{
                 Image(systemName: measure.symbol)
                     .resizable()
@@ -129,6 +130,7 @@ struct TriageView: View{
     }}
     
     var measures: [Measure]
+    var token: String
     
     var allMeasured: Bool = false
     
@@ -145,7 +147,7 @@ struct TriageView: View{
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .frame(maxWidth: .infinity,alignment: .leading)
             ForEach(measures){measure in
-                TriageMeasureButtonView(measure: measure)
+                TriageMeasureButtonView(measure: measure, token:token)
             }
             CompletedButtonView(allMeasured: allMeasured)
         }.frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)

@@ -6,23 +6,20 @@
 //
 
 import Foundation
+import Combine
 
-class User {
+class User: ObservableObject {
     
-    //var id: Int
-    var name: String
-    /**var age: Int
-    var sex: String
-    var healthNumber: String
-    var activated: Bool*/
+    @Published var name: String
     var measures: [Measure]
+    @Published var token: String 
     
     init() {
         self.name = "José"
         self.measures = [
-                Heartbeat(measured: false, value: -99),
-                Temperature(measured: false, value: -99.99)
-            ]
+            Heartbeat(measured: false, value: -99),
+            Temperature(measured: false, value: -99.99)
+        ]
+        self.token = ""
     }
-    
 }

@@ -34,9 +34,7 @@ struct MeasureValueView: View {
     func stringValue(from measure: Measure) -> String {
         if let _ = measure as? Temperature {
             var temperatureValue = "0.0"
-            TemperatureAPI().getTemperature { (temperature) in
-               temperatureValue = "\(temperature)"
-            }
+            // TODO: API Temperature
             
             return temperatureValue
         } else if let heartbeat = measure as? Heartbeat {
@@ -163,6 +161,7 @@ struct MeasureView: View{
     }}
     
     var measure: Measure
+    var token:String
     
     @StateObject private var heartRateManager  = HeartRateManager(cameraType: .back, preferredSpec: nil, previewContainer: nil)
     
@@ -176,6 +175,41 @@ struct MeasureView: View{
     @State private var isMeasuring = false
     @State private var startClicked = false
     
+    
+
+    
+    func measureTemperatureForDuration() {
+           isMeasuring = true
+           let measurementDuration: TimeInterval = 30 // Duration in seconds
+           
+           DispatchQueue.global().async {
+               let startTime = Date()
+               while Date().timeIntervalSince(startTime) < measurementDuration {
+                   // TODO: Get Temperature
+                   Thread.sleep(forTimeInterval: 1)
+                   secondsRemaining = secondsRemaining - 1
+               }
+               
+               // Calculate average temperature
+               let totalTemperature = temperatureMeasurements.reduce(0, +)
+               let averageTemperature = totalTemperature / Double(temperatureMeasurements.count)
+               
+               // Update UI on the main queue
+               DispatchQueue.main.async {
+                   temperatureValue = averageTemperature
+                   isMeasuring = false
+               }
+               
+               // Perform any post-calculation tasks here
+               // For instance, send the average temperature to an API
+            
+               //sendAverageTemperatureToAPI(averageTemperature)
+           }
+       }
+    
+    func dismissView(){
+        self.presentationMode.wrappedValue.dismiss()
+    }
     
     var body: some View {
         
@@ -199,21 +233,32 @@ struct MeasureView: View{
                             Text("Time remaining: \(secondsRemaining) seconds")
                         }
                     } else {
+                        let measuredHeartrate = Int32(self.heartRateAverage/30)
                         Text("Measurement Completed")
                             .font(.title)
                             .fontWeight(.bold)
                             .padding()
                             .onAppear(){
-                                makeHeartRatePostRequest()
-                                
+                                print("Value measured: \(measuredHeartrate)) BPM")
+                                // Post Heartbeat
+                                let api = APIHeartbeatPOST()
+                                api.bearerToken = token
+                                api.makeHeartRatePostRequest(heartbeat: measuredHeartrate) { error in
+                                    if let error = error {
+                                        print("Error posting heartbeat in: \(error)")
+                                    } else {
+                                        print("Posted Heartbeat: \(measuredHeartrate)")
+                                            }
+                                        }
+                                    
                                 DispatchQueue.main.asyncAfter(deadline: .now()+2){
                                     dismissView()
                                 }
+                                Text("Value measured: \(Int32(measuredHeartrate)) BPM")
                             }
-                        Text("Value measured: \(self.heartRateAverage/30) BPM")
                     }
                 }
-            } else {
+                } else {
                 VStack{
                     if secondsRemaining > 0{
                         Image(systemName: measure.symbol)
@@ -248,7 +293,7 @@ struct MeasureView: View{
                             .fontWeight(.bold)
                             .padding()
                             .onAppear(){
-                                makeTemperaturePostRequest()
+                                // TODO: Post Temperature
                                 DispatchQueue.main.asyncAfter(deadline: .now()+2){
                                     dismissView()
                                 }
@@ -264,125 +309,5 @@ struct MeasureView: View{
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(leading: btnBack)
-    }
-    
-    func measureTemperatureForDuration() {
-           isMeasuring = true
-           let measurementDuration: TimeInterval = 30 // Duration in seconds
-           
-           DispatchQueue.global().async {
-               let startTime = Date()
-               while Date().timeIntervalSince(startTime) < measurementDuration {
-                   TemperatureAPI().getTemperature { temperature in
-                       temperatureMeasurements.append(temperature)
-                       temperatureValue = temperature
-                   }
-                   Thread.sleep(forTimeInterval: 1)
-                   secondsRemaining = secondsRemaining - 1
-               }
-               
-               // Calculate average temperature
-               let totalTemperature = temperatureMeasurements.reduce(0, +)
-               let averageTemperature = totalTemperature / Double(temperatureMeasurements.count)
-               
-               // Update UI on the main queue
-               DispatchQueue.main.async {
-                   temperatureValue = averageTemperature
-                   isMeasuring = false
-               }
-               
-               // Perform any post-calculation tasks here
-               // For instance, send the average temperature to an API
-            
-               //sendAverageTemperatureToAPI(averageTemperature)
-           }
-       }
-    
-    func dismissView(){
-        self.presentationMode.wrappedValue.dismiss()
-    }
-    
-    func makeHeartRatePostRequest(){
-        guard let url = URL(string: "http://10.20.229.2/api/patients/1/heartbeats") else {
-            print("Invalid URL")
-            return
-        }
-        
-        let requestData: [String: Any] = [
-            "heartbeat": String(self.heartRateAverage/30)
-        ]
-        
-        do {
-            // Convert the requestData to JSON data
-            let jsonData = try JSONSerialization.data(withJSONObject: requestData)
-
-            // Create the URLRequest with the specified URL and method
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-
-            // Set the request body with the JSON data
-            request.httpBody = jsonData
-
-            // Set the content type to JSON
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            // Create a URLSession task for the request
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    print("Error: \(error)")
-                } else if let response = response as? HTTPURLResponse {
-                    if(response.statusCode == 201) {
-                        print("POST request successful")
-                    } else {
-                        print("POST request failed with status code: \(response.statusCode)")
-                    }
-                }
-            }.resume()
-        } catch {
-            print("Error converting requestData to JSON data: \(error)")
-        }
-        
-    }
-    
-    func makeTemperaturePostRequest(){
-        guard let url = URL(string: "http://10.20.229.2/api/patients/1/temperatures") else {
-            print("Invalid URL")
-            return
-        }
-        
-        let requestData: [String: Any] = [
-            "temperature": String(String(format: "%.2f", temperatureValue))
-        ]
-        
-        do {
-            // Convert the requestData to JSON data
-            let jsonData = try JSONSerialization.data(withJSONObject: requestData)
-
-            // Create the URLRequest with the specified URL and method
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-
-            // Set the request body with the JSON data
-            request.httpBody = jsonData
-
-            // Set the content type to JSON
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            // Create a URLSession task for the request
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    print("Error: \(error)")
-                } else if let response = response as? HTTPURLResponse {
-                    if(response.statusCode == 201) {
-                        print("POST request successful")
-                    } else {
-                        print("POST request failed with status code: \(response.statusCode)")
-                    }
-                }
-            }.resume()
-        } catch {
-            print("Error converting requestData to JSON data: \(error)")
-        }
-        
     }
 }

@@ -7,8 +7,6 @@
 
 import SwiftUI
 import RealityKit
-import UnityFramework // Import UnityFramework
-
 
 struct HowToReadTextView: View {
     var body: some View {
@@ -29,8 +27,8 @@ struct HowToReadTextView: View {
 struct UnityARView: UIViewRepresentable {
     
     func makeUIView(context: Context) -> UIView {
-        let unityView = UnityFrameworkGetMainView()
-        return unityView!
+        let unityView = ARView()
+        return unityView
     }
     
     func updateUIView(_ uiView: UIViewType, context: Context) {

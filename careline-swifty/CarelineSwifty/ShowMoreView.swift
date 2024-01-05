@@ -45,14 +45,15 @@ struct ShowMoreView: View{
     }}
     
     var measures: [Measure]
+    var token: String
     
     var body: some View {
         VStack {
             AvailableMeasuresTextView()
             ForEach(measures){measure in
-                MeasureButtonView(measure: measure)
+                MeasureButtonView(measure: measure, token:token)
             }
-            TriageButtonView(measures: measures)
+            TriageButtonView(measures: measures, token:token)
         }.frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(true)
