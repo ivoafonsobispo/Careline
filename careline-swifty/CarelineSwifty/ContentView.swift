@@ -9,14 +9,10 @@ import SwiftUI
 
 struct SummaryView: View {
     var userName: String
-    var latestHeartbeatCreatedAt: String
     
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
-                Text (latestHeartbeatCreatedAt)
-                    .foregroundColor(.gray)
-                    .font(.caption)
                 Text("Summary")
                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
@@ -172,7 +168,7 @@ struct ContentView: View {
                 } else {
                     
                     VStack{
-                        SummaryView(userName: user.name,latestHeartbeatCreatedAt:apiGetLatestHeartbeat.latestHeartbeatCreatedAt ?? "")
+                        SummaryView(userName: user.name)
                         Text("Quick Status")
                             .font(.title3)
                             .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)

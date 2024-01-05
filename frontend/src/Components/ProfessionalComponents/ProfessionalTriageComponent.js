@@ -8,51 +8,15 @@ import { NavLink } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-export default function ProfessionalTriageComponent({ status }) {
+export default function ProfessionalTriageComponent({ triage }) {
     const token = useSelector((state) => state.auth.token);
     const user = useSelector((state) => state.auth.user);	
-
-    const urlPdf = `http://10.20.229.55/api/professionals/${user.id}/patients/1/diagnosis/1/pdf`;
-
-    // const [pdf, setPdf] = useState(null);
-    const pdfDownloadClick = () => {
-        axios.get(urlPdf, {
-            responseType: 'blob',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                Authorization: `Bearer ${token}`,
-            },
-            proxy: {
-                port: 8080
-            }
-        })
-            .then(response => {
-                const blob = new Blob([response.data], { type: 'application/pdf' });
-                const url = window.URL.createObjectURL(blob);
-
-                // Temporary anchor element
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `Diagnosis_1.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-
-                // Release the object URL
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => {
-                // handle the error
-                console.log(error);
-            });
-    };
-
 
     return (
         <div className="professional-client-triage-box">
             <div className='align-line-row'>
-                <span className='align-line-row' style={{ marginLeft: "0.8%" }}><FileMedical size={20} /> &nbsp;Triage 1</span>
-                <span style={{ marginLeft: "auto", marginRight: "2%" }}>Patient 1</span>
+                <span className='align-line-row' style={{ marginLeft: "0.8%" }}><FileMedical size={20} /> &nbsp;Triage {triage.id}</span>
+                <span style={{ marginLeft: "auto", marginRight: "2%" }}>Patient {triage.patient.id}</span>
             </div>
             <hr className='professional-triage-hr'></hr>
 
@@ -60,18 +24,18 @@ export default function ProfessionalTriageComponent({ status }) {
                 <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
                     <div className='align-line-row'>
                         <span><b>Heartbeat:&nbsp;</b></span>
-                        <span className='triage-field'>120 BPM</span>
+                        <span className='triage-field'>{triage.heartbeat} BPM</span>
                     </div>
                     <div className='align-line-row'>
                         <span><b>Temperature:&nbsp;</b></span>
-                        <span className='triage-field'>50 °C</span>
+                        <span className='triage-field'>{triage.temperature} °C</span>
                     </div>
                 </div>
                 <div >
                     <span><b>Symptoms: </b></span>
                 </div>
                 <div className='client-triage-information'>
-                    <span > ahahah ah a u ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwhahahah ah a u hdwuhduwh ahahah ah a u </span>
+                    <span > {triage.symptoms} </span>
                 </div>
 
             </div>
@@ -79,14 +43,11 @@ export default function ProfessionalTriageComponent({ status }) {
 
             <div className='align-line-row'>
                 <div>
-                    {status === "Reviewed" ? <span className='align-line-row' style={{ color: "var(--lightGreen)", fontWeight: "bold" }}><Check size={20} /> &nbsp;Status - Reviewed</span> : <span className='align-line-row' style={{ color: "#eb7c49", fontWeight: "bold" }}><ClockHistory size={15} /> &nbsp; Status - Unreviewed</span>}
+                    {triage.status === "REVIEWED" ? <span className='align-line-row' style={{ color: "var(--lightGreen)", fontWeight: "bold" }}><Check size={20} /> &nbsp;Status - Reviewed</span> : <span className='align-line-row' style={{ color: "#eb7c49", fontWeight: "bold" }}><ClockHistory size={15} /> &nbsp; Status - Unreviewed</span>}
                 </div>
 
-                {status === "Reviewed" ? (
-                    <div className='align-line-row' style={{ marginLeft: "auto", marginRight: "2%" }}>
-                        <span className='align-line-row'><Paperclip size={20} /> &nbsp;Diagnosis 1 &nbsp;</span>
-                        <span className='align-line-row professional-triage-diagnosis-download-button' onClick={pdfDownloadClick}><Download size={20} /></span>
-                    </div>
+                {triage.status === "REVIEWED" ? (
+                   <></>
                 ) : (
                     <NavLink to={'/triage/1/review'} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
                         <span className='align-line-row' style={{ margin: "auto" }}>
