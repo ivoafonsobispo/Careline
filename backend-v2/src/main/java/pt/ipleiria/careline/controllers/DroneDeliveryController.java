@@ -74,8 +74,8 @@ public class DroneDeliveryController {
     @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<DroneDeliveryResponseDTO> getDeliveryById(@PathVariable("patientId") Long patientId, @PathVariable("id") Long deliveryId) {
         Optional<DroneDeliveryEntity> delivery = service.getById(patientId, deliveryId);
-        return delivery.map(deliveryEntity -> {
-            DroneDeliveryResponseDTO responseDTO = responseMapper.mapToDTO(deliveryEntity);
+        return delivery.map(savedEntity -> {
+            DroneDeliveryResponseDTO responseDTO = new DroneDeliveryResponseDTO(savedEntity.getId(), savedEntity.getCreatedAt(), patientResponseMapper.mapToDTO(savedEntity.getPatient()), savedEntity.getMedications(), savedEntity.getDeliveryStatus(), savedEntity.getDepartureTime(), savedEntity.getArrivalTime(), savedEntity.getCoordinate());
             return new ResponseEntity<>(responseDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
