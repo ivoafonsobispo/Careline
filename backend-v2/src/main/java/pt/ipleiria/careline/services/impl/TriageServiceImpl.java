@@ -150,4 +150,9 @@ public class TriageServiceImpl implements TriageService {
     public Page<TriageEntity> findAllUnreviewed(Pageable pageable) {
         return triageRepository.findAllByStatusOrderByCreatedAtDesc(pageable, Status.UNREVIEWED);
     }
+
+    @Override
+    public Page<TriageEntity> findAllOfPatient(Pageable pageable, Long patientId) {
+        return triageRepository.findAllByPatientIdOrderByCreatedAtDesc(pageable, patientId);
+    }
 }

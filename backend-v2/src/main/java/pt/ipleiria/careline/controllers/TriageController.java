@@ -81,6 +81,13 @@ public class TriageController {
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
+    @GetMapping("/patients/{patientId}/triages")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
+    public Page<TriageResponseDTO> listTriagesOfPatient(@PathVariable("patientId") Long patientId, Pageable pageable) {
+        Page<TriageEntity> triageEntities = triageService.findAllOfPatient(pageable, patientId);
+        return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
+    }
+
     @GetMapping("/triages/{id}")
     @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity<TriageResponseDTO> getTriageById(@PathVariable("id") Long id) {
@@ -130,6 +137,7 @@ public class TriageController {
         TriageEntity triage = triageService.setTriageReviewed(patientId, triageId);
         PatientResponseDTO patientResponseDTO = patientResponseMapper.mapToDTO(triage.getPatient());
         TriageResponseDTO triageResponseDTO = new TriageResponseDTO(patientResponseDTO, triage.getCreatedAt(), triage.getTemperature(), triage.getHeartbeat(), triage.getSymptoms(), triage.getSeverity(), triage.getStatus(), triage.getReviewDate());
+        messagingTemplate.convertAndSend("/topic/triages", triageResponseDTO);
         return new ResponseEntity<>(triageResponseDTO, HttpStatus.OK);
     }
 

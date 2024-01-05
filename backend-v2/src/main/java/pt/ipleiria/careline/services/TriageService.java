@@ -39,4 +39,6 @@ public interface TriageService {
     TriageEntity setTriageReviewed(Long patientId, Long triageId);
 
     Page<TriageEntity> findAllUnreviewed(Pageable pageable);
+
+    Page<TriageEntity> findAllOfPatient(Pageable pageable, Long patientId);
 }

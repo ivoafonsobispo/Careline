@@ -18,6 +18,7 @@ import axios from "axios";
 
 export default function ClientTriage() {
     const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);
 
     const [selected, setSelected] = useState(new Date());
 
@@ -28,7 +29,7 @@ export default function ClientTriage() {
 
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
 
-    const urlTriage = `http://10.20.229.55/api/triages`;
+    const urlTriage = `http://10.20.229.55/api/patients/${user.id}/triages`;
     const [triages, setTriages] = useState(null);
     useEffect(() => {
         axios.get(urlTriage, {
@@ -61,18 +62,47 @@ export default function ClientTriage() {
                             <button className={classNames("triage-button", selectedButton !== 'rtriage' ? "triage-button-inactive" : "")} onClick={() => setButton("rtriage")}>Reviewed Triage</button>
                         </div>
                         <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
-                            {selectedButton === 'all' ? (
+                        {selectedButton === 'all' ? (
                                 <>
-                                    <ClientTriageComponent status={"Reviewed"} />
-                                    <ClientTriageComponent status={"Unreviewed"} />
+                                    {!triages || triages.length === 0 ? (
+                                        <div className='no-records'>No triage yet.</div>
+                                    ) : (
+                                        <>
+                                            {triages.map((triage, index) => {
+                                                return (
+                                                    <ClientTriageComponent key={index} triage={triage} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             ) : selectedButton === 'urtriage' ? (
                                 <>
-                                    <ClientTriageComponent status={"Unreviewed"} />
+                                    {!triages || triages.filter(triage => triage.status === 'UNREVIEWED').length === 0 ? (
+                                        <div className='no-records'>No unreviewed triage.</div>
+                                    ) : (
+                                        <>
+                                            {triages.filter(triage => triage.status === 'UNREVIEWED').map((triage, index) => {
+                                                return (
+                                                    <ClientTriageComponent key={index} triage={triage} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             ) : (
                                 <>
-                                    <ClientTriageComponent status={"Reviewed"} />
+                                    {!triages || triages.filter(triage => triage.status === 'REVIEWED').length === 0 ? (
+                                        <div className='no-records'>No reviewed triage.</div>
+                                    ) : (
+                                        <>
+                                            {triages.filter(triage => triage.status === 'REVIEWED').map((triage, index) => {
+                                                return (
+                                                    <ClientTriageComponent key={index} triage={triage} />
+                                                )
+                                            })}
+                                        </>
+                                    )}
                                 </>
                             )}
                         </div>
