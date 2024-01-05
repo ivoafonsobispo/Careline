@@ -12,7 +12,13 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
 
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import axios from "axios";
+
 export default function ClientTriage() {
+    const token = useSelector((state) => state.auth.token);
+
     const [selected, setSelected] = useState(new Date());
 
     let footer = <p>Please pick a day.</p>;
@@ -21,6 +27,27 @@ export default function ClientTriage() {
     }
 
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
+
+    const urlTriage = `http://10.20.229.55/api/triages`;
+    const [triages, setTriages] = useState(null);
+    useEffect(() => {
+        axios.get(urlTriage, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                setTriages(response.data.content);
+                // console.log(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, [urlTriage, token]);
 
     return (
         <div className="horizontal-container">

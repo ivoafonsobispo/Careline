@@ -17,6 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
@@ -40,6 +41,28 @@ export default function ProfessionalTriageReview() {
     const user = useSelector((state) => state.auth.user);	
 
     const { id } = useParams();
+    const [triage, setTriage] = useState(null);
+
+    const urlTriage = `http://10.20.229.55/api/triages/${id}`;
+    useEffect(() => {
+        axios.get(urlTriage, {
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
+            },
+            proxy: {
+                port: 8080
+            }
+        })
+            .then(response => {
+                setTriage(response.data);
+                // console.log(response.data.content);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, [urlTriage, token]);
+
     const navigate = useNavigate();
 
     const [medications, setMedications] = useState([]);
@@ -239,6 +262,20 @@ export default function ProfessionalTriageReview() {
                     return;
                 }
 
+                const responsePatch = await fetch(`http://10.20.229.55/api/patients/${triage.patient.id}/triages/${id}/reviewed`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!responsePatch.ok) {
+                    console.error('Error:', responsePatch.statusText);
+                    return;
+                }
+
+
                 onReviewSuccess('Drone set up successfully!');
             }
 
@@ -261,6 +298,8 @@ export default function ProfessionalTriageReview() {
         });
     };
 
+    if(!triage || triage === null) return
+
     return (
         <div className="horizontal-container">
             <div className="vertical-container">
@@ -269,28 +308,28 @@ export default function ProfessionalTriageReview() {
                 <div className='App-content' >
                     <div className="vertical-container" style={{ gap: "4%" }}>
                         <div className="professional-client-triage-box" style={{ fontSize: "16px" }}>
-                            <span style={{ margin: "0% 0.7%" }} className="align-line-row"><FileMedical size={20} /> &nbsp;Patient: Alice Johnson &nbsp; | &nbsp; Email: alice@mail.com &nbsp; | &nbsp; NUS: 987654321</span>
+                            <span style={{ margin: "0% 0.7%" }} className="align-line-row"><FileMedical size={20} /> &nbsp;Patient: {triage.patient.name} &nbsp; | &nbsp; Email: {triage.patient.email} &nbsp; | &nbsp; NUS: {triage.patient.nus}</span>
                             <hr className='professional-triage-hr'></hr>
                             <div className='horizontal-container client-triage-information-box'>
                                 <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "24%", marginRight: "3%" }}>
                                     <div className='align-line-row'>
                                         <span>Heartbeat:&nbsp;</span>
-                                        <span className='triage-field'>120 BPM</span>
+                                        <span className='triage-field'>{triage.heartbeat} BPM</span>
                                     </div>
                                     <div className='align-line-row'>
                                         <span>Temperature:&nbsp;</span>
-                                        <span className='triage-field'>50 °C</span>
+                                        <span className='triage-field'>{triage.temperature} °C</span>
                                     </div>
                                 </div>
                                 <div >
                                     <span>Symptoms: </span>
                                 </div>
                                 <div className='client-triage-information'>
-                                    <span > ahahah ah a u ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwh ahahah ah a u hdwuhduwhahahah ah a u hdwuhduwh ahahah ah a u </span>
+                                    <span > {triage.symptoms} </span>
                                 </div>
 
                             </div>
-                            <span className='triage-date'>WEDNESDAY, 8 OCT AT 15:35 PM</span>
+                            <span className='triage-date'>{triage.created_at}</span>
 
                         </div>
                         <div className="align-line-column" style={{ fontSize: "16px" }}>
