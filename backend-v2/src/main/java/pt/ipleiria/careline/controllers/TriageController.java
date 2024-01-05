@@ -21,6 +21,7 @@ import java.util.Optional;
 
 @RequestMapping("/api")
 @RestController
+@CrossOrigin
 public class TriageController {
     private final Mapper<TriageEntity, TriageDTO> triageMapper;
     private final Mapper<TriageEntity, TriageResponseDTO> triageResponseMapper;
