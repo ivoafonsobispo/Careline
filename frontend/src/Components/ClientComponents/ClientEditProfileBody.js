@@ -4,7 +4,11 @@ import './ClientEditProfileBody.css'
 import { Eye, EyeSlash, Check, X } from 'react-bootstrap-icons';
 import { useState } from 'react';
 
+import { useSelector } from 'react-redux';
+
 export default function ClientEditProfileBody({ user, setEditProfileClicked, onEditProfileSuccess }) {
+    const token = useSelector((state) => state.auth.token);	
+
     const isNumber = (value) => /^\d+$/.test(value);
 
     const [name, setName] = useState(user.name);
@@ -81,10 +85,11 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
 
             console.log(JSON.stringify(updatedFields));
 
-            const response = await fetch('http://localhost:8080/api/patients/1', {
+            const response = await fetch(`http://10.20.229.55/api/patients/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(updatedFields),
             });

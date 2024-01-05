@@ -9,33 +9,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const urlUser = 'http://localhost:8080/api/patients/1';
+
+import { useSelector } from "react-redux";
 
 
 export default function ClientProfile() {
-
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.auth.user);
   const [showForm, setShowForm] = useState(false);
-
-  useEffect(() => {
-    axios.get(urlUser, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      },
-      proxy: {
-        port: 8080
-      }
-    })
-      .then(response => {
-        setUser(response.data);
-        // console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, []);
-
-  if (!user) return null;
 
   const handleEditProfileClicked = () => {
     setShowForm(!showForm);

@@ -14,8 +14,11 @@ import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { useSelector } from "react-redux";
 
 export default function ClientMeasures() {
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);	
 
   const [selected, setSelected] = useState(new Date());
   const [date, setDate] = useState("2023-12-25");
@@ -27,7 +30,6 @@ export default function ClientMeasures() {
       const day = String(selected.getDate()).padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
       setDate(formattedDate);
-      console.log(formattedDate);
     }
   }, [selected]);
 
@@ -36,10 +38,8 @@ export default function ClientMeasures() {
     footer = <p>You picked {format(selected, 'PP')}.</p>;
   }
 
-  console.log(date);
-
-  const urlHeartbeats = `http://localhost:8080/api/patients/1/heartbeats/date/${date}`;
-  const urlTemperatures = `http://localhost:8080/api/patients/1/temperatures/date/${date}`;
+  const urlHeartbeats = `http://10.20.229.55/api/patients/${user.id}/heartbeats/date/${date}`;
+  const urlTemperatures = `http://10.20.229.55/api/patients/${user.id}/temperatures/date/${date}`;
 
   const [heartbeats, setHeartbeats] = useState(null);
   const [temperatures, setTemperatures] = useState(null);
@@ -48,6 +48,7 @@ export default function ClientMeasures() {
     axios.get(urlHeartbeats, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
@@ -64,6 +65,7 @@ export default function ClientMeasures() {
     axios.get(urlTemperatures, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
@@ -76,27 +78,37 @@ export default function ClientMeasures() {
       .catch(error => {
         console.log(error);
       });
-  }, [urlHeartbeats, urlTemperatures]);
+  }, [urlHeartbeats, urlTemperatures, token]);
 
+  let stompClient;
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/websocket-endpoint');
-    const stompClient = Stomp.over(socket);
+    const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+    stompClient = Stomp.over(socket);
 
-    stompClient.connect({}, () => {
-      stompClient.subscribe('/topic/heartbeats', (message) => {
-        let newHeartbeat = JSON.parse(message.body);
-        setHeartbeats((prevHeartbeats) => [newHeartbeat, ...prevHeartbeats]);
+    try {
+      stompClient.connect({}, () => {
+        stompClient.subscribe('/topic/heartbeats', (message) => {
+          let newHeartbeat = JSON.parse(message.body);
+          setHeartbeats((prevHeartbeats) => [newHeartbeat, ...prevHeartbeats]);
+        });
+
+        stompClient.subscribe('/topic/temperatures', (message) => {
+          let newTemperature = JSON.parse(message.body);
+          setTemperatures((prevTemperatures) => [newTemperature, ...prevTemperatures]);
+        });
       });
 
-      stompClient.subscribe('/topic/temperatures', (message) => {
-        let newTemperature = JSON.parse(message.body);
-        setTemperatures((prevTemperatures) => [newTemperature, ...prevTemperatures]);
-      });
-    });
+
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+      // Handle the error here, e.g., show a user-friendly message or retry the connection
+    }
 
     return () => {
-      stompClient.disconnect();
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect();
+      }
     };
   }, []);
 

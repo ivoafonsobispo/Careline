@@ -1,7 +1,6 @@
 import PageTitle from "../../Components/PageTitle/PageTitle";
 import "../../Components/ProfessionalComponents/ProfessionalBase.css";
 import "./ProfessionalDiagnoses.css";
-import ClientDiagnosis from "../../Components/ClientComponents/ClientDiagnosis";
 
 import { useState } from 'react';
 
@@ -19,14 +18,20 @@ import { NavLink } from 'react-router-dom';
 
 import axios from 'axios';
 import { useEffect } from 'react';
+
+import { useSelector } from "react-redux";
+
 import ProfessionalDiagnosisComponent from "../../Components/ProfessionalComponents/ProfessionalDiagnosisComponent";
 
 export default function ProfessionalDiagnoses() {
+    const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);
+
     const [selected, setSelected] = useState(new Date());
     const [date, setDate] = useState("2023-12-25");
 
     // const urlDiagnoses = `http://localhost:8080/api/professionals/1/diagnosis/latest`;
-    const urlDiagnoses = `http://localhost:8080/api/professionals/1/diagnosis/date/${date}`;
+    const urlDiagnoses = `http://10.20.229.55/api/professionals/${user.id}/diagnosis/date/${date}`;
 
     useEffect(() => {
         if (selected) {
@@ -49,6 +54,7 @@ export default function ProfessionalDiagnoses() {
         axios.get(urlDiagnoses, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -61,21 +67,31 @@ export default function ProfessionalDiagnoses() {
             .catch(error => {
                 console.log(error);
             });
-    }, [urlDiagnoses]);
+    }, [urlDiagnoses, token]);
+
+    let stompClient;
 
     useEffect(() => {
-        const socket = new SockJS('http://localhost:8080/websocket-endpoint');
-        const stompClient = Stomp.over(socket);
+        const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+        stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, () => {
-            stompClient.subscribe('/topic/diagnosis', (message) => {
-                let newDiagnosis = JSON.parse(message.body);
-                setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
+        try {
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/topic/diagnosis', (message) => {
+                    let newDiagnosis = JSON.parse(message.body);
+                    setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
+                });
             });
-        });
+
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            // Handle the error here, e.g., show a user-friendly message or retry the connection
+        }
 
         return () => {
-            stompClient.disconnect();
+            if (stompClient && stompClient.connected) {
+                stompClient.disconnect();
+            }
         };
     }, []);
 

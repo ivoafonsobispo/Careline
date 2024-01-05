@@ -5,16 +5,22 @@ import "../../Components/ProfessionalComponents/ProfessionalBase.css";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { useSelector } from "react-redux";
+
 export default function ProfessionalPatients() {
+    const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);	
+
     const [availablePatients, setAvailablePatients] = useState(null);
     const [associatedPatients, setAssociatedPatients] = useState(null);
     const [sortAssociated, setSortAssociated] = useState("");
     const [sortAvailable, setSortAvailable] = useState("");
 
     const getPatients = () => {
-        axios.get(`http://localhost:8080/api/professionals/1/patients/available?sort=${sortAvailable}`, {
+        axios.get(`http://10.20.229.55/api/professionals/${user.id}/patients/available?sort=${sortAvailable}`, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -27,9 +33,10 @@ export default function ProfessionalPatients() {
             .catch(error => {
                 console.log(error);
             });
-        axios.get(`http://localhost:8080/api/professionals/1/patients?sort=${sortAssociated}`, {
+        axios.get(`http://10.20.229.55/api/professionals/${user.id}/patients?sort=${sortAssociated}`, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080

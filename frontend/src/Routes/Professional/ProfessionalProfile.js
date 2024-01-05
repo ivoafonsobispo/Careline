@@ -8,35 +8,15 @@ import ProfessionalProfileBody from "../../Components/ProfessionalComponents/Pro
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-const urlUser = 'http://localhost:8080/api/professionals/1';
+import { useState } from 'react';
+
+import { useSelector } from "react-redux";
+
 
 export default function ProfessionalProfile() {
+    const user = useSelector((state) => state.auth.user);
 
-    const [user, setUser] = useState(null);
     const [showForm, setShowForm] = useState(false);
-
-    useEffect(() => {
-        axios.get(urlUser, {
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            },
-            proxy: {
-                port: 8080
-            }
-        })
-            .then(response => {
-                setUser(response.data);
-                // console.log(response.data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }, []);
-
-    if (!user) return null;
-
 
     const handleEditProfileClicked = () => {
         setShowForm(!showForm);

@@ -16,6 +16,8 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
 
+import { useSelector } from "react-redux";
+
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css';
@@ -34,6 +36,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 
 export default function ProfessionalTriageReview() {
+    const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -189,10 +193,11 @@ export default function ProfessionalTriageReview() {
 
             //TODO - Fazer patch para alterar estado da triagem para reviewed
 
-            const response = await fetch('http://localhost:8080/api/professionals/1/patients/1/diagnosis', {
+            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/1/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(diganosisFields),
             });
@@ -220,10 +225,11 @@ export default function ProfessionalTriageReview() {
 
                 console.log(JSON.stringify(droneFields));
 
-                const responseDrone = await fetch(`http://localhost:8080/api/patients/1/diagnosis/${data.id}/deliveries`, {
+                const responseDrone = await fetch(`http://10.20.229.55/api/patients/1/diagnosis/${data.id}/deliveries`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify(droneFields),
                 });

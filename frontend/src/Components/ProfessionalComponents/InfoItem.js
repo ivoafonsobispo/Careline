@@ -6,20 +6,24 @@ import { Heart, ThermometerHalf, HeartFill, HeartHalf, Thermometer, ThermometerH
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { useSelector } from 'react-redux';
+
 export default function InfoItem({ patient }) {
+    const token = useSelector((state) => state.auth.token);	
 
     const [heartbeat, setLastHeartbeat] = useState(null);
     const [temperature, setLastTemperature] = useState(null);
     const [heartbeatSeverity, setHeartbeatSeverity] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    let urlHeartbeat = `http://localhost:8080/api/patients/${patient.id}/heartbeats/latest`;
-    let urlTemperature = `http://localhost:8080/api/patients/${patient.id}/temperatures/latest`;
+    let urlHeartbeat = `http://10.20.229.55/api/patients/${patient.id}/heartbeats/latest`;
+    let urlTemperature = `http://10.20.229.55/api/patients/${patient.id}/temperatures/latest`;
 
     useEffect(() => {
         axios.get(urlHeartbeat, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -40,6 +44,7 @@ export default function InfoItem({ patient }) {
         axios.get(urlTemperature, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -56,7 +61,7 @@ export default function InfoItem({ patient }) {
                 // handle the error
                 console.log(error);
             });
-    }, [urlHeartbeat, urlTemperature]);
+    }, [urlHeartbeat, urlTemperature, token]);
 
     return (
         <div className="App-professional-info-list-item" style={{ display: "flex", flexDirection: "column" }}>

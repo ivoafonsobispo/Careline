@@ -6,7 +6,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
-import { Check, ClockHistory, X, BoxSeam } from 'react-bootstrap-icons'
+import { useSelector } from "react-redux";
+
+import { Check, ClockHistory, X } from 'react-bootstrap-icons'
 
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
@@ -27,6 +29,9 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 
 export default function ClientDrone() {
+    const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
+
     const { id } = useParams();
     const [drone, setDrone] = useState(null);
     const [startPosition, setStartPosition] = useState([0, 0]);
@@ -36,12 +41,13 @@ export default function ClientDrone() {
     const [animate, setAnimate] = useState(false);
     const [currentPosition, setCurrentPosition] = useState([0, 0]);
 
-    const urlDrone = `http://localhost:8080/api/patients/1/deliveries/${id}`;
+    const urlDrone = `http://10.20.229.55/api/patients/${user.id}/deliveries/${id}`;
 
     useEffect(() => {
         axios.get(urlDrone, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -54,7 +60,7 @@ export default function ClientDrone() {
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+    }, [urlDrone, token]);
 
 
     useEffect(() => {

@@ -7,20 +7,25 @@ import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { useSelector } from 'react-redux';
+
 export default function PatientItem({ patient, title, setAssociatedPatient }) {
+    const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
 
     const [heartbeat, setLastHeartbeat] = useState(null);
     const [temperature, setLastTemperature] = useState(null);
     const [heartbeatSeverity, setHeartbeatSeverity] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    let urlHeartbeat = `http://localhost:8080/api/patients/${patient.id}/heartbeats/latest`;
-    let urlTemperature = `http://localhost:8080/api/patients/${patient.id}/temperatures/latest`;
+    let urlHeartbeat = `http://10.20.229.55/api/patients/${patient.id}/heartbeats/latest`;
+    let urlTemperature = `http://10.20.229.55/api/patients/${patient.id}/temperatures/latest`;
 
     useEffect(() => {
         axios.get(urlHeartbeat, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -41,6 +46,7 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
         axios.get(urlTemperature, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -57,14 +63,15 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
                 // handle the error
                 console.log(error);
             });
-    }, [urlHeartbeat, urlTemperature]);
+    }, [urlHeartbeat, urlTemperature, token]);
 
     const associatePatient = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/professionals/1/patients/${patient.id}`, {
+            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${patient.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             });
 

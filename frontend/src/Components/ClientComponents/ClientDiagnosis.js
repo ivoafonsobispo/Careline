@@ -5,8 +5,14 @@ import { Paperclip, Pen, Download } from 'react-bootstrap-icons'
 
 import axios from 'axios';
 
+import { useSelector } from 'react-redux';
+
 export default function ClientDiagnosis({ diagnosis }) {
-    const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/${diagnosis.id}/pdf`;
+
+    const user = useSelector((state) => state.auth.user);	
+    const token = useSelector((state) => state.auth.token);	
+
+    const urlPdf = `http://10.20.229.55/api/patients/${user.id}/diagnosis/${diagnosis.id}/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -14,6 +20,8 @@ export default function ClientDiagnosis({ diagnosis }) {
             responseType: 'blob',
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
+                
             },
             proxy: {
                 port: 8080

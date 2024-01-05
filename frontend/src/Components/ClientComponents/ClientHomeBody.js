@@ -11,12 +11,15 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
-const urlLastHeartbeat = 'http://localhost:8080/api/patients/1/heartbeats/latest?size=1';
-const urlLastTemperature = 'http://localhost:8080/api/patients/1/temperatures/latest?size=1';
+import { useSelector } from 'react-redux';
 
 export default function ClientHomeBody({ date }) {
-  const urlHeartbeats = `http://localhost:8080/api/patients/1/heartbeats/date/${date}`;
-  const urlDiagnoses = `http://localhost:8080/api/patients/1/diagnosis/date/${date}`;
+  const user = useSelector((state) => state.auth.user);
+
+  const urlLastHeartbeat = `http://10.20.229.55/api/patients/${user.id}/heartbeats/latest?size=1`;
+  const urlLastTemperature = `http://10.20.229.55/api/patients/${user.id}/temperatures/latest?size=1`;
+  const urlHeartbeats = `http://10.20.229.55/api/patients/${user.id}/heartbeats/date/${date}`;
+  const urlDiagnoses = `http://10.20.229.55/api/patients/${user.id}/diagnosis/date/${date}`;
 
   const [measures, setMeasures] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
@@ -34,10 +37,13 @@ export default function ClientHomeBody({ date }) {
     animation: `growAndFade 1s ease-in-out infinite alternate`,
   });
 
+  const token = useSelector((state) => state.auth.token);
+
   useEffect(() => {
     axios.get(urlHeartbeats, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
@@ -54,6 +60,7 @@ export default function ClientHomeBody({ date }) {
     axios.get(urlDiagnoses, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
@@ -70,6 +77,7 @@ export default function ClientHomeBody({ date }) {
     axios.get(urlLastHeartbeat, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
@@ -98,12 +106,13 @@ export default function ClientHomeBody({ date }) {
     axios.get(urlLastTemperature, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
       }
     })
-      .then(response => { 
+      .then(response => {
         let temperatureObject = response.data.content[0];
         if (temperatureObject) {
           setLastTemperature(temperatureObject.temperature);
@@ -113,49 +122,61 @@ export default function ClientHomeBody({ date }) {
       .catch(error => {
         console.log(error);
       });
-  }, [urlHeartbeats, urlDiagnoses]);
+  }, [urlHeartbeats, urlDiagnoses, urlLastHeartbeat, urlLastTemperature, token]);
+
+  let stompClient;
 
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/websocket-endpoint');
-    const stompClient = Stomp.over(socket);
+    const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+    stompClient = Stomp.over(socket);
 
-    stompClient.connect({}, () => {
-      stompClient.subscribe('/topic/heartbeats', (message) => {
-        let newHeartbeat = JSON.parse(message.body);
-        setLastHeartbeat(newHeartbeat.heartbeat);
-        setHeartbeatSeverity(newHeartbeat.severity);
+    try {
 
-        const newAnimationSpeed = 1 - ((newHeartbeat.heartbeat / (60 + ((newHeartbeat.heartbeat - 60) / 2))) - 1);
-        setHeartStyle({
-          animation: `growAndFade ${newAnimationSpeed}s ease-in-out infinite alternate`,
+      stompClient.connect({}, () => {
+        stompClient.subscribe('/topic/heartbeats', (message) => {
+          let newHeartbeat = JSON.parse(message.body);
+          setLastHeartbeat(newHeartbeat.heartbeat);
+          setHeartbeatSeverity(newHeartbeat.severity);
+
+          const newAnimationSpeed = 1 - ((newHeartbeat.heartbeat / (60 + ((newHeartbeat.heartbeat - 60) / 2))) - 1);
+          setHeartStyle({
+            animation: `growAndFade ${newAnimationSpeed}s ease-in-out infinite alternate`,
+          });
+
+          toast.success('Heartbeat updated successfully!', {
+            style: {
+              fontSize: '16px',
+            },
+          });
         });
 
-        toast.success('Heartbeat updated successfully!', {
-          style: {
-            fontSize: '16px',
-          },
+        stompClient.subscribe('/topic/temperatures', (message) => {
+          let newTemperature = JSON.parse(message.body);
+          setLastTemperature(newTemperature.temperature);
+          setTemperatureSeverity(newTemperature.severity);
+          toast.success('Temperature updated successfully!', {
+            style: {
+              fontSize: '16px',
+            },
+          });
+        });
+
+        stompClient.subscribe('/topic/diagnosis', (message) => {
+          let newDiagnosis = JSON.parse(message.body);
+          setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
         });
       });
 
-      stompClient.subscribe('/topic/temperatures', (message) => {
-        let newTemperature = JSON.parse(message.body);
-        setLastTemperature(newTemperature.temperature);
-        setTemperatureSeverity(newTemperature.severity);
-        toast.success('Temperature updated successfully!', {
-          style: {
-            fontSize: '16px',
-          },
-        });
-      });
 
-      stompClient.subscribe('/topic/diagnosis', (message) => {
-        let newDiagnosis = JSON.parse(message.body);
-        setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
-      });
-    });
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+      // Handle the error here, e.g., show a user-friendly message or retry the connection
+    }
 
     return () => {
-      stompClient.disconnect();
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect();
+      }
     };
   }, []);
 
@@ -173,7 +194,7 @@ export default function ClientHomeBody({ date }) {
         <MeasureList title={"Measures"} dataArray={measures} />
         <MeasureList title={"Diagnoses"} dataArray={diagnoses} />
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 }

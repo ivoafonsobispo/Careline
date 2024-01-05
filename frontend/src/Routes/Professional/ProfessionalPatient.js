@@ -9,19 +9,24 @@ import Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 
 import axios from 'axios';
+import { useSelector } from "react-redux";
+
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import PatientInfoList from "../../Components/ProfessionalComponents/ProfessionalPatientLists/PatientInfoList";
 
 export default function ProfessionalPatient() {
+    const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);	
+
     const { id } = useParams();
-    const [patient, setPatient] = useState(null);
+    const [patient, setPatient] = useState({});
     const [currentList, setCurrentList] = useState("urtriage");
     const [currentDroneStatusFilter, setcurrentDroneStatusFilter] = useState('PENDING');
 
-    const urlPatient = `http://localhost:8080/api/professionals/1/patients/${id}`;
-    const urlLastHeartbeat = `http://localhost:8080/api/patients/${id}/heartbeats/latest?size=1`;
-    const urlLastTemperature = `http://localhost:8080/api/patients/${id}/temperatures/latest?size=1`;
+    const urlPatient = `http://10.20.229.55/api/professionals/${user.id}/patients/${id}`;
+    const urlLastHeartbeat = `http://10.20.229.55/api/patients/${id}/heartbeats/latest?size=1`;
+    const urlLastTemperature = `http://10.20.229.55/api/patients/${id}/temperatures/latest?size=1`;
 
     // Heartbeat (value and severity)
     const [lastHeartbeat, setLastHeartbeat] = useState(null);
@@ -31,26 +36,28 @@ export default function ProfessionalPatient() {
     const [lastTemperature, setLastTemperature] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    const urlDiagnoses = `http://localhost:8080/api/professionals/1/patients/${id}/diagnosis/latest`;
+    const urlDiagnoses = `http://10.20.229.55/api/professionals/${user.id}/patients/${id}/diagnosis/latest`;
     const [diagnoses, setDiagnoses] = useState(null);
 
     const [heartStyle, setHeartStyle] = useState({
         animation: `growAndFade 1s ease-in-out infinite alternate`,
     });
 
-    const urlDrones = `http://localhost:8080/api/patients/${id}/deliveries`;
+    const urlDrones = `http://10.20.229.55/api/patients/${id}/deliveries`;
     const [drones, setDrones] = useState(null);
 
     useEffect(() => {
         axios.get(urlPatient, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
             }
         })
             .then(response => {
+                console.log(response.data);
                 setPatient(response.data);
             })
             .catch(error => {
@@ -60,6 +67,7 @@ export default function ProfessionalPatient() {
         axios.get(urlLastHeartbeat, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -88,6 +96,7 @@ export default function ProfessionalPatient() {
         axios.get(urlLastTemperature, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -107,6 +116,7 @@ export default function ProfessionalPatient() {
         axios.get(urlDiagnoses, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -123,6 +133,7 @@ export default function ProfessionalPatient() {
         axios.get(urlDrones, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -135,32 +146,43 @@ export default function ProfessionalPatient() {
             .catch(error => {
                 console.log(error);
             });
-    }, [id, urlLastHeartbeat, urlLastTemperature, urlPatient, urlDrones]);
+    }, [id, urlLastHeartbeat, urlLastTemperature, urlPatient, urlDrones, urlDiagnoses, token]);
+
+    let stompClient;
 
     useEffect(() => {
-        const socket = new SockJS('http://localhost:8080/websocket-endpoint');
-        const stompClient = Stomp.over(socket);
+        const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+        stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, () => {
-            stompClient.subscribe('/topic/deliveries', (message) => {
-                let newDrone = JSON.parse(message.body);
-                if (newDrone.patient.id === parseInt(id)) {
-                    setDrones((prevDrones) => [newDrone, ...prevDrones]);
-                }
+        try {
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/topic/deliveries', (message) => {
+                    let newDrone = JSON.parse(message.body);
+                    if (newDrone.patient.id === parseInt(id)) {
+                        setDrones((prevDrones) => [newDrone, ...prevDrones]);
+                    }
+                });
+
+                stompClient.subscribe('/topic/diagnosis', (message) => {
+                    let newDiagnosis = JSON.parse(message.body);
+                    if (newDiagnosis.patient.id === parseInt(id)) {
+                        setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
+                    }
+                });
             });
 
-            stompClient.subscribe('/topic/diagnosis', (message) => {
-                let newDiagnosis = JSON.parse(message.body);
-                if (newDiagnosis.patient.id === parseInt(id)) {
-                    setDiagnoses((prevDiagnoses) => [newDiagnosis, ...prevDiagnoses]);
-                }
-            });
-        });
+
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            // Handle the error here, e.g., show a user-friendly message or retry the connection
+        }
 
         return () => {
-            stompClient.disconnect();
+            if (stompClient && stompClient.connected) {
+                stompClient.disconnect();
+            }
         };
-    }, []);
+    }, [id]);
 
     const handleListChange = (list) => {
         console.log(list);
@@ -179,8 +201,8 @@ export default function ProfessionalPatient() {
         }
     }, [currentList]);
 
-    if (!patient) return null;
-    if (!lastHeartbeat) return null;
+    // if (!patient || patient === null) return;
+    // if (!lastHeartbeat) return;
 
     return (
         <div className="vertical-container">
@@ -233,7 +255,7 @@ export default function ProfessionalPatient() {
                                             currentList === "ddrones" ? "Delivered Drones" :
                                                 "Failed Drones"}
                                     setCurrentList={handleListChange}
-                                    dataArray={drones.filter(drone => drone.status === currentDroneStatusFilter)} />
+                                    dataArray={drones !== null ? drones.filter(drone => drone.status === currentDroneStatusFilter) : drones} />
                             </>
                         )}
                         <div className="align-line-row" style={{ gap: "2%" }}>
