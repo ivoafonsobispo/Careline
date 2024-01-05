@@ -4,9 +4,14 @@ import InfoList from './InfoList'
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const urlAvailablePatients = 'http://localhost:8080/api/professionals/1/patients';
+
+import { useSelector } from 'react-redux';
+
+const urlAvailablePatients = 'http://10.20.229.55/api/professionals/1/patients';
 
 export default function ProfessionalHomeBody() {
+  const token = useSelector((state) => state.auth.token);	
+  
   const [availablePatients, setAvailablePatients] = useState(null);
 
   useEffect(() => {
@@ -14,6 +19,7 @@ export default function ProfessionalHomeBody() {
     axios.get(urlAvailablePatients, {
       headers: {
         'Access-Control-Allow-Origin': '*',
+        Authorization: `Bearer ${token}`,
       },
       proxy: {
         port: 8080
@@ -27,7 +33,7 @@ export default function ProfessionalHomeBody() {
       .catch(error => {
         console.log(error);
       });
-  }, []);
+  }, [token]);
 
   return (
     <div className='vertical-container gap-vertical' >

@@ -1,9 +1,13 @@
 import classNames from 'classnames';
 import './ProfessionalEditProfileBody.css'
 
+import { useSelector } from 'react-redux';
+
 import { Eye, EyeSlash, Check, X } from 'react-bootstrap-icons';
 import { useState } from 'react';
 export default function ProfessionalEditProfileBody({user, setEditProfileClicked, onEditProfileSuccess}) {
+    const token = useSelector((state) => state.auth.token);
+
     const isNumber = (value) => /^\d+$/.test(value);
 
     const [name, setName] = useState(user.name);
@@ -80,10 +84,11 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
 
             console.log(JSON.stringify(updatedFields));
 
-            const response = await fetch('http://localhost:8080/api/professionals/1', {
+            const response = await fetch('http://10.20.229.55/api/professionals/1', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(updatedFields),
             });

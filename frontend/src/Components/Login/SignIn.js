@@ -1,10 +1,20 @@
 import { useState } from "react";
 import "../../Routes/Login.css";
 
+import { useNavigate } from "react-router-dom";
+
 import classNames from 'classnames';
 import { Eye, EyeSlash, BoxArrowInRight } from 'react-bootstrap-icons';
 
-export default function SignIn( {setOtherView} ) {
+import { useDispatch } from 'react-redux'
+import { tokenSetter, userSetter } from '../../TokenSlice'
+
+import { ToastContainer } from "react-toastify";
+
+export default function SignIn({ setOtherView }) {
+
+    const navigate = useNavigate();
+
     const isNumber = (value) => /^\d+$/.test(value);
 
     const [password, setPassword] = useState('');
@@ -31,6 +41,100 @@ export default function SignIn( {setOtherView} ) {
             setIsValidNus(isValidNus);
         }
 
+    };
+
+    // const [errorMessage, setErrorMessage] = useState('');
+
+    // const token = useSelector((state) => state.token.value)
+    const dispatch = useDispatch()
+    const handleLogin = async () => {
+        console.log(nus)
+        console.log(password)
+        console.log(JSON.stringify({
+            nus,
+            password,
+        }));
+
+        try {
+            const response = await fetch('http://10.20.229.55/api/signin/patient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nus,
+                    password,
+                }),
+            });
+
+            if (response.ok) {
+                // Login successful, handle the success (e.g., redirect or set user token)
+                console.log('Login successful');
+                const responseData = await response.json();
+
+                console.log(responseData.token);
+                console.log(`Bearer ${responseData.token}`);
+                dispatch(tokenSetter(responseData.token));
+
+                const patientResponse = await fetch(`http://10.20.229.55/api/patients/nus/${nus}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${responseData.token}`,
+                    },
+                });
+
+                console.log(responseData.token);
+
+                const patientResponseData = await patientResponse.json();
+                patientResponseData.type = "patient";
+                dispatch(userSetter(patientResponseData));
+
+                navigate('/');
+
+            } else {
+                // Login failed, handle the error~
+                console.log(response);
+                const secondResponse = await fetch('http://10.20.229.55/api/signin/professional', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nus,
+                        password,
+                    }),
+                })
+
+                if (secondResponse.ok) {
+                    // Login successful, handle the success (e.g., redirect or set user token)
+                    console.log('Login successful');
+                    const secondResponseData = await secondResponse.json();
+
+                    console.log(secondResponseData.token);
+                    console.log(`Bearer ${secondResponseData.token}`);
+                    dispatch(tokenSetter(secondResponseData.token));
+
+                    const professionalResponse = await fetch(`http://10.20.229.55/api/professionals/nus/${nus}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${secondResponseData.token}`,
+                        },
+                    });
+
+
+                    const professionalResponseData = await professionalResponse.json();
+                    professionalResponseData.type = "professional"; 
+                    console.log(professionalResponseData);
+                    dispatch(userSetter(professionalResponseData));
+
+                    navigate('/');
+                }
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
     };
 
     return (
@@ -71,7 +175,8 @@ export default function SignIn( {setOtherView} ) {
                 <div className="vertical-container" style={{ alignItems: "center" }}>
                     <button className={classNames("profile-button align-line-row", !(isValidNus && isValidPassword) ? "profile-button-disabled" : "")}
                         disabled={!(isValidNus && isValidPassword)}
-                        style={{ width: "20%" }}>
+                        style={{ width: "20%" }}
+                        onClick={handleLogin}>
                         <span className="align-line-row" style={{ margin: "0 auto" }}><BoxArrowInRight size={25} color="white" /> &nbsp; Sign In</span>
                     </button>
                     <button className="login-subbutton" onClick={() => setOtherView()}>
@@ -79,6 +184,7 @@ export default function SignIn( {setOtherView} ) {
                     </button>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }

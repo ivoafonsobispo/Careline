@@ -2,7 +2,7 @@ import './App.css';
 import Navbar from './Components/Navbar/Navbar';
 import Header from './Components/Header/Header';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Routes, Route } from 'react-router-dom';
 import ClientHome from './Routes/Client/ClientHome';
@@ -24,60 +24,69 @@ import ProfessionalDiagnoses from './Routes/Professional/ProfessionalDiagnoses';
 import ProfessionalDiagnosis from './Routes/Professional/ProfessionalDiagnosis';
 import Login from './Routes/Login';
 
-export default function App() {
-  const userType = 'patient';
-  const [isLoggedIn, setLoggedIn] = useState(false);
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
+export default function App() {
+  
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {
     setIsActive(!isToggleActive);
   }
 
-  return (
-    <div className='App'>
-      {/* Place here the login.js route */}
-      {!isLoggedIn ? (
-        <Routes>
-          <Route path="/" element={<Login/>} />
-          {/* Other routes as before */}
-        </Routes>
-      ) : (
-        <>
-          <Header isActive={isToggleActive} toggleNavbar={toggleNavbar} userType={userType} />
+  const navigate = useNavigate();
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
 
-          <div className='App-body'>
-            <Navbar isActive={isToggleActive} userType={userType} />
-            <div className='App-content-div'>
-              <Routes>
-                {userType === 'patient' && (
-                  <>
-                    <Route path="/" element={<ClientHome />} />
-                    <Route path="/diagnoses" element={<ClientDiagnoses />} />
-                    <Route path="/measures" element={<ClientMeasures />} />
-                    <Route path="/drones" element={<ClientDrones />} />
-                    <Route path="/drones/:id" element={<ClientDrone />} />
-                    <Route path="/triage" element={<ClientTriage />} />
-                    <Route path="/profile" element={<ClientProfile />} />
-                  </>
-                )}
-                {userType === 'professional' && (
-                  <>
-                    <Route path="/" element={<ProfessionalHome />} />
-                    <Route path="/patients" element={<ProfessionalPatients />} />
-                    <Route path="/patient/:id" element={<ProfessionalPatient />} />
-                    <Route path="/profile" element={<ProfessionalProfile />} />
-                    <Route path="/diagnoses" element={<ProfessionalDiagnoses />} />
-                    <Route path="/diagnosis" element={<ProfessionalDiagnosis />} />
-                    <Route path="/triage" element={<ProfessionalTriage />} />
-                    <Route path="/triage/:id/review" element={<ProfessionalTriageReview />} />
-                  </>
-                )}
-                <Route path="/*" element={<ErrorPage />} />
-              </Routes>
-            </div>
-          </div>
-        </>
-      )}
+  useEffect(() => {
+    // Check if the token is null
+    if (token === null) {
+      // Redirect to the '/signin' route
+      navigate('/signin');
+    }
+  }, [token, navigate]);
+
+  return (
+    <div className={token !== null && user !== null ? 'App' : ''}>
+      {token !== null && user !== null ? (
+        <Header isActive={isToggleActive} toggleNavbar={toggleNavbar} userType={user.type} />
+      ) : (<></>)}
+
+      <div className={token !== null && user !== null ? 'App-body' : ''}>
+        {token !== null && user !== null ? (
+          <Navbar isActive={isToggleActive} userType={user.type} />
+        ) : (<></>)}
+        <div className={token !== null && user !== null ? 'App-content-div' : ''}>
+          <Routes>
+            {user !== null && user.type === 'patient' && (
+              <>
+                <Route path="/" element={<ClientHome />} />
+                <Route path="/diagnoses" element={<ClientDiagnoses />} />
+                <Route path="/measures" element={<ClientMeasures />} />
+                <Route path="/drones" element={<ClientDrones />} />
+                <Route path="/drones/:id" element={<ClientDrone />} />
+                <Route path="/triage" element={<ClientTriage />} />
+                <Route path="/profile" element={<ClientProfile />} />
+              </>
+            )}
+            {user !== null && user.type === 'professional' && (
+              <>
+                <Route path="/" element={<ProfessionalHome />} />
+                <Route path="/patients" element={<ProfessionalPatients />} />
+                <Route path="/patient/:id" element={<ProfessionalPatient />} />
+                <Route path="/profile" element={<ProfessionalProfile />} />
+                <Route path="/diagnoses" element={<ProfessionalDiagnoses />} />
+                <Route path="/diagnosis" element={<ProfessionalDiagnosis />} />
+                <Route path="/triage" element={<ProfessionalTriage />} />
+                <Route path="/triage/:id/review" element={<ProfessionalTriageReview />} />
+              </>
+            )}
+            <Route path="/signin" element={<Login />} />
+            <Route path="/*" element={<ErrorPage />} />
+          </Routes>
+        </div>
+      </div>
+
     </div>
   );
 }

@@ -6,7 +6,7 @@ import ProfessionalMedicationList from "../../Components/ProfessionalComponents/
 
 import { useState } from 'react';
 
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import classNames from "classnames";
 
 import { Pen } from 'react-bootstrap-icons'
@@ -15,6 +15,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
+
+import { useSelector } from "react-redux";
 
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet'
@@ -34,6 +36,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 
 export default function ProfessionalDiagnosis() {
+    const token = useSelector((state) => state.auth.token);	
     const navigate = useNavigate();
 
     const [medications, setMedications] = useState([]);
@@ -198,10 +201,11 @@ export default function ProfessionalDiagnosis() {
             console.log(diganosisFields);
             console.log(JSON.stringify(diganosisFields));
 
-            const responseNUS = await fetch(`http://localhost:8080/api/patients/nus/${nus}`, {
+            const responseNUS = await fetch(`http://10.20.229.55/api/patients/nus/${nus}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -214,10 +218,11 @@ export default function ProfessionalDiagnosis() {
 
             const patient = await responseNUS.json();
 
-            const response = await fetch(`http://localhost:8080/api/professionals/1/patients/${patient.id}/diagnosis`, {
+            const response = await fetch(`http://10.20.229.55/api/professionals/1/patients/${patient.id}/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify(diganosisFields),
             });
@@ -245,10 +250,11 @@ export default function ProfessionalDiagnosis() {
 
                 console.log(JSON.stringify(droneFields));
 
-                const responseDrone = await fetch(`http://localhost:8080/api/patients/1/diagnosis/${data.id}/deliveries`, {
+                const responseDrone = await fetch(`http://10.20.229.55/api/patients/1/diagnosis/${data.id}/deliveries`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
                     },
                     body: JSON.stringify(droneFields),
                 });

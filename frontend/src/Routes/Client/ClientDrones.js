@@ -15,12 +15,16 @@ import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { useSelector } from "react-redux";
+
 export default function ClientDrones() {
+    const token = useSelector((state) => state.auth.token);
+
     const [selected, setSelected] = useState(new Date());
     const [date, setDate] = useState("2023-12-25");
 
     // const urlDrones = `http://localhost:8080/api/patients/1/deliveries/date/${date}`;
-    const urlDrones = `http://localhost:8080/api/patients/1/deliveries`;
+    const urlDrones = `http://10.20.229.55/api/patients/1/deliveries`;
 
     useEffect(() => {
         if (selected) {
@@ -41,12 +45,13 @@ export default function ClientDrones() {
     const [selectedButton, setButton] = useState("all"); // all; pdrones; itdrones; ddrones; fdrones
 
     const [drones, setDrones] = useState(null);
-    
+
     useEffect(() => {
 
         axios.get(urlDrones, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -59,22 +64,27 @@ export default function ClientDrones() {
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+    }, [urlDrones, token]);
 
     useEffect(() => {
-        const socket = new SockJS('http://localhost:8080/websocket-endpoint');
-        const stompClient = Stomp.over(socket);
+        try {
+            const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+            const stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, () => {
-            stompClient.subscribe('/topic/deliveries', (message) => {
-                let newDrone = JSON.parse(message.body);
-                setDrones((prevDrones) => [newDrone, ...prevDrones]);
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/topic/deliveries', (message) => {
+                    let newDrone = JSON.parse(message.body);
+                    setDrones((prevDrones) => [newDrone, ...prevDrones]);
+                });
             });
-        });
 
-        return () => {
-            stompClient.disconnect();
-        };
+            return () => {
+                stompClient.disconnect();
+            };
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            // Handle the error here, e.g., show a user-friendly message or retry the connection
+        }
     }, []);
 
     return (

@@ -4,7 +4,12 @@ import "../../Routes/Login.css";
 import classNames from 'classnames';
 import { Eye, EyeSlash, BoxArrowInRight } from 'react-bootstrap-icons';
 
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 export default function SignUp({ setOtherView }) {
+    const navigate = useNavigate();
+
     const isNumber = (value) => /^\d+$/.test(value);
 
     const [name, setName] = useState('');
@@ -59,6 +64,43 @@ export default function SignUp({ setOtherView }) {
 
     };
 
+    // const [errorMessage, setErrorMessage] = useState('');
+    const handleSignUp = async () => {
+        try {
+            const response = await fetch('http://10.20.229.55/api/signup/patient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "name": name,
+                    "email": email,
+                    "password": password,
+                    "nus": nus
+                }),
+            });
+
+            if (response.ok) {
+                // Login successful, handle the success (e.g., redirect or set user token)
+                navigate('/');
+
+                toast.success('Account created successfully!', {
+                    style: {
+                        fontSize: '16px',
+                    },
+                });
+
+            } else {
+                // Login failed, handle the error
+                console.log(response);
+                // const errorData = await response.json();
+                // setErrorMessage(errorData.message || 'Login failed');
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+        }
+    };
+
     return (
         <div className="login-right-content">
             <h2 style={{ margin: "0 auto" }}>Sign Up</h2>
@@ -80,14 +122,14 @@ export default function SignUp({ setOtherView }) {
                 <div className="horizontal-container" style={{ alignItems: "center" }}>
                     <span className="profile-field-title">Email:</span>
                     <input
-                        className={classNames('profile-field', !isValidEmail && emailTouched ? 'profile-field-border': '')}
+                        className={classNames('profile-field', !isValidEmail && emailTouched ? 'profile-field-border' : '')}
                         type="email"
                         name="email"
                         value={email}
                         onChange={handleEmailChange}
                     />
                 </div>
-                {!isValidEmail && emailTouched ? <p className='field-error-message'>Email is invalid</p> :  <></>}
+                {!isValidEmail && emailTouched ? <p className='field-error-message'>Email is invalid</p> : <></>}
 
                 {/* Password */}
                 <div className="horizontal-container" style={{ alignItems: "center" }}>
@@ -123,7 +165,8 @@ export default function SignUp({ setOtherView }) {
                 <div className="vertical-container" style={{ alignItems: "center" }}>
                     <button className={classNames("profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && isValidPassword) ? "profile-button-disabled" : "")}
                         disabled={!(isValidName && isValidEmail && isValidNus && isValidPassword)}
-                        style={{ width: "20%" }}>
+                        style={{ width: "20%" }}
+                        onClick={handleSignUp}>
                         <span className="align-line-row" style={{ margin: "0 auto" }}><BoxArrowInRight size={25} color="white" /> &nbsp; Sign Up</span>
                     </button>
                     <button className="login-subbutton" onClick={() => setOtherView()}>

@@ -4,10 +4,13 @@ import './ClientBase.css'
 import { Pencil, Paperclip, Check, Download, ClockHistory } from 'react-bootstrap-icons'
 
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 export default function ClientTriageComponent({ status }) {
 
-    const urlPdf = `http://localhost:8080/api/patients/1/diagnosis/1/pdf`;
+    const urlPdf = `http://10.20.229.55/api/patients/1/diagnosis/1/pdf`;
+
+    const token = useSelector((state) => state.auth.token);
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -15,6 +18,7 @@ export default function ClientTriageComponent({ status }) {
             responseType: 'blob',
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080

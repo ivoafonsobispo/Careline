@@ -4,9 +4,12 @@ import './ProfessionalBase.css'
 import { Paperclip, Pen, Download } from 'react-bootstrap-icons'
 
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 export default function ProfessionalDiagnosisComponent({ diagnosis }) {
-    const urlPdf = `http://localhost:8080/api/patients/${diagnosis.patient.id}/diagnosis/${diagnosis.id}/pdf`;
+    const token = useSelector((state) => state.auth.token);
+
+    const urlPdf = `http://10.20.229.55/api/professionals/1/patients/${diagnosis.patient.id}/diagnosis/${diagnosis.id}/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -14,6 +17,7 @@ export default function ProfessionalDiagnosisComponent({ diagnosis }) {
             responseType: 'blob',
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080

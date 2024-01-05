@@ -6,9 +6,12 @@ import { Pencil, Paperclip, Check, Download, ClockHistory, FileMedical } from 'r
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 
-export default function ProfessionalTriageComponent({ status }) {
+import { useSelector } from 'react-redux';
 
-    const urlPdf = `http://localhost:8080/api/professionals/1/patients/1/diagnosis/1/pdf`;
+export default function ProfessionalTriageComponent({ status }) {
+    const token = useSelector((state) => state.auth.token);
+
+    const urlPdf = `http://10.20.229.55/api/professionals/1/patients/1/diagnosis/1/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -16,6 +19,7 @@ export default function ProfessionalTriageComponent({ status }) {
             responseType: 'blob',
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080

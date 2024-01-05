@@ -10,9 +10,13 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-const urlUser = 'http://localhost:8080/api/professionals/1';
+
+import { useSelector } from "react-redux";
+
+const urlUser = 'http://10.20.229.55/api/professionals/1';
 
 export default function ProfessionalProfile() {
+    const token = useSelector((state) => state.auth.token);	
 
     const [user, setUser] = useState(null);
     const [showForm, setShowForm] = useState(false);
@@ -21,6 +25,7 @@ export default function ProfessionalProfile() {
         axios.get(urlUser, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
+                Authorization: `Bearer ${token}`,
             },
             proxy: {
                 port: 8080
@@ -33,7 +38,7 @@ export default function ProfessionalProfile() {
             .catch(error => {
                 console.log(error);
             });
-    }, []);
+    }, [token]);
 
     if (!user) return null;
 
