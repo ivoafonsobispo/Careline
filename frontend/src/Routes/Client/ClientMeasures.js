@@ -82,12 +82,13 @@ export default function ClientMeasures() {
       });
   }, [urlHeartbeats, urlTemperatures, token]);
 
+  let stompClient;
 
   useEffect(() => {
-    try {
-      const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
-      const stompClient = Stomp.over(socket);
+    const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+    stompClient = Stomp.over(socket);
 
+    try {
       stompClient.connect({}, () => {
         stompClient.subscribe('/topic/heartbeats', (message) => {
           let newHeartbeat = JSON.parse(message.body);
@@ -100,13 +101,17 @@ export default function ClientMeasures() {
         });
       });
 
-      return () => {
-        stompClient.disconnect();
-      };
+
     } catch (error) {
       console.error('WebSocket connection error:', error);
       // Handle the error here, e.g., show a user-friendly message or retry the connection
     }
+
+    return () => {
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect();
+      }
+    };
   }, []);
 
 

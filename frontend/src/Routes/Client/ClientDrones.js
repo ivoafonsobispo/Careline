@@ -66,11 +66,12 @@ export default function ClientDrones() {
             });
     }, [urlDrones, token]);
 
-    useEffect(() => {
-        try {
-            const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
-            const stompClient = Stomp.over(socket);
+    let stompClient;
 
+    useEffect(() => {
+        const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+        stompClient = Stomp.over(socket);
+        try {
             stompClient.connect({}, () => {
                 stompClient.subscribe('/topic/deliveries', (message) => {
                     let newDrone = JSON.parse(message.body);
@@ -78,13 +79,17 @@ export default function ClientDrones() {
                 });
             });
 
-            return () => {
-                stompClient.disconnect();
-            };
+
         } catch (error) {
             console.error('WebSocket connection error:', error);
             // Handle the error here, e.g., show a user-friendly message or retry the connection
         }
+
+        return () => {
+            if (stompClient && stompClient.connected) {
+                stompClient.disconnect();
+            }
+        };
     }, []);
 
     return (

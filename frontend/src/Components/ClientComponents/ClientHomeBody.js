@@ -123,10 +123,13 @@ export default function ClientHomeBody({ date }) {
       });
   }, [urlHeartbeats, urlDiagnoses, token]);
 
+  let stompClient;
+
   useEffect(() => {
+    const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+    stompClient = Stomp.over(socket);
+
     try {
-      const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
-      const stompClient = Stomp.over(socket);
 
       stompClient.connect({}, () => {
         stompClient.subscribe('/topic/heartbeats', (message) => {
@@ -163,13 +166,17 @@ export default function ClientHomeBody({ date }) {
         });
       });
 
-      return () => {
-        stompClient.disconnect();
-      };
+
     } catch (error) {
       console.error('WebSocket connection error:', error);
       // Handle the error here, e.g., show a user-friendly message or retry the connection
     }
+
+    return () => {
+      if (stompClient && stompClient.connected) {
+        stompClient.disconnect();
+      }
+    };
   }, []);
 
   return (
