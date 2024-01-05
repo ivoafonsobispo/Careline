@@ -14,7 +14,7 @@ public interface DiagnosisService {
 
     List<DiagnosisEntity> findAll();
 
-    Page<DiagnosisEntity> findAll(Pageable pageable);
+    Page<DiagnosisEntity> findAll(Long professionalId, Long patientId, Pageable pageable);
 
     boolean isExists(Long id);
 

@@ -73,8 +73,8 @@ public class DiagnosisServiceImpl implements DiagnosisService {
     }
 
     @Override
-    public Page<DiagnosisEntity> findAll(Pageable pageable) {
-        return diagnosisRepository.findAll(pageable);
+    public Page<DiagnosisEntity> findAll(Long professionalId, Long patientId, Pageable pageable) {
+        return diagnosisRepository.findAllByPatientIdOrderByCreatedAtDesc(patientId, pageable);
     }
 
     @Override

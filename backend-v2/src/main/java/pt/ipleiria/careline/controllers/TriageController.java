@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ipleiria.careline.domain.dto.data.TriageDTO;
 import pt.ipleiria.careline.domain.dto.responses.PatientResponseDTO;
@@ -38,6 +39,7 @@ public class TriageController {
     }
 
     @PostMapping("/patients/{patientId}/triages")
+    @PreAuthorize("hasRole('PATIENT')")
     public ResponseEntity<TriageResponseDTO> create(@RequestBody @Valid TriageDTO triageDTO, @PathVariable("patientId") Long patientId) {
         TriageEntity triageEntity = triageMapper.mapFrom(triageDTO);
         TriageEntity savedTriageEntity = triageService.save(triageEntity, patientId);
@@ -51,30 +53,35 @@ public class TriageController {
     }
 
     @GetMapping("/triages")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public Page<TriageResponseDTO> listTriages(Pageable pageable) {
         Page<TriageEntity> triageEntities = triageService.findAll(pageable);
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
     @GetMapping("/triages/latest")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public Page<TriageResponseDTO> listLatestTriages(Pageable pageable) {
         Page<TriageEntity> triageEntities = triageService.findAllLatest(pageable);
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
     @GetMapping("/triages/unreviewed")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public Page<TriageResponseDTO> listUnreviewedTriages(Pageable pageable) {
         Page<TriageEntity> triageEntities = triageService.findAllUnreviewed(pageable);
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
     @GetMapping("/triages/date/{date}")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public Page<TriageResponseDTO> listLatestTriages(@PathVariable("date") String date, Pageable pageable) {
         Page<TriageEntity> triageEntities = triageService.findAllByDate(pageable, date);
         return triageEntities.map(triageEntity -> new TriageResponseDTO(patientResponseMapper.mapToDTO(triageEntity.getPatient()), triageEntity.getCreatedAt(), triageEntity.getTemperature(), triageEntity.getHeartbeat(), triageEntity.getSymptoms(), triageEntity.getSeverity(), triageEntity.getStatus(), triageEntity.getReviewDate()));
     }
 
     @GetMapping("/triages/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity<TriageResponseDTO> getTriageById(@PathVariable("id") Long id) {
         Optional<TriageEntity> triage = triageService.getTriageById(id);
         return triage.map(savedTriageEntity -> {
@@ -85,6 +92,7 @@ public class TriageController {
     }
 
     @PutMapping("/triages/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity<TriageDTO> fullUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
         if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -98,6 +106,7 @@ public class TriageController {
     }
 
     @PatchMapping("/triages/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity<TriageDTO> partialUpdateTriage(@PathVariable("id") Long id, @RequestBody @Valid TriageDTO triageDTO) {
         if (!triageService.isExists(id))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -108,12 +117,14 @@ public class TriageController {
     }
 
     @PatchMapping("/triages/tags")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity resetTagOrder() {
         Optional<TriageEntity> t = triageService.findLastTriage();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Tese is the first triage in line");
     }
 
     @PatchMapping("patients/{patientId}/triages/{id}/reviewed")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity<TriageResponseDTO> setTriageReviewed(@PathVariable("patientId") Long patientId, @PathVariable("id") Long triageId) {
         TriageEntity triage = triageService.setTriageReviewed(patientId, triageId);
         PatientResponseDTO patientResponseDTO = patientResponseMapper.mapToDTO(triage.getPatient());
@@ -122,6 +133,7 @@ public class TriageController {
     }
 
     @DeleteMapping("/triages/{id}")
+    @PreAuthorize("hasRole('PROFESSIONAL') or hasRole('PATIENT')")
     public ResponseEntity deleteProfessional(@PathVariable("id") Long id) {
         if (!triageService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
