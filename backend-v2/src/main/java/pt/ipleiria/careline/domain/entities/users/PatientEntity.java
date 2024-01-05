@@ -1,11 +1,19 @@
 package pt.ipleiria.careline.domain.entities.users;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import pt.ipleiria.careline.domain.enums.Role;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "patients")
 public class PatientEntity extends UserEntity {
@@ -13,18 +21,40 @@ public class PatientEntity extends UserEntity {
     List<ProfessionalEntity> professionals;
 
     public PatientEntity() {
+        super();
     }
 
-    public PatientEntity(String name, String email, String password, String nus) {
-        super(name, email, password, nus);
-        professionals = new ArrayList<>();
+    public PatientEntity(String name, String nus, String email, String password) {
+        super(name, nus, email, password, Role.ROLE_PATIENT);
     }
 
-    public List<ProfessionalEntity> getProfessionals() {
-        return professionals;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public void setProfessionals(List<ProfessionalEntity> professionals) {
-        this.professionals = professionals;
+    @Override
+    public String getUsername() {
+        return getNus();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

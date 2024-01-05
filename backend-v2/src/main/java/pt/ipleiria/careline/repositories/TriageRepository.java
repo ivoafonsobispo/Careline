@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import pt.ipleiria.careline.domain.entities.TriageEntity;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
 import pt.ipleiria.careline.domain.enums.Status;
 

@@ -4,15 +4,23 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CurrentTimestamp;
+import org.springframework.security.core.userdetails.UserDetails;
+import pt.ipleiria.careline.domain.enums.Role;
 
 import java.time.Instant;
 
+@Setter
+@Getter
 @MappedSuperclass
-public abstract class UserEntity {
+public abstract class UserEntity implements UserDetails {
     @CurrentTimestamp
     @Column(name = "created_at")
     public Instant createdAt;
+    @Enumerated(EnumType.STRING)
+    Role role;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "users_id_seq")
     private Long id;
@@ -23,7 +31,6 @@ public abstract class UserEntity {
     @Email
     private String email;
     @NotNull(message = "Password is required")
-    @Size(min = 8, max = 30)
     private String password;
     @Column(unique = true, nullable = false)
     @NotNull(message = "NUS is required")
@@ -33,59 +40,11 @@ public abstract class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(String name, String email, String password, String nus) {
+    public UserEntity(String name, String nus, String email, String password, Role role) {
         this.name = name;
+        this.nus = nus;
         this.email = email;
         this.password = password;
-        this.nus = nus;
-        this.createdAt = Instant.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNus() {
-        return nus;
-    }
-
-    public void setNus(String nus) {
-        this.nus = nus;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+        this.role = role;
     }
 }

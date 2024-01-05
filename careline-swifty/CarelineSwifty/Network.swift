@@ -10,7 +10,7 @@ import SwiftUI
 class TemperatureAPI {
     
     func getTemperature(completion: @escaping (Double) -> ()) {
-        guard let url = URL(string: "http://10.20.229.61/temperature") else {fatalError("Incorrect URL")}
+        guard let url = URL(string: "http://10.20.229.180/temperature") else {fatalError("Incorrect URL")}
         
         let urlRequest = URLRequest(url: url)
         

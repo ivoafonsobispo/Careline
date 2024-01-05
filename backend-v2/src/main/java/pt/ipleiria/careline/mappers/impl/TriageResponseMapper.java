@@ -3,7 +3,7 @@ package pt.ipleiria.careline.mappers.impl;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import pt.ipleiria.careline.domain.dto.responses.TriageResponseDTO;
-import pt.ipleiria.careline.domain.entities.data.TriageEntity;
+import pt.ipleiria.careline.domain.entities.TriageEntity;
 import pt.ipleiria.careline.mappers.Mapper;
 
 @Component

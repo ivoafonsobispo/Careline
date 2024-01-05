@@ -3,8 +3,7 @@ package pt.ipleiria.careline.domain.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CurrentTimestamp;
 import pt.ipleiria.careline.domain.entities.embed.Medication;
 import pt.ipleiria.careline.domain.entities.users.PatientEntity;
@@ -13,6 +12,10 @@ import pt.ipleiria.careline.domain.entities.users.ProfessionalEntity;
 import java.time.Instant;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -36,14 +39,4 @@ public class DiagnosisEntity {
     @NotNull(message = "Diagnosis is required")
     private String diagnosis;
 
-    public DiagnosisEntity() {
-    }
-
-    public DiagnosisEntity(PatientEntity patient, ProfessionalEntity professional, String diagnosis, List<Medication> medications) {
-        this.patient = patient;
-        this.professional = professional;
-        this.diagnosis = diagnosis;
-        this.medications = medications;
-        this.createdAt = Instant.now();
-    }
 }

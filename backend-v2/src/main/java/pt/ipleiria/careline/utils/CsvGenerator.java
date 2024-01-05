@@ -1,8 +1,8 @@
 package pt.ipleiria.careline.utils;
 
+import pt.ipleiria.careline.domain.entities.TriageEntity;
 import pt.ipleiria.careline.domain.entities.data.HeartbeatEntity;
 import pt.ipleiria.careline.domain.entities.data.TemperatureEntity;
-import pt.ipleiria.careline.domain.entities.data.TriageEntity;
 
 import java.util.List;
 
