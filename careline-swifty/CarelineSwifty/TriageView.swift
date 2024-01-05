@@ -11,9 +11,6 @@ struct TriageTextView: View {
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
-                Text ("WEDNESDAY, OCT 18")
-                    .foregroundColor(.gray)
-                    .font(.caption)
                 Text("Triage")
                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
@@ -38,12 +35,7 @@ struct TriageMeasureButtonView: View{
                     .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 0))
                     .frame(minWidth: 170, maxWidth: 170, alignment: .leading)
                 VStack {
-                    Image(systemName: measure.measured ? "checkmark" : "xmark")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20.0,height: 20.0)
-                    Text(measure.measured ? "Done" : "Missing")
-                        .font(.caption)
+                    
                 }.frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
             }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 30, maxHeight: 30, alignment: .leading)
                 .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
@@ -51,18 +43,18 @@ struct TriageMeasureButtonView: View{
         }.background(Color("Salmon"))
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .cornerRadius(15)
-            
+        
     }
 }
 
 
 
 struct SymptonsTextView: View {
+    @Binding var symptons: String
+    
     private enum Field: Int, CaseIterable {
         case symptons
     }
-    
-    @State var symptons: String = ""
     
     @FocusState private var focusedField: Field?
     
@@ -83,28 +75,62 @@ struct SymptonsTextView: View {
                 }
             }
         }
-
     }
 }
+
 
 struct CompletedButtonView: View {
     
     var allMeasured: Bool
+    var token: String
+    var symptoms: String
+    let apiGetLatestHeartbeat = APIHeartbeatGET()
+    let apiGetLatestTemperature = APITemperatureGETCareline()
+    let apiPost = APITriagePOST()
     
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var body: some View {
         HStack {
             Button(action: {
-                self.presentationMode.wrappedValue.dismiss()
+                apiGetLatestHeartbeat.bearerToken = token
+                apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
+                    switch result {
+                    case .success:
+                        print("Heartbeat request successful")
+                        apiGetLatestTemperature.bearerToken = token
+                        apiGetLatestTemperature.makeTemperatureGetRequest { result in
+                            switch result {
+                            case .success:
+                                print("Temperature request successful")
+                                apiPost.bearerToken = token
+                                print("Temperature: \(apiGetLatestTemperature.latestTemperatureValue)")
+                                print("Heartbeat: \(apiGetLatestHeartbeat.latestHeartbeatValue)")
+                                print("Symptoms: \(symptoms)")
+                                apiPost.makeTriagePostRequest(symptoms: symptoms, temperature: apiGetLatestTemperature.latestTemperatureValue ?? 0.0, heartbeat: apiGetLatestHeartbeat.latestHeartbeatValue ?? 0) { error in
+                                    if let error = error {
+                                        print("Error posting heartbeat in: \(error)")
+                                    } else {
+                                        print("Posted Heartbeat")
+                                    }
+                                }
+                            case .failure(let error):
+                                print("Temperature request failed with error: \(error)")
+                            }
+                        }
+                    case .failure(let error):
+                        print("Heartbeat request failed with error: \(error)")
+                    }
+                }
+                //self.presentationMode.wrappedValue.dismiss()
             }) {
                 HStack{
                     Text("Completed")
                         .frame(alignment: .center)
                 }.frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 30, alignment: .center)
                     .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
-                    .foregroundColor(allMeasured ? Color.black : Color.textGray)
-            }.background(Color(allMeasured ? "Salmon" : "LightGray"))
+                    .foregroundColor(Color.black)
+            }.background(Color("Salmon"))
                 .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 .cornerRadius(15)
                 .frame(minHeight: 0, maxHeight: .infinity, alignment: .bottom)
@@ -131,6 +157,7 @@ struct TriageView: View{
     
     var measures: [Measure]
     var token: String
+    @State private var symptoms: String = ""
     
     var allMeasured: Bool = false
     
@@ -141,7 +168,7 @@ struct TriageView: View{
                 .font(.title3)
                 .fontWeight(.bold)
                 .frame(maxWidth: .infinity,alignment: .leading)
-            SymptonsTextView()
+            SymptonsTextView(symptons: $symptoms)
             Text("Measures")
                 .font(.title3)
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
@@ -149,7 +176,7 @@ struct TriageView: View{
             ForEach(measures){measure in
                 TriageMeasureButtonView(measure: measure, token:token)
             }
-            CompletedButtonView(allMeasured: allMeasured)
+            CompletedButtonView(allMeasured: allMeasured, token:token, symptoms:symptoms)
         }.frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(true)

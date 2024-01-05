@@ -14,9 +14,6 @@ struct MeasuringTextView: View {
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading) {
-                Text ("WEDNESDAY, OCT 18")
-                    .foregroundColor(.gray)
-                    .font(.caption)
                 Text("Measuring")
                     .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
@@ -54,9 +51,6 @@ struct MeasureValueView: View {
                         .fontWeight(.bold)
                     Text(measure.metric)
                 }.padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                Text ("WEDNESDAY, OCT 18 AT 15:35")
-                    .foregroundColor(.gray)
-                    .font(.caption)
             }.frame(minWidth: 210, maxWidth: 210, alignment: .leading)
             Image(systemName: measure.symbol)
                 .resizable()
@@ -204,7 +198,7 @@ struct MeasureView: View{
             api.bearerToken = token
             api.makeTemperaturePostRequest(temperature: averageTemperature) { error in
                 if let error = error {
-                    print("Error posting heartbeat in: \(error)")
+                    print("Error posting temperature in: \(error)")
                 } else {
                     print("Posted Temperature: \(averageTemperature)")
                 }
