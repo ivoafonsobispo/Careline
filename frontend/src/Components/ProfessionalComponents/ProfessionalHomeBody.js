@@ -7,11 +7,12 @@ import { useState, useEffect } from 'react';
 
 import { useSelector } from 'react-redux';
 
-const urlAvailablePatients = 'http://10.20.229.55/api/professionals/1/patients';
-
 export default function ProfessionalHomeBody() {
-  const token = useSelector((state) => state.auth.token);	
-  
+  const token = useSelector((state) => state.auth.token);
+  const user = useSelector((state) => state.auth.user);
+
+  const urlAvailablePatients = `http://10.20.229.55/api/professionals/${user.id}/patients`;
+
   const [availablePatients, setAvailablePatients] = useState(null);
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function ProfessionalHomeBody() {
       .catch(error => {
         console.log(error);
       });
-  }, [token]);
+  }, [urlAvailablePatients, token]);
 
   return (
     <div className='vertical-container gap-vertical' >
@@ -56,7 +57,7 @@ export default function ProfessionalHomeBody() {
           <div className='no-records'>No patients associated yet.</div>
         ) : (
           <>
-          <InfoList title={"Patients"} dataArray={availablePatients} />
+            <InfoList title={"Patients"} dataArray={availablePatients} />
           </>
         )}
       </div>

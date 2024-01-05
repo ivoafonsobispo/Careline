@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 
 export default function PatientItem({ patient, title, setAssociatedPatient }) {
     const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
 
     const [heartbeat, setLastHeartbeat] = useState(null);
     const [temperature, setLastTemperature] = useState(null);
@@ -66,7 +67,7 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
 
     const associatePatient = async () => {
         try {
-            const response = await fetch(`http://10.20.229.55/api/professionals/1/patients/${patient.id}`, {
+            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${patient.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

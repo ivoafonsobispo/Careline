@@ -10,8 +10,9 @@ import { useSelector } from 'react-redux';
 
 export default function ProfessionalTriageComponent({ status }) {
     const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);	
 
-    const urlPdf = `http://10.20.229.55/api/professionals/1/patients/1/diagnosis/1/pdf`;
+    const urlPdf = `http://10.20.229.55/api/professionals/${user.id}/patients/1/diagnosis/1/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {
@@ -50,7 +51,7 @@ export default function ProfessionalTriageComponent({ status }) {
     return (
         <div className="professional-client-triage-box">
             <div className='align-line-row'>
-                <span className='align-line-row' style={{marginLeft: "0.8%"}}><FileMedical size={20} /> &nbsp;Triage 1</span>
+                <span className='align-line-row' style={{ marginLeft: "0.8%" }}><FileMedical size={20} /> &nbsp;Triage 1</span>
                 <span style={{ marginLeft: "auto", marginRight: "2%" }}>Patient 1</span>
             </div>
             <hr className='professional-triage-hr'></hr>
@@ -88,7 +89,7 @@ export default function ProfessionalTriageComponent({ status }) {
                     </div>
                 ) : (
                     <NavLink to={'/triage/1/review'} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
-                        <span className='align-line-row' style={{margin: "auto"}}>
+                        <span className='align-line-row' style={{ margin: "auto" }}>
                             <Pencil size={13} /> &nbsp; Review
                         </span>
                     </NavLink>

@@ -21,11 +21,12 @@ import { useSelector } from "react-redux";
 
 export default function ClientDiagnoses() {
     const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);	
 
     const [selected, setSelected] = useState(new Date());
     const [date, setDate] = useState("2023-12-25");
 
-    const urlDiagnoses = `http://10.20.229.55/api/patients/1/diagnosis/date/${date}`;
+    const urlDiagnoses = `http://10.20.229.55/api/patients/${user.id}/diagnosis/date/${date}`;
 
     useEffect(() => {
         if (selected) {

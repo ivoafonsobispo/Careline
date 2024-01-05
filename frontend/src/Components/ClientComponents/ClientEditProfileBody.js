@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function ClientEditProfileBody({ user, setEditProfileClicked, onEditProfileSuccess }) {
-    const token = useSelector((state) => state.auth.token);
+    const token = useSelector((state) => state.auth.token);	
 
     const isNumber = (value) => /^\d+$/.test(value);
 
@@ -85,7 +85,7 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
 
             console.log(JSON.stringify(updatedFields));
 
-            const response = await fetch('http://10.20.229.55/api/patients/1', {
+            const response = await fetch(`http://10.20.229.55/api/patients/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

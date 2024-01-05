@@ -28,7 +28,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function App() {
-  
+
   const [isToggleActive, setIsActive] = useState(false);
   const toggleNavbar = () => {
     setIsActive(!isToggleActive);
@@ -54,7 +54,7 @@ export default function App() {
 
       <div className={token !== null && user !== null ? 'App-body' : ''}>
         {token !== null && user !== null ? (
-          <Navbar isActive={isToggleActive} userType={user.type} />
+          <Navbar isActive={isToggleActive} />
         ) : (<></>)}
         <div className={token !== null && user !== null ? 'App-content-div' : ''}>
           <Routes>

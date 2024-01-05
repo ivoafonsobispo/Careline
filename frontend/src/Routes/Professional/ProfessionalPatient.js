@@ -17,13 +17,14 @@ import PatientInfoList from "../../Components/ProfessionalComponents/Professiona
 
 export default function ProfessionalPatient() {
     const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);	
 
     const { id } = useParams();
-    const [patient, setPatient] = useState(null);
+    const [patient, setPatient] = useState({});
     const [currentList, setCurrentList] = useState("urtriage");
     const [currentDroneStatusFilter, setcurrentDroneStatusFilter] = useState('PENDING');
 
-    const urlPatient = `http://10.20.229.55/api/professionals/1/patients/${id}`;
+    const urlPatient = `http://10.20.229.55/api/professionals/${user.id}/patients/${id}`;
     const urlLastHeartbeat = `http://10.20.229.55/api/patients/${id}/heartbeats/latest?size=1`;
     const urlLastTemperature = `http://10.20.229.55/api/patients/${id}/temperatures/latest?size=1`;
 
@@ -35,7 +36,7 @@ export default function ProfessionalPatient() {
     const [lastTemperature, setLastTemperature] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    const urlDiagnoses = `http://10.20.229.55/api/professionals/1/patients/${id}/diagnosis/latest`;
+    const urlDiagnoses = `http://10.20.229.55/api/professionals/${user.id}/patients/${id}/diagnosis/latest`;
     const [diagnoses, setDiagnoses] = useState(null);
 
     const [heartStyle, setHeartStyle] = useState({
@@ -56,6 +57,7 @@ export default function ProfessionalPatient() {
             }
         })
             .then(response => {
+                console.log(response.data);
                 setPatient(response.data);
             })
             .catch(error => {
@@ -199,8 +201,8 @@ export default function ProfessionalPatient() {
         }
     }, [currentList]);
 
-    if (!patient) return null;
-    if (!lastHeartbeat) return null;
+    // if (!patient || patient === null) return;
+    // if (!lastHeartbeat) return;
 
     return (
         <div className="vertical-container">

@@ -37,6 +37,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function ProfessionalTriageReview() {
     const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -192,7 +193,7 @@ export default function ProfessionalTriageReview() {
 
             //TODO - Fazer patch para alterar estado da triagem para reviewed
 
-            const response = await fetch('http://10.20.229.55/api/professionals/1/patients/1/diagnosis', {
+            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/1/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

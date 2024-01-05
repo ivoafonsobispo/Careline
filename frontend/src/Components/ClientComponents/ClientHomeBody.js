@@ -13,12 +13,13 @@ import { toast, ToastContainer } from 'react-toastify';
 
 import { useSelector } from 'react-redux';
 
-const urlLastHeartbeat = 'http://10.20.229.55/api/patients/1/heartbeats/latest?size=1';
-const urlLastTemperature = 'http://10.20.229.55/api/patients/1/temperatures/latest?size=1';
-
 export default function ClientHomeBody({ date }) {
-  const urlHeartbeats = `http://10.20.229.55/api/patients/1/heartbeats/date/${date}`;
-  const urlDiagnoses = `http://10.20.229.55/api/patients/1/diagnosis/date/${date}`;
+  const user = useSelector((state) => state.auth.user);
+
+  const urlLastHeartbeat = `http://10.20.229.55/api/patients/${user.id}/heartbeats/latest?size=1`;
+  const urlLastTemperature = `http://10.20.229.55/api/patients/${user.id}/temperatures/latest?size=1`;
+  const urlHeartbeats = `http://10.20.229.55/api/patients/${user.id}/heartbeats/date/${date}`;
+  const urlDiagnoses = `http://10.20.229.55/api/patients/${user.id}/diagnosis/date/${date}`;
 
   const [measures, setMeasures] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
@@ -121,7 +122,7 @@ export default function ClientHomeBody({ date }) {
       .catch(error => {
         console.log(error);
       });
-  }, [urlHeartbeats, urlDiagnoses, token]);
+  }, [urlHeartbeats, urlDiagnoses, urlLastHeartbeat, urlLastTemperature, token]);
 
   let stompClient;
 

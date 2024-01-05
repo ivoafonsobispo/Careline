@@ -30,6 +30,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function ClientDrone() {
     const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
 
     const { id } = useParams();
     const [drone, setDrone] = useState(null);
@@ -40,7 +41,7 @@ export default function ClientDrone() {
     const [animate, setAnimate] = useState(false);
     const [currentPosition, setCurrentPosition] = useState([0, 0]);
 
-    const urlDrone = `http://10.20.229.55/api/patients/1/deliveries/${id}`;
+    const urlDrone = `http://10.20.229.55/api/patients/${user.id}/deliveries/${id}`;
 
     useEffect(() => {
         axios.get(urlDrone, {

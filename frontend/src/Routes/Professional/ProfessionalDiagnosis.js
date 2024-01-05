@@ -37,6 +37,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 export default function ProfessionalDiagnosis() {
     const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
     const navigate = useNavigate();
 
     const [medications, setMedications] = useState([]);
@@ -218,7 +219,7 @@ export default function ProfessionalDiagnosis() {
 
             const patient = await responseNUS.json();
 
-            const response = await fetch(`http://10.20.229.55/api/professionals/1/patients/${patient.id}/diagnosis`, {
+            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${patient.id}/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -250,7 +251,7 @@ export default function ProfessionalDiagnosis() {
 
                 console.log(JSON.stringify(droneFields));
 
-                const responseDrone = await fetch(`http://10.20.229.55/api/patients/1/diagnosis/${data.id}/deliveries`, {
+                const responseDrone = await fetch(`http://10.20.229.55/api/patients/${patient.id}/diagnosis/${data.id}/deliveries`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
