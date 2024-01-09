@@ -45,7 +45,7 @@ export default function ClientDrones() {
 
     const [selectedButton, setButton] = useState("all"); // all; pdrones; itdrones; ddrones; fdrones
 
-    const [drones, setDrones] = useState(null);
+    const [drones, setDrones] = useState([]);
 
     useEffect(() => {
 
@@ -76,7 +76,22 @@ export default function ClientDrones() {
             stompClient.connect({}, () => {
                 stompClient.subscribe('/topic/deliveries', (message) => {
                     let newDrone = JSON.parse(message.body);
-                    setDrones((prevDrones) => [newDrone, ...prevDrones]);
+                    if (newDrone.status === 'PENDING') {
+                        setDrones((prevDrones) => [newDrone, ...prevDrones]);
+                    } else {
+                        console.log(newDrone.id);
+                        console.log(drones.findIndex(drone => drone.id === newDrone.id));
+                        const index = drones.findIndex(drone => drone.id === newDrone.id);
+                        
+                        
+                        // drones[index] = newDrone;
+
+                        setDrones((prevDrones) => {
+                            const updatedDrones = [...prevDrones];
+                            updatedDrones[index] = newDrone;
+                            return updatedDrones;
+                        });
+                    }
                 });
             });
 
@@ -110,7 +125,7 @@ export default function ClientDrones() {
                         <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
                             {selectedButton === 'all' ? (
                                 <>
-                                    {!drones || drones.length === 0 ? (
+                                    {!drones || drones === null || drones.length === 0 ? (
                                         <div className='no-records'>No drones yet.</div>
                                     ) : (
                                         <>
@@ -124,7 +139,7 @@ export default function ClientDrones() {
                                 </>
                             ) : selectedButton === 'pdrones' ? (
                                 <>
-                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'PENDING').length === 0 ? (
+                                    {!drones ||drones === null || drones.length === 0 || drones.filter(drone => drone.status === 'PENDING').length === 0 ? (
                                         <div className='no-records'>No pending drones.</div>
                                     ) : (
                                         <>
@@ -138,7 +153,7 @@ export default function ClientDrones() {
                                 </>
                             ) : selectedButton === 'itdrones' ? (
                                 <>
-                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'IN_TRANSIT').length === 0 ? (
+                                    {!drones || drones === null || drones.length === 0 || drones.filter(drone => drone.status === 'IN_TRANSIT').length === 0 ? (
                                         <div className='no-records'>No in transit drones.</div>
                                     ) : (
                                         <>
@@ -152,7 +167,7 @@ export default function ClientDrones() {
                                 </>
                             ) : selectedButton === 'ddrones' ? (
                                 <>
-                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'DELIVERED').length === 0 ? (
+                                    {!drones || drones === null || drones.length === 0 || drones.filter(drone => drone.status === 'DELIVERED').length === 0 ? (
                                         <div className='no-records'>No delivered drones.</div>
                                     ) : (
                                         <>
@@ -166,7 +181,7 @@ export default function ClientDrones() {
                                 </>
                             ) : (
                                 <>
-                                    {!drones || drones.length === 0 || drones.filter(drone => drone.status === 'FAILED').length === 0 ? (
+                                    {!drones || drones === null || drones.length === 0 || drones.filter(drone => drone.status === 'FAILED').length === 0 ? (
                                         <div className='no-records'>No failed drones.</div>
                                     ) : (
                                         <>

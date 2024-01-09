@@ -30,7 +30,7 @@ export default function MeasureList({ title, dataArray }) {
                                 {dataArray.map((measure, index) => {
                                     return (
                                         <div key={index} className="App-client-measure-list-item" style={{ display: "flex", flexDirection: "column" }}>
-                                            <span>{title}: {measure.heartbeat} </span>
+                                            <span>Heartbeat: {measure.heartbeat} BPM </span>
                                             <span className='list-item-date'>{measure.created_at} </span>
                                         </div>
                                     )

@@ -2,6 +2,9 @@ import PageTitle from "../../Components/PageTitle/PageTitle";
 import "../../Components/ClientComponents/ClientBase.css";
 import "./ClientDrone.css"
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -9,6 +12,9 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from "react-redux";
 
 import { Check, ClockHistory, X } from 'react-bootstrap-icons'
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
@@ -29,8 +35,8 @@ L.Marker.prototype.options.icon = DefaultIcon;
 
 
 export default function ClientDrone() {
-    const token = useSelector((state) => state.auth.token);	
-    const user = useSelector((state) => state.auth.user);	
+    const token = useSelector((state) => state.auth.token);
+    const user = useSelector((state) => state.auth.user);
 
     const { id } = useParams();
     const [drone, setDrone] = useState(null);
@@ -42,6 +48,30 @@ export default function ClientDrone() {
     const [currentPosition, setCurrentPosition] = useState([0, 0]);
 
     const urlDrone = `http://10.20.229.55/api/patients/${user.id}/deliveries/${id}`;
+
+    const patchDrone = async () => {
+        const responsePatch = await fetch(`http://10.20.229.55/api/patients/${drone.patient.id}/deliveries/${id}/delivered`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!responsePatch.ok) {
+            console.error('Error:', responsePatch.statusText);
+            return;
+        }
+
+        
+        setAnimate(false);
+        drone.status = 'DELIVERED';
+        toast.success('Drone delivered successfully!', {
+            style: {
+                fontSize: '16px',
+            },
+        });
+    };
 
     useEffect(() => {
         axios.get(urlDrone, {
@@ -96,6 +126,7 @@ export default function ClientDrone() {
                     fraction += 0.05;
                 } else {
                     clearInterval(interval);
+                    patchDrone();
                 }
             }, 1000); // Update every second (adjust as needed)
         };
@@ -104,6 +135,37 @@ export default function ClientDrone() {
             simulateDroneMovement();
         }
     }, [startPosition, endPosition, animate]);
+
+    let stompClient;
+
+    useEffect(() => {
+        const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+        stompClient = Stomp.over(socket);
+        try {
+
+            if (drone !== null) {
+                stompClient.connect({}, () => {
+                    stompClient.subscribe('/topic/deliveries', (message) => {
+                        let newDrone = JSON.parse(message.body);
+                        if (newDrone.id === drone.id) {
+                            setDrone(newDrone);
+                        }
+                    });
+                });
+            }
+
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            // Handle the error here, e.g., show a user-friendly message or retry the connection
+        }
+
+        return () => {
+            if (stompClient && stompClient.connected) {
+                stompClient.disconnect();
+            }
+        };
+    }, [drone]);
+
 
     if (drone === null) return;
 
@@ -115,7 +177,7 @@ export default function ClientDrone() {
                     <div className='align-line-row client-triage-information-box'>
                         <div className='vertical-container' style={{ gap: "10%", width: "24%", minWidth: "40%", marginRight: "3%" }}>
                             <div className='align-line-row'>
-                            <span><b>&#91;</b>{(drone.coordinate.departure_latitude).toFixed(3)}, {(drone.coordinate.departure_longitude).toFixed(3)}<b>&#93;</b> &nbsp; &#8594; &nbsp; <b>&#91;</b>{(drone.coordinate.arrival_latitude).toFixed(3)}, {(drone.coordinate.arrival_longitude).toFixed(3)}<b>&#93;</b></span>    
+                                <span><b>&#91;</b>{(drone.coordinate.departure_latitude).toFixed(3)}, {(drone.coordinate.departure_longitude).toFixed(3)}<b>&#93;</b> &nbsp; &#8594; &nbsp; <b>&#91;</b>{(drone.coordinate.arrival_latitude).toFixed(3)}, {(drone.coordinate.arrival_longitude).toFixed(3)}<b>&#93;</b></span>
                             </div>
                             <div className='align-line-column'>
                                 <div className='align-line-row'>
@@ -198,6 +260,7 @@ export default function ClientDrone() {
                     </MapContainer>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 }

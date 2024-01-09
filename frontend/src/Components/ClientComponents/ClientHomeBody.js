@@ -21,7 +21,7 @@ export default function ClientHomeBody({ date }) {
   const urlHeartbeats = `http://10.20.229.55/api/patients/${user.id}/heartbeats/date/${date}`;
   const urlDiagnoses = `http://10.20.229.55/api/patients/${user.id}/diagnosis/date/${date}`;
 
-  const [measures, setMeasures] = useState(null);
+  const [heartbeats, setHeartbeats] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);
 
   // Heartbeat (value and severity)
@@ -50,7 +50,7 @@ export default function ClientHomeBody({ date }) {
       }
     })
       .then(response => {
-        setMeasures(response.data.content);
+        setHeartbeats(response.data.content);
       })
       .catch(error => {
         // handle the error
@@ -137,6 +137,7 @@ export default function ClientHomeBody({ date }) {
           let newHeartbeat = JSON.parse(message.body);
           setLastHeartbeat(newHeartbeat.heartbeat);
           setHeartbeatSeverity(newHeartbeat.severity);
+          setHeartbeats((prevHeartbeats) => [newHeartbeat, ...prevHeartbeats]);
 
           const newAnimationSpeed = 1 - ((newHeartbeat.heartbeat / (60 + ((newHeartbeat.heartbeat - 60) / 2))) - 1);
           setHeartStyle({
@@ -191,7 +192,7 @@ export default function ClientHomeBody({ date }) {
       </div>
 
       <div className='horizontal-container gap-horizontal' style={{ maxHeight: "300px" }}>
-        <MeasureList title={"Measures"} dataArray={measures} />
+        <MeasureList title={"Measures"} dataArray={heartbeats} />
         <MeasureList title={"Diagnoses"} dataArray={diagnoses} />
       </div>
       <ToastContainer />
