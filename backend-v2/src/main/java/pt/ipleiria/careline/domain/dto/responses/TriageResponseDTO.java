@@ -13,6 +13,7 @@ import java.time.ZonedDateTime;
 @Setter
 @Getter
 public class TriageResponseDTO extends DataResponseDTO {
+    private Long id;
     private PatientResponseDTO patient;
     private Float temperature;
     private Integer heartbeat;
@@ -22,8 +23,9 @@ public class TriageResponseDTO extends DataResponseDTO {
     @JsonProperty("review_date")
     private ZonedDateTime reviewDate;
 
-    public TriageResponseDTO(PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String symptoms, Severity severity, Status status, Instant reviewDate) {
+    public TriageResponseDTO(Long id, PatientResponseDTO patient, Instant createdAt, Float temperature, Integer heartbeat, String symptoms, Severity severity, Status status, Instant reviewDate) {
         super(createdAt, severity);
+        this.id = id;
         this.patient = patient;
         this.temperature = temperature;
         this.heartbeat = heartbeat;
