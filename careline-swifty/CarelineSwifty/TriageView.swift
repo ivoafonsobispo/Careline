@@ -122,7 +122,7 @@ struct CompletedButtonView: View {
                         print("Heartbeat request failed with error: \(error)")
                     }
                 }
-                //self.presentationMode.wrappedValue.dismiss()
+                self.presentationMode.wrappedValue.dismiss()
             }) {
                 HStack{
                     Text("Completed")
