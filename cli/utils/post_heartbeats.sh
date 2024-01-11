@@ -2,7 +2,7 @@
 
 # Set variables
 api_url="http://10.20.229.55/api/patients/1/heartbeats"
-bearer_token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQiOjE3MDQ3MjgyMjUsImV4cCI6MTcwNDczMTgyNX0.9zfqcwTOkYQyp_fImnKpgiP7w8nmO1YzfkdKmxMyivU"
+bearer_token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQiOjE3MDQ3MzU5MTUsImV4cCI6MTcwNDczOTUxNX0.B3WEt6FxoQfUQsQJhHpboSDW0DxojEhWjKZ9ChuufV8"
 
 # Loop for 20 POST requests with random heartbeat values ranging from 60 to 140
 for ((i = 0; i < 20; i++)); do
