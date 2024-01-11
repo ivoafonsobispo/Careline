@@ -56,7 +56,7 @@ export default function SignIn({ setOtherView }) {
         }));
 
         try {
-            const response = await fetch('http://10.20.229.55/api/signin/patient', {
+            const response = await fetch('/signin/patient', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ export default function SignIn({ setOtherView }) {
                 console.log(`Bearer ${responseData.token}`);
                 dispatch(tokenSetter(responseData.token));
 
-                const patientResponse = await fetch(`http://10.20.229.55/api/patients/nus/${nus}`, {
+                const patientResponse = await fetch(`/patients/nus/${nus}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ export default function SignIn({ setOtherView }) {
             } else {
                 // Login failed, handle the error~
                 console.log(response);
-                const secondResponse = await fetch('http://10.20.229.55/api/signin/professional', {
+                const secondResponse = await fetch('/signin/professional', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export default function SignIn({ setOtherView }) {
                     console.log(`Bearer ${secondResponseData.token}`);
                     dispatch(tokenSetter(secondResponseData.token));
 
-                    const professionalResponse = await fetch(`http://10.20.229.55/api/professionals/nus/${nus}`, {
+                    const professionalResponse = await fetch(`/professionals/nus/${nus}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',

@@ -85,7 +85,7 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
 
             console.log(JSON.stringify(updatedFields));
 
-            const response = await fetch(`http://10.20.229.55/api/patients/${user.id}`, {
+            const response = await fetch(`/patients/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

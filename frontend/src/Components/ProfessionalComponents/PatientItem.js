@@ -18,8 +18,8 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
     const [heartbeatSeverity, setHeartbeatSeverity] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    let urlHeartbeat = `http://10.20.229.55/api/patients/${patient.id}/heartbeats/latest`;
-    let urlTemperature = `http://10.20.229.55/api/patients/${patient.id}/temperatures/latest`;
+    let urlHeartbeat = `/patients/${patient.id}/heartbeats/latest`;
+    let urlTemperature = `/patients/${patient.id}/temperatures/latest`;
 
     useEffect(() => {
         axios.get(urlHeartbeat, {
@@ -67,7 +67,7 @@ export default function PatientItem({ patient, title, setAssociatedPatient }) {
 
     const associatePatient = async () => {
         try {
-            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${patient.id}`, {
+            const response = await fetch(`/professionals/${user.id}/patients/${patient.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

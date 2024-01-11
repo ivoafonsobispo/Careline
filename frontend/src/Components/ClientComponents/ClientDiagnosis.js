@@ -12,7 +12,7 @@ export default function ClientDiagnosis({ diagnosis }) {
     const user = useSelector((state) => state.auth.user);	
     const token = useSelector((state) => state.auth.token);	
 
-    const urlPdf = `http://10.20.229.55/api/patients/${user.id}/diagnosis/${diagnosis.id}/pdf`;
+    const urlPdf = `/patients/${user.id}/diagnosis/${diagnosis.id}/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {

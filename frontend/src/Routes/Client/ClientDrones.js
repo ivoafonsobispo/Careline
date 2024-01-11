@@ -25,7 +25,7 @@ export default function ClientDrones() {
     const [date, setDate] = useState("2023-12-25");
 
     // const urlDrones = `http://localhost:8080/api/patients/1/deliveries/date/${date}`;
-    const urlDrones = `http://10.20.229.55/api/patients/${user.id}/deliveries`;
+    const urlDrones = `/patients/${user.id}/deliveries`;
 
     useEffect(() => {
         if (selected) {

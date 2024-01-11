@@ -24,9 +24,9 @@ export default function ProfessionalPatient() {
     const [currentList, setCurrentList] = useState("urtriage");
     const [currentDroneStatusFilter, setcurrentDroneStatusFilter] = useState('PENDING');
 
-    const urlPatient = `http://10.20.229.55/api/professionals/${user.id}/patients/${id}`;
-    const urlLastHeartbeat = `http://10.20.229.55/api/patients/${id}/heartbeats/latest?size=1`;
-    const urlLastTemperature = `http://10.20.229.55/api/patients/${id}/temperatures/latest?size=1`;
+    const urlPatient = `/professionals/${user.id}/patients/${id}`;
+    const urlLastHeartbeat = `/patients/${id}/heartbeats/latest?size=1`;
+    const urlLastTemperature = `/patients/${id}/temperatures/latest?size=1`;
 
     // Heartbeat (value and severity)
     const [lastHeartbeat, setLastHeartbeat] = useState(null);
@@ -36,14 +36,14 @@ export default function ProfessionalPatient() {
     const [lastTemperature, setLastTemperature] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    const urlDiagnoses = `http://10.20.229.55/api/professionals/${user.id}/patients/${id}/diagnosis/latest`;
+    const urlDiagnoses = `/professionals/${user.id}/patients/${id}/diagnosis/latest`;
     const [diagnoses, setDiagnoses] = useState(null);
 
     const [heartStyle, setHeartStyle] = useState({
         animation: `growAndFade 1s ease-in-out infinite alternate`,
     });
 
-    const urlDrones = `http://10.20.229.55/api/patients/${id}/deliveries`;
+    const urlDrones = `/patients/${id}/deliveries`;
     const [drones, setDrones] = useState(null);
 
     useEffect(() => {

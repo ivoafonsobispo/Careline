@@ -85,7 +85,7 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
 
             console.log(JSON.stringify(updatedFields));
 
-            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}`, {
+            const response = await fetch(`/professionals/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
