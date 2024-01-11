@@ -216,7 +216,7 @@ export default function ProfessionalTriageReview() {
 
             //TODO - Fazer patch para alterar estado da triagem para reviewed
 
-            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/1/diagnosis`, {
+            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${triage.patient.id}/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

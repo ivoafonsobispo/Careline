@@ -33,7 +33,7 @@ export default function ClientTriage() {
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
 
     const urlTriage = `http://10.20.229.55/api/patients/${user.id}/triages`;
-    const [triages, setTriages] = useState(null);
+    const [triages, setTriages] = useState([]);
     useEffect(() => {
         axios.get(urlTriage, {
             headers: {
@@ -67,13 +67,8 @@ export default function ClientTriage() {
                     if (newTriage.status === 'UNREVIEWED') {
                         setTriages((prevTriages) => [newTriage, ...prevTriages]);
                     } else {
-                        const index = triages.findIndex(triage => triage.id === newTriage.id);
-                        
-                        setTriages((prevTriages) => {
-                            const updatedTriages = [...prevTriages];
-                            updatedTriages[index] = newTriage;
-                            return updatedTriages;
-                        });
+                        const updatedTriages = triages.map((triage) => (triage.id === newTriage.id ? newTriage : triage));
+                        setTriages(updatedTriages);
                     }
                 });
             });
@@ -89,7 +84,7 @@ export default function ClientTriage() {
                 stompClient.disconnect();
             }
         };
-    }, [urlTriage]);
+    }, [urlTriage, triages]);
 
     return (
         <div className="horizontal-container">

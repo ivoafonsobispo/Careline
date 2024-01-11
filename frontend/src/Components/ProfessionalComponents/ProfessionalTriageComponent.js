@@ -44,7 +44,7 @@ export default function ProfessionalTriageComponent({ triage }) {
                 {triage.status === "REVIEWED" ? (
                    <></>
                 ) : (
-                    <NavLink to={'/triage/1/review'} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
+                    <NavLink to={`/triage/${triage.id}/review`} className='professional-triage-button align-line-row' style={{ marginLeft: "auto", marginRight: "2%", padding: "1% 0%", fontSize: "16px" }}>
                         <span className='align-line-row' style={{ margin: "auto" }}>
                             <Pencil size={13} /> &nbsp; Review
                         </span>

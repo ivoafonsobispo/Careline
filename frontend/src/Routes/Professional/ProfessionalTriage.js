@@ -46,7 +46,7 @@ export default function ProfessionalTriage() {
 
 
     const urlTriage = `http://10.20.229.55/api/triages/date/${date}`;
-    const [triages, setTriages] = useState(null);
+    const [triages, setTriages] = useState([]);
     useEffect(() => {
         axios.get(urlTriage, {
             headers: {
@@ -79,13 +79,13 @@ export default function ProfessionalTriage() {
                     if (newTriage.status !== 'REVIEWED') {
                         setTriages((prevTriages) => [newTriage, ...prevTriages]);
                     } else {
-                        // const index = triages.findIndex(triage => triage.id === newTriage.id);
+                        const index = triages.findIndex(triage => triage.id === newTriage.id);
 
-                        // setTriages((prevTriages) => {
-                        //     const updatedTriages = [...prevTriages];
-                        //     updatedTriages[index] = newTriage;
-                        //     return updatedTriages;
-                        // });
+                        setTriages((prevTriages) => {
+                            const updatedTriages = [...prevTriages];
+                            updatedTriages[index] = newTriage;
+                            return updatedTriages;
+                        });
                     }
                 });
             });
