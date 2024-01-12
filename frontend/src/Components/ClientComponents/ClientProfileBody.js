@@ -2,7 +2,10 @@ import './ClientProfileBody.css'
 
 import { Pencil } from 'react-bootstrap-icons';
 
-export default function ClientProfileBody({ user, setEditProfileClicked }) {
+import { useSelector } from 'react-redux';
+
+export default function ClientProfileBody({ setEditProfileClicked }) {
+    const user = useSelector((state) => state.auth.user);	
 
     return (
         <div className="vertical-container profile-container">

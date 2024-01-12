@@ -7,14 +7,10 @@ import ClientEditProfileBody from "../../Components/ClientComponents/ClientEditP
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-
-import { useSelector } from "react-redux";
+import { useState } from 'react';
 
 
 export default function ClientProfile() {
-  const user = useSelector((state) => state.auth.user);
   const [showForm, setShowForm] = useState(false);
 
   const handleEditProfileClicked = () => {
@@ -34,8 +30,8 @@ export default function ClientProfile() {
       <PageTitle title="Profile" />
       <div className='App-content'>
         {showForm ?
-          (<ClientEditProfileBody user={user} setEditProfileClicked={handleEditProfileClicked} onEditProfileSuccess={handleEditProfileSuccess} />) :
-          (<ClientProfileBody user={user} setEditProfileClicked={handleEditProfileClicked} />)}
+          (<ClientEditProfileBody setEditProfileClicked={handleEditProfileClicked} onEditProfileSuccess={handleEditProfileSuccess} />) :
+          (<ClientProfileBody setEditProfileClicked={handleEditProfileClicked} />)}
         <ToastContainer />
       </div>
     </div>

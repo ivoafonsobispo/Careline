@@ -6,8 +6,13 @@ import { useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
-export default function ClientEditProfileBody({ user, setEditProfileClicked, onEditProfileSuccess }) {
+import { useDispatch } from 'react-redux'
+import { userSetter } from '../../TokenSlice'
+
+export default function ClientEditProfileBody({ setEditProfileClicked, onEditProfileSuccess }) {
     const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
+    const dispatch = useDispatch();
 
     const isNumber = (value) => /^\d+$/.test(value);
 
@@ -29,11 +34,11 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
         setIsValidEmail(isValidEmail);
     };
 
-    const [password, setPassword] = useState(user.password);
+    const [password, setPassword] = useState('');
     const [isValidPassword, setIsValidPassword] = useState(true);
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-        const passwordRegex = /^[^\s@]/;
+        const passwordRegex = /^.{8,}$/;
         const isValidPassword = passwordRegex.test(e.target.value);
         setIsValidPassword(isValidPassword);
     };
@@ -69,7 +74,7 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
                 console.log(updatedFields.email);
             }
 
-            if (password !== user.password) {
+            if (password !== '') {
                 updatedFields.password = password;
                 console.log(updatedFields.password);
             }
@@ -102,10 +107,15 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
 
             // Assuming the server responds with JSON data
             const data = await response.json();
-            user.name = data.name;
-            user.email = data.email;
-            user.nus = data.nus;
-            user.password = data.password;
+            const updatedUser = {
+                id: user.id,
+                name: data.name,
+                email: data.email,
+                nus: data.nus,
+                type: "patient"
+            };
+
+            dispatch(userSetter(updatedUser));
 
             setEditProfileClicked();
             onEditProfileSuccess();
@@ -146,7 +156,7 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
             {/* Password */}
             <div className="horizontal-container" style={{ alignItems: "center" }}>
                 <span className="profile-field-title">Password:</span>
-                <span className={classNames('profile-field', isValidPassword ? '' : 'profile-field-border')} style={{ alignItems: "center", display: "flex" }}>
+                <span className={classNames('profile-field', password === '' || isValidPassword ? '' : 'profile-field-border')} style={{ alignItems: "center", display: "flex" }}>
                     <input
                         type={showPassword ? 'text' : 'password'}
                         value={password}
@@ -158,7 +168,7 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
                     </button>
                 </span>
             </div>
-            {isValidPassword ? <></> : <p className='field-error-message'>Password is invalid</p>}
+            {password === '' || isValidPassword ? <></> : <p className='field-error-message'>Password is invalid</p>}
 
             {/* NUS */}
             <div className="horizontal-container" style={{ alignItems: "center" }}>
@@ -178,7 +188,9 @@ export default function ClientEditProfileBody({ user, setEditProfileClicked, onE
                 <button className="profile-button align-line-row" onClick={() => setEditProfileClicked()}>
                     <X size={25} color="white" /> &nbsp; Back
                 </button>
-                <button className={classNames("profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && isValidPassword) ? "profile-button-disabled" : "")} onClick={handlePostRequest} disabled={!(isValidName && isValidEmail && isValidNus && isValidPassword)}>
+                <button className={classNames("profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && (isValidPassword || password === '')) ? "profile-button-disabled" : "")}
+                 onClick={handlePostRequest}
+                  disabled={!(isValidName && isValidEmail && isValidNus && (isValidPassword || password === ''))}>
                     <Check size={25} color="white" /> &nbsp; Edit Profile
                 </button>
             </div>
