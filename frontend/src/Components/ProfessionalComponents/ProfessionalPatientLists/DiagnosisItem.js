@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 export default function DiagnosisItem({ diagnosis }) {
     const token = useSelector((state) => state.auth.token);	
 
-    const urlPdf = `http://10.20.229.55/api/patients/${diagnosis.patient.id}/diagnosis/${diagnosis.id}/pdf`;
+    const urlPdf = `/patients/${diagnosis.patient.id}/diagnosis/${diagnosis.id}/pdf`;
 
     // const [pdf, setPdf] = useState(null);
     const pdfDownloadClick = () => {

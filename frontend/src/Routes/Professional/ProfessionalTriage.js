@@ -45,7 +45,7 @@ export default function ProfessionalTriage() {
     }, [selected]);
 
 
-    const urlTriage = `http://10.20.229.55/api/triages/date/${date}`;
+    const urlTriage = `/triages/date/${date}`;
     const [triages, setTriages] = useState([]);
     useEffect(() => {
         axios.get(urlTriage, {

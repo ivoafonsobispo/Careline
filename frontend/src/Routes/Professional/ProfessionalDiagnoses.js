@@ -31,7 +31,7 @@ export default function ProfessionalDiagnoses() {
     const [date, setDate] = useState("2023-12-25");
 
     // const urlDiagnoses = `http://localhost:8080/api/professionals/1/diagnosis/latest`;
-    const urlDiagnoses = `http://10.20.229.55/api/professionals/${user.id}/diagnosis/date/${date}`;
+    const urlDiagnoses = `/professionals/${user.id}/diagnosis/date/${date}`;
 
     useEffect(() => {
         if (selected) {

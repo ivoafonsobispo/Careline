@@ -17,9 +17,14 @@ export default function SignIn({ setOtherView }) {
 
     const isNumber = (value) => /^\d+$/.test(value);
 
+    const [errorMessage, setErrorMessage] = useState('');
+
     const [password, setPassword] = useState('');
     const [isValidPassword, setIsValidPassword] = useState(true);
     const handlePasswordChange = (e) => {
+        if (errorMessage !== '') {
+            setErrorMessage('');
+        }
         setPassword(e.target.value);
         const passwordRegex = /^[^\s@]/;
         const isValidPassword = passwordRegex.test(e.target.value);
@@ -35,6 +40,9 @@ export default function SignIn({ setOtherView }) {
     const handleNusChange = (e) => {
         // Check if the entered value is a number
         if ((isNumber(e.target.value) && e.target.value.length <= 9) || e.target.value === '') {
+            if (errorMessage !== '') {
+                setErrorMessage('');
+            }
             setNus(e.target.value);
             const nusRegex = /^\d{9}$/;
             const isValidNus = nusRegex.test(e.target.value);
@@ -42,8 +50,6 @@ export default function SignIn({ setOtherView }) {
         }
 
     };
-
-    // const [errorMessage, setErrorMessage] = useState('');
 
     // const token = useSelector((state) => state.token.value)
     const dispatch = useDispatch()
@@ -56,7 +62,7 @@ export default function SignIn({ setOtherView }) {
         }));
 
         try {
-            const response = await fetch('http://10.20.229.55/api/signin/patient', {
+            const response = await fetch('/signin/patient', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,7 +82,7 @@ export default function SignIn({ setOtherView }) {
                 console.log(`Bearer ${responseData.token}`);
                 dispatch(tokenSetter(responseData.token));
 
-                const patientResponse = await fetch(`http://10.20.229.55/api/patients/nus/${nus}`, {
+                const patientResponse = await fetch(`/patients/nus/${nus}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -95,7 +101,7 @@ export default function SignIn({ setOtherView }) {
             } else {
                 // Login failed, handle the error~
                 console.log(response);
-                const secondResponse = await fetch('http://10.20.229.55/api/signin/professional', {
+                const secondResponse = await fetch('/signin/professional', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -115,7 +121,7 @@ export default function SignIn({ setOtherView }) {
                     console.log(`Bearer ${secondResponseData.token}`);
                     dispatch(tokenSetter(secondResponseData.token));
 
-                    const professionalResponse = await fetch(`http://10.20.229.55/api/professionals/nus/${nus}`, {
+                    const professionalResponse = await fetch(`/professionals/nus/${nus}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -125,14 +131,18 @@ export default function SignIn({ setOtherView }) {
 
 
                     const professionalResponseData = await professionalResponse.json();
-                    professionalResponseData.type = "professional"; 
+                    professionalResponseData.type = "professional";
                     console.log(professionalResponseData);
                     dispatch(userSetter(professionalResponseData));
 
                     navigate('/');
                 }
+
+
+                setErrorMessage('Incorrect NUS or password');
             }
         } catch (error) {
+            setErrorMessage('NUS or password incorrect');
             console.error('Error during login:', error);
         }
     };
@@ -170,11 +180,12 @@ export default function SignIn({ setOtherView }) {
                     </span>
                 </div>
                 {isValidPassword ? <></> : <p className='field-error-message'>Password is invalid</p>}
+                {errorMessage === '' ? <></> : <p className='field-error-message'>{errorMessage}</p>}
 
                 {/* Edit Button */}
                 <div className="vertical-container" style={{ alignItems: "center" }}>
-                    <button className={classNames("profile-button align-line-row", !(isValidNus && isValidPassword) ? "profile-button-disabled" : "")}
-                        disabled={!(isValidNus && isValidPassword)}
+                    <button className={classNames("profile-button align-line-row", (nus === '' || password === '') || !(isValidNus && isValidPassword) ? "profile-button-disabled" : "")}
+                        disabled={(nus !== '' && password !== '') && !(isValidNus && isValidPassword)}
                         style={{ width: "20%" }}
                         onClick={handleLogin}>
                         <span className="align-line-row" style={{ margin: "0 auto" }}><BoxArrowInRight size={25} color="white" /> &nbsp; Sign In</span>

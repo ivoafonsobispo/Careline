@@ -17,7 +17,7 @@ export default function ProfessionalPatients() {
     const [sortAvailable, setSortAvailable] = useState("");
 
     const getPatients = () => {
-        axios.get(`http://10.20.229.55/api/professionals/${user.id}/patients/available?sort=${sortAvailable}`, {
+        axios.get(`/professionals/${user.id}/patients/available?sort=${sortAvailable}`, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 Authorization: `Bearer ${token}`,
@@ -33,7 +33,7 @@ export default function ProfessionalPatients() {
             .catch(error => {
                 console.log(error);
             });
-        axios.get(`http://10.20.229.55/api/professionals/${user.id}/patients?sort=${sortAssociated}`, {
+        axios.get(`/professionals/${user.id}/patients?sort=${sortAssociated}`, {
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 Authorization: `Bearer ${token}`,

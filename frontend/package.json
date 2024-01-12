@@ -2,6 +2,7 @@
   "name": "careline-frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://10.20.229.55/api",
   "dependencies": {
     "@react-google-maps/api": "^2.19.2",
     "@reduxjs/toolkit": "^2.0.1",

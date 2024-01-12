@@ -38,8 +38,8 @@ export default function ClientMeasures() {
     footer = <p>You picked {format(selected, 'PP')}.</p>;
   }
 
-  const urlHeartbeats = `http://10.20.229.55/api/patients/${user.id}/heartbeats/date/${date}`;
-  const urlTemperatures = `http://10.20.229.55/api/patients/${user.id}/temperatures/date/${date}`;
+  const urlHeartbeats = `/patients/${user.id}/heartbeats/date/${date}`;
+  const urlTemperatures = `/patients/${user.id}/temperatures/date/${date}`;
 
   const [heartbeats, setHeartbeats] = useState(null);
   const [temperatures, setTemperatures] = useState(null);

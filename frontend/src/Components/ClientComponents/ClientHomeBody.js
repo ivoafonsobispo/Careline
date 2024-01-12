@@ -16,10 +16,10 @@ import { useSelector } from 'react-redux';
 export default function ClientHomeBody({ date }) {
   const user = useSelector((state) => state.auth.user);
 
-  const urlLastHeartbeat = `http://10.20.229.55/api/patients/${user.id}/heartbeats/latest?size=1`;
-  const urlLastTemperature = `http://10.20.229.55/api/patients/${user.id}/temperatures/latest?size=1`;
-  const urlHeartbeats = `http://10.20.229.55/api/patients/${user.id}/heartbeats/date/${date}`;
-  const urlDiagnoses = `http://10.20.229.55/api/patients/${user.id}/diagnosis/date/${date}`;
+  const urlLastHeartbeat = `/patients/${user.id}/heartbeats/latest?size=1`;
+  const urlLastTemperature = `/patients/${user.id}/temperatures/latest?size=1`;
+  const urlHeartbeats = `/patients/${user.id}/heartbeats/date/${date}`;
+  const urlDiagnoses = `/patients/${user.id}/diagnosis/date/${date}`;
 
   const [heartbeats, setHeartbeats] = useState(null);
   const [diagnoses, setDiagnoses] = useState(null);

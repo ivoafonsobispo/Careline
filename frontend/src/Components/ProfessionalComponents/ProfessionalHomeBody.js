@@ -11,7 +11,7 @@ export default function ProfessionalHomeBody() {
   const token = useSelector((state) => state.auth.token);
   const user = useSelector((state) => state.auth.user);
 
-  const urlAvailablePatients = `http://10.20.229.55/api/professionals/${user.id}/patients`;
+  const urlAvailablePatients = `/professionals/${user.id}/patients`;
 
   const [availablePatients, setAvailablePatients] = useState(null);
 
