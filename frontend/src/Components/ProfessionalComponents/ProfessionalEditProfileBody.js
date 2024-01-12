@@ -6,8 +6,13 @@ import { useSelector } from 'react-redux';
 import { Eye, EyeSlash, Check, X } from 'react-bootstrap-icons';
 import { useState } from 'react';
 
-export default function ProfessionalEditProfileBody({user, setEditProfileClicked, onEditProfileSuccess}) {
+import { useDispatch } from 'react-redux'
+import { userSetter } from '../../TokenSlice'
+
+export default function ProfessionalEditProfileBody({setEditProfileClicked, onEditProfileSuccess}) {
     const token = useSelector((state) => state.auth.token);	
+    const user = useSelector((state) => state.auth.user);	
+    const dispatch = useDispatch();
 
     const isNumber = (value) => /^\d+$/.test(value);
 
@@ -29,11 +34,11 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
         setIsValidEmail(isValidEmail);
     };
 
-    const [password, setPassword] = useState(user.password);
+    const [password, setPassword] = useState('');
     const [isValidPassword, setIsValidPassword] = useState(true);
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-        const passwordRegex = /^[^\s@]/;
+        const passwordRegex = /^.{8,}$/;
         const isValidPassword = passwordRegex.test(e.target.value);
         setIsValidPassword(isValidPassword);
     };
@@ -69,7 +74,7 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
                 console.log(updatedFields.email);
             }
 
-            if (password !== user.password) {
+            if (password !== '') {
                 updatedFields.password = password;
                 console.log(updatedFields.password);
             }
@@ -85,7 +90,7 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
 
             console.log(JSON.stringify(updatedFields));
 
-            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}`, {
+            const response = await fetch(`/professionals/${user.id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,10 +107,16 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
 
             // Assuming the server responds with JSON data
             const data = await response.json();
-            user.name = data.name;
-            user.email = data.email;
-            user.nus = data.nus;
-            user.password = data.password;
+
+            const updatedUser = {
+                id: user.id,
+                name: data.name,
+                email: data.email,
+                nus: data.nus,
+                type: "professional"
+            };
+
+            dispatch(userSetter(updatedUser));
 
             setEditProfileClicked();
             onEditProfileSuccess();
@@ -148,7 +159,7 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
             {/* Password */}
             <div className="horizontal-container" style={{ alignItems: "center" }}>
                 <span className="profile-field-title">Password:</span>
-                <span className={classNames('professional-profile-field', isValidPassword ? '' : 'professional-profile-field-border')} style={{ alignItems: "center", display: "flex" }}>
+                <span className={classNames('professional-profile-field', password === '' || isValidPassword ? '' : 'professional-profile-field-border')} style={{ alignItems: "center", display: "flex" }}>
                     <input
                         type={showPassword ? 'text' : 'password'}
                         value={password}
@@ -161,7 +172,7 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
                     </button>
                 </span>
             </div>
-            {isValidPassword ? <></> : <p className='field-error-message'>Password is invalid</p>}
+            {password === '' || isValidPassword ? <></> : <p className='field-error-message'>Password is invalid</p>}
 
             {/* NUS */}
             <div className="horizontal-container" style={{ alignItems: "center" }}>
@@ -182,7 +193,8 @@ export default function ProfessionalEditProfileBody({user, setEditProfileClicked
                 <button className="professional-profile-button align-line-row" onClick={() => setEditProfileClicked()}>
                     <X size={25} color="white" /> &nbsp; Back
                 </button>
-                <button className={classNames("professional-profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && isValidPassword) ? "professional-profile-button-disabled" : "")} onClick={handlePostRequest} disabled={!(isValidName && isValidEmail && isValidNus && isValidPassword)}>
+                <button className={classNames("professional-profile-button align-line-row", !(isValidName && isValidEmail && isValidNus && (isValidPassword || password === '')) ? "professional-profile-button-disabled" : "")}
+                 onClick={handlePostRequest} disabled={!(isValidName && isValidEmail && isValidNus && (isValidPassword || password === ''))}>
                     <Check size={25} color="white" /> &nbsp; Edit Profile
                 </button>
             </div>

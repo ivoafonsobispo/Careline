@@ -47,10 +47,10 @@ export default function ClientDrone() {
     const [animate, setAnimate] = useState(false);
     const [currentPosition, setCurrentPosition] = useState([0, 0]);
 
-    const urlDrone = `http://10.20.229.55/api/patients/${user.id}/deliveries/${id}`;
+    const urlDrone = `/patients/${user.id}/deliveries/${id}`;
 
     const patchDrone = async () => {
-        const responsePatch = await fetch(`http://10.20.229.55/api/patients/${drone.patient.id}/deliveries/${id}/delivered`, {
+        const responsePatch = await fetch(`/patients/${drone.patient.id}/deliveries/${id}/delivered`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

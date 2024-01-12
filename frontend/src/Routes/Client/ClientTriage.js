@@ -32,7 +32,7 @@ export default function ClientTriage() {
 
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
 
-    const urlTriage = `http://10.20.229.55/api/patients/${user.id}/triages`;
+    const urlTriage = `/patients/${user.id}/triages`;
     const [triages, setTriages] = useState([]);
     useEffect(() => {
         axios.get(urlTriage, {

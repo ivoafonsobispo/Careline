@@ -43,7 +43,7 @@ export default function ProfessionalTriageReview() {
     const { id } = useParams();
     const [triage, setTriage] = useState(null);
 
-    const urlTriage = `http://10.20.229.55/api/triages/${id}`;
+    const urlTriage = `/triages/${id}`;
     useEffect(() => {
         axios.get(urlTriage, {
             headers: {
@@ -216,7 +216,7 @@ export default function ProfessionalTriageReview() {
 
             //TODO - Fazer patch para alterar estado da triagem para reviewed
 
-            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${triage.patient.id}/diagnosis`, {
+            const response = await fetch(`/professionals/${user.id}/patients/${triage.patient.id}/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ export default function ProfessionalTriageReview() {
 
                 console.log(JSON.stringify(droneFields));
 
-                const responseDrone = await fetch(`http://10.20.229.55/api/patients/1/diagnosis/${data.id}/deliveries`, {
+                const responseDrone = await fetch(`/patients/1/diagnosis/${data.id}/deliveries`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -262,7 +262,7 @@ export default function ProfessionalTriageReview() {
                     return;
                 }
 
-                const responsePatch = await fetch(`http://10.20.229.55/api/patients/${triage.patient.id}/triages/${id}/reviewed`, {
+                const responsePatch = await fetch(`/patients/${triage.patient.id}/triages/${id}/reviewed`, {
                     method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
