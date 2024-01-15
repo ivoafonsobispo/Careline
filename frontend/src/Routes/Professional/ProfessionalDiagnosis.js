@@ -202,7 +202,7 @@ export default function ProfessionalDiagnosis() {
             console.log(diganosisFields);
             console.log(JSON.stringify(diganosisFields));
 
-            const responseNUS = await fetch(`http://10.20.229.55/api/patients/nus/${nus}`, {
+            const responseNUS = await fetch(`/patients/nus/${nus}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -219,7 +219,7 @@ export default function ProfessionalDiagnosis() {
 
             const patient = await responseNUS.json();
 
-            const response = await fetch(`http://10.20.229.55/api/professionals/${user.id}/patients/${patient.id}/diagnosis`, {
+            const response = await fetch(`/professionals/${user.id}/patients/${patient.id}/diagnosis`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -251,7 +251,7 @@ export default function ProfessionalDiagnosis() {
 
                 console.log(JSON.stringify(droneFields));
 
-                const responseDrone = await fetch(`http://10.20.229.55/api/patients/${patient.id}/diagnosis/${data.id}/deliveries`, {
+                const responseDrone = await fetch(`/patients/${patient.id}/diagnosis/${data.id}/deliveries`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

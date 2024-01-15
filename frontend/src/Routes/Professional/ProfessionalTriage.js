@@ -16,11 +16,15 @@ import classNames from "classnames";
 import axios from "axios";
 import { useEffect } from "react";
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import { useSelector } from "react-redux";
 
 export default function ProfessionalTriage() {
     const token = useSelector((state) => state.auth.token);
     const [selected, setSelected] = useState(new Date());
+    const [date, setDate] = useState("2023-12-25");
 
     let footer = <p>Please pick a day.</p>;
     if (selected) {
@@ -29,20 +33,20 @@ export default function ProfessionalTriage() {
 
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
 
-    // useEffect(() => {
-    //     if (selected) {
-    //         const year = selected.getFullYear();
-    //         const month = String(selected.getMonth() + 1).padStart(2, '0');
-    //         const day = String(selected.getDate()).padStart(2, '0');
-    //         const formattedDate = `${year}-${month}-${day}`;
-    //         setDate(formattedDate);
-    //         console.log(formattedDate);
-    //     }
-    // }, [selected]);
+    useEffect(() => {
+        if (selected) {
+            const year = selected.getFullYear();
+            const month = String(selected.getMonth() + 1).padStart(2, '0');
+            const day = String(selected.getDate()).padStart(2, '0');
+            const formattedDate = `${year}-${month}-${day}`;
+            setDate(formattedDate);
+            console.log(formattedDate);
+        }
+    }, [selected]);
 
 
-    const urlTriage = `http://10.20.229.55/api/triages`;
-    const [triages, setTriages] = useState(null);
+    const urlTriage = `/triages/date/${date}`;
+    const [triages, setTriages] = useState([]);
     useEffect(() => {
         axios.get(urlTriage, {
             headers: {
@@ -62,6 +66,43 @@ export default function ProfessionalTriage() {
             });
     }, [urlTriage, token]);
 
+    let stompClient;
+
+    useEffect(() => {
+        const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+        stompClient = Stomp.over(socket);
+
+        try {
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/topic/triages', (message) => {
+                    let newTriage = JSON.parse(message.body);
+                    if (newTriage.status !== 'REVIEWED') {
+                        setTriages((prevTriages) => [newTriage, ...prevTriages]);
+                    } else {
+                        const index = triages.findIndex(triage => triage.id === newTriage.id);
+
+                        setTriages((prevTriages) => {
+                            const updatedTriages = [...prevTriages];
+                            updatedTriages[index] = newTriage;
+                            return updatedTriages;
+                        });
+                    }
+                });
+            });
+
+
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            // Handle the error here, e.g., show a user-friendly message or retry the connection
+        }
+
+        return () => {
+            if (stompClient && stompClient.connected) {
+                stompClient.disconnect();
+            }
+        };
+    }, []);
+
     return (
         <div className="horizontal-container">
             <div className="vertical-container">
@@ -76,7 +117,7 @@ export default function ProfessionalTriage() {
                         <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
                             {selectedButton === 'all' ? (
                                 <>
-                                    {!triages || triages.length === 0 ? (
+                                    {!triages || triages === null || triages.length === 0 ? (
                                         <div className='no-records'>No triage yet.</div>
                                     ) : (
                                         <>

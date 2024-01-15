@@ -12,6 +12,9 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../../DayPicker.css';
 
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import axios from "axios";
@@ -29,8 +32,8 @@ export default function ClientTriage() {
 
     const [selectedButton, setButton] = useState("all"); // all; urtriage; rtriage
 
-    const urlTriage = `http://10.20.229.55/api/patients/${user.id}/triages`;
-    const [triages, setTriages] = useState(null);
+    const urlTriage = `/patients/${user.id}/triages`;
+    const [triages, setTriages] = useState([]);
     useEffect(() => {
         axios.get(urlTriage, {
             headers: {
@@ -50,6 +53,39 @@ export default function ClientTriage() {
             });
     }, [urlTriage, token]);
 
+    let stompClient;
+
+    useEffect(() => {
+        const socket = new SockJS('http://10.20.229.55/websocket-endpoint');
+        stompClient = Stomp.over(socket);
+
+        try {
+            stompClient.connect({}, () => {
+                stompClient.subscribe('/topic/triages', (message) => {
+                    
+                    let newTriage = JSON.parse(message.body);
+                    if (newTriage.status === 'UNREVIEWED') {
+                        setTriages((prevTriages) => [newTriage, ...prevTriages]);
+                    } else {
+                        const updatedTriages = triages.map((triage) => (triage.id === newTriage.id ? newTriage : triage));
+                        setTriages(updatedTriages);
+                    }
+                });
+            });
+
+
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+            // Handle the error here, e.g., show a user-friendly message or retry the connection
+        }
+
+        return () => {
+            if (stompClient && stompClient.connected) {
+                stompClient.disconnect();
+            }
+        };
+    }, [urlTriage, triages]);
+
     return (
         <div className="horizontal-container">
             <div className="vertical-container">
@@ -62,9 +98,9 @@ export default function ClientTriage() {
                             <button className={classNames("triage-button", selectedButton !== 'rtriage' ? "triage-button-inactive" : "")} onClick={() => setButton("rtriage")}>Reviewed Triage</button>
                         </div>
                         <div className="vertical-container diagnoses-list" style={{ maxHeight: "470px" }}>
-                        {selectedButton === 'all' ? (
+                            {selectedButton === 'all' ? (
                                 <>
-                                    {!triages || triages.length === 0 ? (
+                                    {!triages || triages === null || triages.length === 0 ? (
                                         <div className='no-records'>No triage yet.</div>
                                     ) : (
                                         <>

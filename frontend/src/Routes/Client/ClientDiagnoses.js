@@ -26,7 +26,7 @@ export default function ClientDiagnoses() {
     const [selected, setSelected] = useState(new Date());
     const [date, setDate] = useState("2023-12-25");
 
-    const urlDiagnoses = `http://10.20.229.55/api/patients/${user.id}/diagnosis/date/${date}`;
+    const urlDiagnoses = `/patients/${user.id}/diagnosis/date/${date}`;
 
     useEffect(() => {
         if (selected) {

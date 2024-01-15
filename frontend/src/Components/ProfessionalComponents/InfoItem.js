@@ -16,8 +16,8 @@ export default function InfoItem({ patient }) {
     const [heartbeatSeverity, setHeartbeatSeverity] = useState(null);
     const [temperatureSeverity, setTemperatureSeverity] = useState(null);
 
-    let urlHeartbeat = `http://10.20.229.55/api/patients/${patient.id}/heartbeats/latest`;
-    let urlTemperature = `http://10.20.229.55/api/patients/${patient.id}/temperatures/latest`;
+    let urlHeartbeat = `/patients/${patient.id}/heartbeats/latest`;
+    let urlTemperature = `/patients/${patient.id}/temperatures/latest`;
 
     useEffect(() => {
         axios.get(urlHeartbeat, {

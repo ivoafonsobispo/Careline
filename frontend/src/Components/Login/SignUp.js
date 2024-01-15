@@ -67,7 +67,7 @@ export default function SignUp({ setOtherView }) {
     // const [errorMessage, setErrorMessage] = useState('');
     const handleSignUp = async () => {
         try {
-            const response = await fetch('http://10.20.229.55/api/signup/patient', {
+            const response = await fetch('/signup/patient', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
