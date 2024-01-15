@@ -1,5 +1,6 @@
 package pt.ipleiria.careline.services.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
+@Slf4j
 public class ProfessionalServiceImpl implements ProfessionalService {
     private final ProfessionalRepository professionalRepository;
     private final PatientRepository patientRepository;
@@ -40,38 +42,45 @@ public class ProfessionalServiceImpl implements ProfessionalService {
     @Override
     public ProfessionalEntity save(ProfessionalEntity professionalEntity) {
         validateProfessional(professionalEntity);
+        log.atError().log("Saving professional - {}", professionalEntity);
         return professionalRepository.save(professionalEntity);
     }
 
     @Override
     public Optional<ProfessionalEntity> getProfessionalById(Long id) {
+        log.atInfo().log("Getting professional by id - {}", id);
         return professionalRepository.findById(id);
     }
 
     @Override
     public Optional<ProfessionalEntity> getProfessionalByNus(String nus) {
+        log.atInfo().log("Getting professional by nus - {}", nus);
         return professionalRepository.findByNus(nus);
     }
 
     @Override
     public List<ProfessionalEntity> findAll() {
+        log.atInfo().log("Getting all professionals");
         return StreamSupport.stream(professionalRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Page<ProfessionalEntity> findAll(Pageable pageable) {
+        log.atInfo().log("Getting all professionals");
         return professionalRepository.findAll(pageable);
     }
 
     @Override
     public boolean isExists(Long id) {
+        log.atInfo().log("Checking if professional exists - {}", id);
         return professionalRepository.existsById(id);
     }
 
     @Override
     public ProfessionalEntity partialUpdate(Long id, ProfessionalEntity professionalEntity) {
         professionalEntity.setId(id);
+        log.atInfo().log("Partial update professional - {}", professionalEntity);
         return professionalRepository.findById(id).map(existingProfessional -> {
             Optional.ofNullable(professionalEntity.getName()).ifPresent(existingProfessional::setName);
             Optional.ofNullable(professionalEntity.getEmail()).ifPresent(existingProfessional::setEmail);
@@ -84,6 +93,7 @@ public class ProfessionalServiceImpl implements ProfessionalService {
 
     @Override
     public void delete(Long id) {
+        log.atInfo().log("Delete professional by id - {}", id);
         professionalRepository.deleteById(id);
     }
 
@@ -95,18 +105,22 @@ public class ProfessionalServiceImpl implements ProfessionalService {
         professional.getPatients().add(patient);
         patientService.setProfessionalToPatient(professional, patient);
 
+        log.atInfo().log("Set patient to professional - {}", professional);
+
         partialUpdate(professionalId, professional);
     }
 
     @Override
     public Page<PatientEntity> getProfessionalPatients(Long professionalId, Pageable pageable) {
         ProfessionalEntity professional = professionalRepository.findById(professionalId).orElseThrow(ProfessionalException::new);
+        log.atInfo().log("Get professional patients - {}", professional);
         return patientRepository.findByProfessionalsId(professional.getId(), pageable);
     }
 
     @Override
     public Page<PatientEntity> getAvailablePatient(Long professionalId, Pageable pageable) {
         professionalRepository.findById(professionalId).orElseThrow(ProfessionalException::new);
+        log.atInfo().log("Get available patients");
         return patientRepository.findByProfessionalsIdIsNull(pageable);
     }
 
@@ -118,13 +132,21 @@ public class ProfessionalServiceImpl implements ProfessionalService {
 
     private void validateProfessional(ProfessionalEntity professionalEntity) {
         List<String> errors = new ArrayList<>();
-        if (professionalRepository.findByNus(professionalEntity.getNus()).isPresent())
+        if (professionalRepository.findByNus(professionalEntity.getNus()).isPresent()) {
             errors.add("NUS already exists");
-        if (professionalRepository.findByEmail(professionalEntity.getEmail()).isPresent())
+            log.atError().log("NUS already exists - {}", professionalEntity.getNus());
+        }
+        if (professionalRepository.findByEmail(professionalEntity.getEmail()).isPresent()) {
             errors.add("Email already exists");
-        if (!UserValidation.isNusValid(professionalEntity.getNus()))
+            log.atError().log("Email already exists - {}", professionalEntity.getEmail());
+        }
+        if (!UserValidation.isNusValid(professionalEntity.getNus())) {
             errors.add("Invalid NUS");
-        if (!errors.isEmpty())
+            log.atError().log("Invalid NUS - {}", professionalEntity.getNus());
+        }
+        if (!errors.isEmpty()) {
+            log.atError().log("Invalid professional - {}", professionalEntity);
             throw new IllegalArgumentException(String.join(", ", errors));
+        }
     }
 }

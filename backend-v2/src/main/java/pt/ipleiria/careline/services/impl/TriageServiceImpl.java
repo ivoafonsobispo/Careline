@@ -1,5 +1,6 @@
 package pt.ipleiria.careline.services.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class TriageServiceImpl implements TriageService {
     private final TriageRepository triageRepository;
     private final PatientService patientService;
@@ -33,8 +35,10 @@ public class TriageServiceImpl implements TriageService {
     public TriageEntity save(TriageEntity triageEntity, Long patientId) {
         // Set Patient
         Optional<PatientEntity> patient = patientService.getPatientById(patientId);
-        if (patient.isEmpty())
+        if (patient.isEmpty()) {
+            log.atError().log("Patient does not exist - {}", patientId);
             throw new PatientException();
+        }
 
         triageEntity.setPatient(patient.get());
 
@@ -57,52 +61,62 @@ public class TriageServiceImpl implements TriageService {
         triageEntity.setStatus(Status.UNREVIEWED);
         triageEntity.setReviewDate(Instant.EPOCH);
 
+        log.atInfo().log("Saving triage - {}", triageEntity);
         return triageRepository.save(triageEntity);
     }
 
     @Override
     public Optional<TriageEntity> getTriageById(Long id) {
+        log.atInfo().log("Getting triage by id - {}", id);
         return triageRepository.findById(id);
     }
 
     @Override
     public Page<TriageEntity> getTriagesByPatient(Pageable pageable, PatientEntity patient) {
+        log.atInfo().log("Getting triages by patient - {}", patient);
         return triageRepository.getTriagesByPatient(pageable, patient);
     }
 
     @Override
     public Optional<TriageEntity> getTriageByPatient(PatientEntity patient, Long triageID) {
+        log.atInfo().log("Getting triage by patient - {}", patient);
         return triageRepository.getTriageByPatient(patient, triageID);
     }
 
     @Override
     public Optional<TriageEntity> findLastParientTriage(PatientEntity patient) {
+        log.atInfo().log("Getting last triage by patient - {}", patient);
         return triageRepository.findLastParientTriage(patient);
     }
 
     @Override
     public List<TriageEntity> findAll() {
+        log.atInfo().log("Getting all triages");
         return triageRepository.findAll();
     }
 
     @Override
     public Page<TriageEntity> findAll(Pageable pageable) {
+        log.atInfo().log("Getting all triages");
         return triageRepository.findAll(pageable);
     }
 
     @Override
     public Optional<TriageEntity> findLastTriage() {
+        log.atInfo().log("Getting last triage");
         return triageRepository.findLastTriage();
     }
 
     @Override
     public boolean isExists(Long id) {
+        log.atInfo().log("Checking if triage exists - {}", id);
         return triageRepository.existsById(id);
     }
 
     @Override
     public TriageEntity partialUpdate(Long id, TriageEntity triageEntity) {
         triageEntity.setId(id);
+        log.info("Partial update Triage - {}", triageEntity);
         return triageRepository.findById(id).map(existingTriage -> {
             Optional.ofNullable(triageEntity.getHeartbeat()).ifPresent(existingTriage::setHeartbeat);
             Optional.ofNullable(triageEntity.getTemperature()).ifPresent(existingTriage::setTemperature);
@@ -117,6 +131,7 @@ public class TriageServiceImpl implements TriageService {
 
     @Override
     public void delete(Long id) {
+        log.info("Delete Triage - {}", id);
         Optional<TriageEntity> opt = triageRepository.findById(id);
         opt.ifPresent(triageRepository::delete);
     }
@@ -127,32 +142,40 @@ public class TriageServiceImpl implements TriageService {
         Instant startDate = dateConversionUtil.convertStringToStartOfDayInstant(date);
         Instant endDate = dateConversionUtil.convertStringToEndOfDayInstant(date);
 
+        log.atInfo().log("Getting all triages by date - {}", date);
+
         return triageRepository.findAllByCreatedAtBetweenOrderByCreatedAtDesc(pageable, startDate, endDate);
     }
 
     @Override
     public Page<TriageEntity> findAllLatest(Pageable pageable) {
+        log.atInfo().log("Getting all latest triages");
         return triageRepository.findAllOrderByCreatedAtDesc(pageable);
     }
 
     @Override
     public TriageEntity setTriageReviewed(Long patientId, Long triageId) {
         Optional<TriageEntity> triage = triageRepository.findById(triageId);
-        if (triage.isEmpty())
+        if (triage.isEmpty()) {
+            log.atError().log("Triage does not exist - {}", triageId);
             throw new RuntimeException("Triage not found");
+        }
 
         triage.get().setStatus(Status.REVIEWED);
         triage.get().setReviewDate(Instant.now());
+        log.atInfo().log("Changed Triage status to REVIEWED - {}", triageId);
         return partialUpdate(triageId, triage.get());
     }
 
     @Override
     public Page<TriageEntity> findAllUnreviewed(Pageable pageable) {
+        log.atInfo().log("Getting all unreviewed triages");
         return triageRepository.findAllByStatusOrderByCreatedAtDesc(pageable, Status.UNREVIEWED);
     }
 
     @Override
     public Page<TriageEntity> findAllOfPatient(Pageable pageable, Long patientId) {
+        log.atInfo().log("Getting all triages of patient - {}", patientId);
         return triageRepository.findAllByPatientIdOrderByCreatedAtDesc(pageable, patientId);
     }
 }
