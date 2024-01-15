@@ -125,7 +125,7 @@ String header;
 //Set the subnet you will ALLOW traffic from. 
 //Right now it just supports /24, /16 or /8 networks. 
 //i.e. allowNet="192.168.1"  | allowNet="172.16" | allowNet="10" 
-String allowNet = "192.168.1"; 
+String allowNet = "10.20.229"; 
 
 void handleRoot() {
   server.send(200, "text/plain", "Hello from esp8266 over HTTPS!");
