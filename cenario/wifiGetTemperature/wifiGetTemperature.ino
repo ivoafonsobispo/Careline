@@ -1,7 +1,17 @@
-#include "Arduino.h"
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
+#include <ESP8266WebServerSecure.h>
+#include <ESP8266mDNS.h>
+#include <umm_malloc/umm_malloc.h>
+#include <umm_malloc/umm_heap_select.h>
+#include "Arduino.h"
 #include "OneWire.h"
 #include "DallasTemperature.h"
+
+#ifndef STASSID
+#define STASSID "SSID_NAME"
+#define STAPSK "PASSWORD"
+#endif
 
 class Firewall {
 public:
@@ -68,20 +78,20 @@ int Firewall::checkFirewall(String clientIP, String allowNet) {
 }
 
 
-const char WiFiSSID[] = "labs"; //Enter SSID
-const char WiFiPSK[] = "password"; //Enter Password
+const char* ssid = STASSID;
+const char* password = STAPSK;
+
+BearSSL::ESP8266WebServerSecure server(443);
+BearSSL::ServerSessions serverCache(5);
+
+#define USING_INSECURE_CERTS_AND_KEYS_AND_CAS 1
+#include "ssl-tls-ca-key-cert-example.h"
+
+String bigChunk;
+
+Firewall firewall;
 
 const int tempPin = A0;
-
-//Set the subnet you will ALLOW traffic from. 
-//Right now it just supports /24, /16 or /8 networks. 
-//i.e. allowNet="192.168.1"  | allowNet="172.16" | allowNet="10" 
-String allowNet = "10.20.229"; 
-
-WiFiServer server(80);
-
-//Instantiate the firewall
-Firewall firewall;
 
 // Assign output variables to GPIO pins
 const int output5 = 5;
@@ -112,143 +122,185 @@ IPAddress secondaryDNS(8, 8, 4, 4); //optional
 // Variable to store the HTTP request
 String header;
 
-void setup()
-{
+//Set the subnet you will ALLOW traffic from. 
+//Right now it just supports /24, /16 or /8 networks. 
+//i.e. allowNet="192.168.1"  | allowNet="172.16" | allowNet="10" 
+String allowNet = "192.168.1"; 
+
+void handleRoot() {
+  server.send(200, "text/plain", "Hello from esp8266 over HTTPS!");
+}
+
+void handleNotFound() {
+  String message = "File Not Found\n\n";
+  message += "URI: ";
+  message += server.uri();
+  message += "\nMethod: ";
+  message += (server.method() == HTTP_GET) ? "GET" : "POST";
+  message += "\nArguments: ";
+  message += server.args();
+  message += "\n";
+  for (uint8_t i = 0; i < server.args(); i++) { message += " " + server.argName(i) + ": " + server.arg(i) + "\n"; }
+  server.send(404, "text/plain", message);
+}
+
+void handleChunked() {
+  server.chunkedResponseModeStart(200, F("text/html"));
+
+  server.sendContent(bigChunk);
+  server.sendContent(F("chunk 2"));
+  server.sendContent(bigChunk);
+
+  server.chunkedResponseFinalize();
+}
+
+void setup(void) {
   Serial.begin(115200);
-  connectWiFi();
-  server.begin();
-}
+  if (!WiFi.config(ip, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("STA Failed to configure");
+  }
+  WiFi.begin(ssid, password);
+  Serial.println("");
 
-void connectWiFi()
-{
-  //From Sparkfun sample: https://goo.gl/ubHfDF
-  Serial.println("Connecting to: " + String(WiFiSSID));
-  // Set WiFi mode to station (as opposed to AP or AP_STA)
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WiFiSSID, WiFiPSK);
+  // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
-    delay(100);
+    delay(500);
+    Serial.print(".");
   }
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
+
+  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
+
+  Serial.println("");
+  Serial.print("Connected to ");
+  Serial.println(ssid);
+  Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-}
 
-void loop()
-{
-  WiFiClient client = server.available();
-  if (!client) {
-    return;
-  }
+  if (MDNS.begin("esp8266")) { Serial.println("MDNS responder started"); }
 
-  //Check the firewall
-  int firewallResponse = firewall.checkFirewall(client.remoteIP().toString(), allowNet);
-  if (firewallResponse == 0) {
-    Serial.println("New Client.");          // print a message out in the serial port
-    String stringBuilder = "";
-    String currentLine = "";                // make a String to hold incoming data from the client
-    currentTime = millis();
-    previousTime = currentTime;
-    while (client.connected() && currentTime - previousTime <= timeoutTime) { // loop while the client's connected
-      currentTime = millis();         
-      if (client.available()) {             // if there's bytes to read from the client,
-        char c = client.read();             // read a byte, then
-        Serial.write(c);                    // print it out the serial monitor
-        stringBuilder+= c;
-        
+  server.getServer().setRSACert(new BearSSL::X509List(server_cert), new BearSSL::PrivateKey(server_private_key));
 
-        header += c;
-        if (c == '\n') {                    // if the byte is a newline character
-          Serial.println("Builder");
-          Serial.println(stringBuilder);
-          if (currentLine.length() == 0) {
-            buildRequest(stringBuilder, &client);
-            break;
-          } else { // if you got a newline, then clear currentLine
-            currentLine = "";
-          }
-        } else if (c != '\r') {  // if you got anything else but a carriage return character,
-          currentLine += c;      // add it to the end of the currentLine
-        }
-      }
+  // Cache SSL sessions to accelerate the TLS handshake.
+  server.getServer().setCache(&serverCache);
+
+  server.on("/", handleRoot);
+
+  server.on("/temperature", []() {
+    int firewallResponse = firewall.checkFirewall(server.client().remoteIP().toString(), allowNet);
+    if (firewallResponse == 0) {
+      Serial.println("A new client arrived in /temperature route");
+      tempSensor.requestTemperaturesByIndex(0);
+      temp = tempSensor.getTempCByIndex(0);
+      server.send(200, "application/json", "{\"value\":"+String(temp)+"}");
     }
-    // Clear the header variable
-    header = "";
-    // Close the connection
-    client.stop();
-    Serial.println("Client disconnected.");
-    Serial.println("");
-  }else {
-    client.flush();
-    // Send Reply
-    buildUnauthorizedRequest(&client);
-    client.stop();
-  }
-}
+  });
 
-void buildRequest(String stringBuilder, WiFiClient *client) {
-    char c = client->read();             // read a byte, then
-    Serial.write(c);                    // print it out the serial monitor
-    stringBuilder+= c;
-    // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
-    // and a content-type so the client knows what's coming, then a blank line:
-    
-    int control = 0;
-    tempSensor.requestTemperaturesByIndex(0);
-    if (stringBuilder.indexOf("/temperature") != -1) {
-      buildOKRequest(client);
-      client->print("{");
-      client->print("\"value\":");
-      //temp = tempSensor.requestTemperaturesByIndex(0);
-      client->print(tempSensor.getTempCByIndex(0));
-      client->print("}");
-      control = 1;
-    }
-    if (stringBuilder.indexOf("/status") != -1) {
-      buildOKRequest(client);
-      client->print("{");
+  server.on("/status", []() {
+    int firewallResponse = firewall.checkFirewall(server.client().remoteIP().toString(), allowNet);
+    if (firewallResponse == 0) {
+      Serial.println("A new client arrived in /status route");
       if(tempSensor.getTempCByIndex(0) > temp){
-        client->print("\"iotStatus\":\"incrementing\"");
+        temp = tempSensor.getTempCByIndex(0);
+        server.send(200, "application/json", "{\"iotStatus\":\"incrementing\"}");
       } 
       if(tempSensor.getTempCByIndex(0) < temp){
-        client->print("\"iotStatus\":\"decrementing\"");
+        temp = tempSensor.getTempCByIndex(0);
+        server.send(200, "application/json", "{\"iotStatus\":\"decrementing\"}");
       } 
       if(tempSensor.getTempCByIndex(0) == temp) { 
-          client->print("\"iotStatus\":\"Stopped\"");
+          temp = tempSensor.getTempCByIndex(0);
+          server.send(200, "application/json", "{\"iotStatus\":\"Stopped\"}");
       }
-      temp = tempSensor.getTempCByIndex(0);
-      
-      client->print("}");
-      control = 1;
+      handleNotFound();
     }
-    if(control == 0){
-      buildBADRequest(client);
-    }
-    client->println();
-    // Break out of the while loop
-   
+  });
+
+  server.on("/chunks", handleChunked);
+
+  server.onNotFound(handleNotFound);
+
+  // prepare chunk in ram for sending
+  constexpr int chunkLen = 4000;  // ~4KB chunk
+  bigChunk.reserve(chunkLen);
+  bigChunk = F("chunk of len ");
+  bigChunk += chunkLen;
+  String piece = F("-blah");
+  while (bigChunk.length() < chunkLen - piece.length())
+    bigChunk += piece;
+
+  server.begin();
+  Serial.println("HTTPS server started");
 }
 
-void buildOKRequest(WiFiClient *client) {
-  client->println("HTTP/1.1 200 OK");
-  client->println("Access-Control-Allow-Origin: *");
-  client->println("Content-type:application/json");
-  client->println("Connection: close");
-  client->println();
+extern "C" void stack_thunk_dump_stack();
+
+void processKey(Print& out, int hotKey) {
+  switch (hotKey) {
+    case 'd':
+      {
+        HeapSelectDram ephemeral;
+        umm_info(NULL, true);
+        break;
+      }
+    case 'i':
+      {
+        HeapSelectIram ephemeral;
+        umm_info(NULL, true);
+        break;
+      }
+    case 'h':
+      {
+        {
+          HeapSelectIram ephemeral;
+          Serial.printf(PSTR("IRAM ESP.getFreeHeap:  %u\n"), ESP.getFreeHeap());
+        }
+        {
+          HeapSelectDram ephemeral;
+          Serial.printf(PSTR("DRAM ESP.getFreeHeap:  %u\n"), ESP.getFreeHeap());
+        }
+        break;
+      }
+#ifdef DEBUG_ESP_PORT
+    // From this context stack_thunk_dump_stack() will only work when Serial
+    // debug is enabled.
+    case 'p':
+      out.println(F("Calling stack_thunk_dump_stack();"));
+      stack_thunk_dump_stack();
+      break;
+#endif
+    case 'R':
+      out.printf_P(PSTR("Restart, ESP.restart(); ...\r\n"));
+      ESP.restart();
+      break;
+    case '\r': out.println();
+    case '\n': break;
+    case '?':
+      out.println();
+      out.println(F("Press a key + <enter>"));
+      out.println(F("  h    - Free Heap Report;"));
+      out.println(F("  i    - iRAM umm_info(null, true);"));
+      out.println(F("  d    - dRAM umm_info(null, true);"));
+#ifdef DEBUG_ESP_PORT
+      out.println(F("  p    - call stack_thunk_dump_stack();"));
+#endif
+      out.println(F("  R    - Restart, ESP.restart();"));
+      out.println(F("  ?    - Print Help"));
+      out.println();
+      break;
+    default:
+      out.printf_P(PSTR("\"%c\" - Not an option?  / ? - help"), hotKey);
+      out.println();
+      processKey(out, '?');
+      break;
+  }
 }
 
-void buildBADRequest(WiFiClient *client) {
-  client->println("HTTP/1.1 400 BAD-REQUEST");
-  client->println("Content-type:application/json");
-  client->println("Access-Control-Allow-Origin: *");
-  client->println("Connection: close");
-  client->println();
-}
 
-void buildUnauthorizedRequest(WiFiClient *client) {
-  client->println("HTTP/1.1 403 UNAUTHORIZED");
-  client->println("Content-type:application/json");
-  client->println("Access-Control-Allow-Origin: *");
-  client->println("Connection: close");
-  client->println();
+void loop(void) {
+  server.handleClient();
+  MDNS.update();
+  if (Serial.available() > 0) {
+    int hotKey = Serial.read();
+    processKey(Serial, hotKey);
+  }
 }
