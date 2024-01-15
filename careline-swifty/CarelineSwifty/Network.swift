@@ -10,7 +10,7 @@ import Foundation
 
 class APIToken: ObservableObject {
     var bearerToken: String = ""
-
+    
     func signInPatient(nus: String, password: String, completion: @escaping (Error?) -> ()) {
         guard let url = URL(string: "http://10.20.229.55/api/signin/patient") else {
             print("Invalid URL")
@@ -35,9 +35,10 @@ class APIToken: ObservableObject {
 
             // Set the content type to JSON
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                         
 
             // Create a URLSession task for the request
-            URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+                URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { [weak self] data, response, error in
                 if let error = error {
                     print("Error: \(error)")
                     completion(error)
@@ -83,7 +84,7 @@ class APITemperatureGET: ObservableObject {
         
         let urlRequest = URLRequest(url: url)
         
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+        let dataTask = URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: urlRequest) { (data, response, error) in
             if let error = error {
                 print("Request error.", error)
                 return
@@ -150,7 +151,7 @@ class APITemperaturePOST: ObservableObject {
             print("request: \(request)")
             
             // Create a URLSession task for the request
-            URLSession.shared.dataTask(with: request) { data, response, error in
+            URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("Error: \(error)")
                 } else if let response = response as? HTTPURLResponse {
@@ -197,14 +198,16 @@ class APIHeartbeatPOST: ObservableObject {
             
             // Set the authorization header with the bearer token
             request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
-
-            // Create a URLSession task for the request
-            URLSession.shared.dataTask(with: request) { data, response, error in
+            
+            
+            URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("Error: \(error)")
                 } else if let response = response as? HTTPURLResponse {
                     if(response.statusCode == 201) {
                         print("POST request successful")
+                        
+                        
                     } else {
                         print("POST request failed with status code: \(response.statusCode)")
                     }
@@ -287,9 +290,9 @@ struct Sort: Codable {
 
 class APIHeartbeatGET: ObservableObject {
     var bearerToken: String = ""
-    var latestHeartbeatSeverity: String?
-    var latestHeartbeatValue: Int?
-    var latestHeartbeatCreatedAt: String?
+    @Published var latestHeartbeatSeverity: String?
+    @Published var latestHeartbeatValue: Int?
+    @Published var latestHeartbeatCreatedAt: String?
     
     func makeHeartbeatGetRequest(completion: @escaping (Result<Void, Error>) -> ()) {
         guard let url = URL(string: "http://10.20.229.55/api/patients/1/heartbeats/latest?size=1") else {
@@ -303,7 +306,7 @@ class APIHeartbeatGET: ObservableObject {
         // Set the authorization header with the bearer token
         request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -357,7 +360,7 @@ class APITemperatureGETCareline: ObservableObject {
         // Set the authorization header with the bearer token
         request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -426,7 +429,7 @@ class APITriagePOST: ObservableObject {
             request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
 
             // Create a URLSession task for the request
-            URLSession.shared.dataTask(with: request) { data, response, error in
+            URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("Error: \(error)")
                 } else if let response = response as? HTTPURLResponse {

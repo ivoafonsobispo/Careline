@@ -170,8 +170,6 @@ struct MeasureView: View{
     @State private var startClicked = false
     
     
-    
-    
     func measureTemperatureForDuration() {
         isMeasuring = true
         let measurementDuration: TimeInterval = 30 // Duration in seconds

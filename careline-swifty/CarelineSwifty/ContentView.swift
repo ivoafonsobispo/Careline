@@ -155,54 +155,45 @@ struct MeasureButtonView: View{
 }
 
 struct ContentView: View {
-    @StateObject var user: User = User()
-    @State private var isLoading = true
-    var apiToken = APIToken()
-    var apiGetLatestHeartbeat = APIHeartbeatGET()
+    @StateObject var user = User()
+    @State private var isLoggedIn = false
+    
+    @StateObject var apiToken = APIToken()
+    @StateObject var apiGetLatestHeartbeat = APIHeartbeatGET()
     
     var body: some View {
         NavigationView{
-            VStack {
-                if isLoading {
-                    Text("Loading...")
-                } else {
-                    
-                    VStack{
-                        SummaryView(userName: user.name)
-                        Text("Quick Status")
-                            .font(.title3)
-                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                            .frame(maxWidth: .infinity,alignment: .leading)
-                        LastHeartbeatView(latestHeartbeatValue:apiGetLatestHeartbeat.latestHeartbeatValue ?? 0, latestHeartbeatCreatedAt:apiGetLatestHeartbeat.latestHeartbeatCreatedAt ?? "")
-                        MeasureTextView(measures: user.measures, token:user.token)
-                        MeasureButtonsListView(measures: user.measures, token:user.token)
-                    }
-                }
-            }
-            .onAppear {
-                apiToken.signInPatient(nus: "123456789", password: "password") { error in
-                    if let error = error {
-                        print("Error signing in: \(error)")
-                    } else {
-                        print("Bearer token received:", apiToken.bearerToken ?? "No token received")
-                        user.token = apiToken.bearerToken ?? ""
-                        apiGetLatestHeartbeat.bearerToken = user.token
-                        apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
-                            switch result {
-                            case .success:
-                                print("Heartbeat request successful")
-                                isLoading = false
-                            case .failure(let error):
-                                print("Heartbeat request failed with error: \(error)")
+            VStack{
+                if isLoggedIn {
+                    SummaryView(userName: user.name)
+                        .onAppear{
+                            apiGetLatestHeartbeat.bearerToken = apiToken.bearerToken
+                            apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
+                                switch result {
+                                    case .success:
+                                        print("Heartbeat request successful")
+                                    case .failure(let error):
+                                        print("Heartbeat request failed with error: \(error)")
+                                }
                             }
                         }
-                    }
+                    Text("Quick Status")
+                        .font(.title3)
+                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                        .frame(maxWidth: .infinity,alignment: .leading)
+                    LastHeartbeatView(latestHeartbeatValue:apiGetLatestHeartbeat.latestHeartbeatValue ?? 0, latestHeartbeatCreatedAt:apiGetLatestHeartbeat.latestHeartbeatCreatedAt ?? "")
+                    MeasureTextView(measures: user.measures, token:user.token)
+                    MeasureButtonsListView(measures: user.measures, token:user.token)
+                } else {
+                    LoginView(isLoggedIn: $isLoggedIn)
+                        .environmentObject(apiToken)
+                        .environmentObject(user)
                 }
             }
             .frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .navigationBarHidden(true)
             .navigationBarTitle("", displayMode: .inline)
         }.padding(EdgeInsets(top: 30, leading: 20, bottom: 40, trailing: 20))
-            .foregroundColor(.black)
+        .foregroundColor(.black)
     }
 }

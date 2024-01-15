@@ -18,6 +18,8 @@
 		2C2627CD2B2B58D9000DDD38 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627CC2B2B58D9000DDD38 /* Filter.swift */; };
 		2C2627CF2B2B5969000DDD38 /* ColorUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2627CE2B2B5969000DDD38 /* ColorUtils.swift */; };
 		2C2627D72B2B5F54000DDD38 /* PulseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2C2627D62B2B5F54000DDD38 /* PulseViewController.xib */; };
+		2C7936CE2B51A7C200CBB408 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7936CD2B51A7C200CBB408 /* Login.swift */; };
+		2C7936D02B55A1C100CBB408 /* NetworkConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7936CF2B55A1C100CBB408 /* NetworkConfigurator.swift */; };
 		2CBFD49E2B06A91000BDD99C /* Measures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49D2B06A91000BDD99C /* Measures.swift */; };
 		2CBFD4A02B07F20300BDD99C /* MeasureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD49F2B07F20300BDD99C /* MeasureView.swift */; };
 		2CBFD4A22B0BB36D00BDD99C /* TriageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */; };
@@ -42,6 +44,8 @@
 		2C2627CC2B2B58D9000DDD38 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		2C2627CE2B2B5969000DDD38 /* ColorUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorUtils.swift; sourceTree = "<group>"; };
 		2C2627D62B2B5F54000DDD38 /* PulseViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PulseViewController.xib; path = ../../../../../../.Trash/PulseViewController.xib; sourceTree = "<group>"; };
+		2C7936CD2B51A7C200CBB408 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		2C7936CF2B55A1C100CBB408 /* NetworkConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConfigurator.swift; sourceTree = "<group>"; };
 		2CBFD49D2B06A91000BDD99C /* Measures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Measures.swift; sourceTree = "<group>"; };
 		2CBFD49F2B07F20300BDD99C /* MeasureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasureView.swift; sourceTree = "<group>"; };
 		2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriageView.swift; sourceTree = "<group>"; };
@@ -109,12 +113,14 @@
 				2C2627B92B163E4B000DDD38 /* CarelineSwifty.entitlements */,
 				2CE6509B2B066B7C00D17A73 /* CarelineSwiftyApp.swift */,
 				2CE6509D2B066B7C00D17A73 /* ContentView.swift */,
+				2C7936CD2B51A7C200CBB408 /* Login.swift */,
 				2CBFD4A12B0BB36D00BDD99C /* TriageView.swift */,
 				2C2627B72B14F918000DDD38 /* TriageMeasures.swift */,
 				2C2627C12B18DFA3000DDD38 /* User.swift */,
 				2C2627B52B14E8D6000DDD38 /* ShowMoreView.swift */,
 				2CBFD49D2B06A91000BDD99C /* Measures.swift */,
 				2C2627BB2B1669D2000DDD38 /* Network.swift */,
+				2C7936CF2B55A1C100CBB408 /* NetworkConfigurator.swift */,
 				2CE6509F2B066B7F00D17A73 /* Assets.xcassets */,
 				2CE650A12B066B7F00D17A73 /* Preview Content */,
 				2CBFD49F2B07F20300BDD99C /* MeasureView.swift */,
@@ -204,9 +210,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C2627B82B14F918000DDD38 /* TriageMeasures.swift in Sources */,
+				2C7936CE2B51A7C200CBB408 /* Login.swift in Sources */,
 				2C2627CD2B2B58D9000DDD38 /* Filter.swift in Sources */,
 				2CE6509E2B066B7C00D17A73 /* ContentView.swift in Sources */,
 				2C2627B62B14E8D6000DDD38 /* ShowMoreView.swift in Sources */,
+				2C7936D02B55A1C100CBB408 /* NetworkConfigurator.swift in Sources */,
 				2C2627CB2B2B58C3000DDD38 /* PulseDetector.swift in Sources */,
 				2C2627C72B2A0FD4000DDD38 /* AVCaptureDevice.swift in Sources */,
 				2C2627C22B18DFA3000DDD38 /* User.swift in Sources */,
