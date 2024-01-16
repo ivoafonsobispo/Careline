@@ -155,7 +155,8 @@ struct MeasureView: View{
     }}
     
     var measure: Measure
-    var token:String
+    var token: String
+    var userId: String
     
     @StateObject private var heartRateManager  = HeartRateManager(cameraType: .back, preferredSpec: nil, previewContainer: nil)
     
@@ -194,6 +195,7 @@ struct MeasureView: View{
             // Post Temperature
             let api = APITemperaturePOST()
             api.bearerToken = token
+            api.userId = userId
             api.makeTemperaturePostRequest(temperature: averageTemperature) { error in
                 if let error = error {
                     print("Error posting temperature in: \(error)")
@@ -251,6 +253,7 @@ struct MeasureView: View{
                                 // Post Heartbeat
                                 let api = APIHeartbeatPOST()
                                 api.bearerToken = token
+                                api.userId = userId
                                 api.makeHeartRatePostRequest(heartbeat: measuredHeartrate) { error in
                                     if let error = error {
                                         print("Error posting heartbeat in: \(error)")

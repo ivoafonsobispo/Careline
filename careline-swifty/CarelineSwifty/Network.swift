@@ -10,6 +10,10 @@ import Foundation
 
 class APIToken: ObservableObject {
     var bearerToken: String = ""
+    var userName: String = ""
+    var userEmail: String = ""
+    var userNus: String = ""
+    var userId: String = ""
     
     func signInPatient(nus: String, password: String, completion: @escaping (Error?) -> ()) {
         guard let url = URL(string: "http://10.20.229.55/api/signin/patient") else {
@@ -55,9 +59,83 @@ class APIToken: ObservableObject {
                         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                            let token = json["token"] as? String {
                             self?.bearerToken = token
+                            self?.userNus = nus
                             completion(nil)
                             return
                         }
+                    } catch {
+                        print("Error parsing JSON: \(error)")
+                        completion(error)
+                        return
+                    }
+                }
+                    
+                completion(NSError(domain:"", code: httpResponse.statusCode, userInfo:nil))
+            }.resume()
+        } catch {
+            print("Error converting requestData to JSON data: \(error)")
+            completion(error)
+        }
+    }
+    
+    func getPatient(completion: @escaping (Error?) -> ()) {
+        guard let url = URL(string: "http://10.20.229.55/api/patients/nus/\(self.userNus)") else {
+            print("Invalid URL")
+            return
+        }
+
+        do {
+            // Create the URLRequest with the specified URL and method
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+
+            // Set the content type to JSON
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("Bearer \(bearerToken)", forHTTPHeaderField: "Authorization")
+                         
+
+            // Create a URLSession task for the request
+            URLSession(configuration: NetworkConfigurator.getSessionConfiguration()).dataTask(with: request) { [weak self] data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                    completion(error)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    completion(nil)
+                    return
+                }
+
+                if httpResponse.statusCode == 200, let data = data {
+                    do {
+                       let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                        
+                        print(json)
+                        
+                        if let id = json?["id"] as? Int {
+                            print("Id: \(id)")
+                            self?.userId = "\(id)"
+                        } else {
+                            print("Error: Unable to extract id from the JSON.")
+                        }
+                        
+                        if let name = json?["name"] as? String {
+                            print("Name: \(name)")
+                            self?.userName = name
+                        } else {
+                            print("Error: Unable to extract name from the JSON.")
+                        }
+                        
+                        if let email = json?["email"] as? String {
+                            print("Email: \(email)")
+                            self?.userEmail = email
+                        } else {
+                            print("Error: Unable to extract email from the JSON.")
+                        }
+                        
+                        
+                        
                     } catch {
                         print("Error parsing JSON: \(error)")
                         completion(error)
@@ -118,9 +196,10 @@ class APITemperatureGET: ObservableObject {
 
 class APITemperaturePOST: ObservableObject {
     var bearerToken: String = ""
+    var userId: String = ""
     
     func makeTemperaturePostRequest(temperature: Double, completion: @escaping (Error?) -> ()){
-        guard let url = URL(string: "http://10.20.229.55/api/patients/1/temperatures") else {
+        guard let url = URL(string: "http://10.20.229.55/api/patients/\(userId)/temperatures") else {
             print("Invalid URL")
             return
         }
@@ -171,9 +250,11 @@ class APITemperaturePOST: ObservableObject {
 
 class APIHeartbeatPOST: ObservableObject {
     var bearerToken: String = ""
+    var userId: String = ""
     
     func makeHeartRatePostRequest(heartbeat: Int32, completion: @escaping (Error?) -> Void) {
-        guard let url = URL(string: "http://10.20.229.55/api/patients/1/heartbeats") else {
+        
+        guard let url = URL(string: "http://10.20.229.55/api/patients/\(userId)/heartbeats") else {
             print("Invalid URL")
             return
         }
@@ -206,7 +287,6 @@ class APIHeartbeatPOST: ObservableObject {
                 } else if let response = response as? HTTPURLResponse {
                     if(response.statusCode == 201) {
                         print("POST request successful")
-                        
                         
                     } else {
                         print("POST request failed with status code: \(response.statusCode)")
@@ -290,12 +370,16 @@ struct Sort: Codable {
 
 class APIHeartbeatGET: ObservableObject {
     var bearerToken: String = ""
+    var userId: String = ""
+    
     @Published var latestHeartbeatSeverity: String?
     @Published var latestHeartbeatValue: Int?
     @Published var latestHeartbeatCreatedAt: String?
     
     func makeHeartbeatGetRequest(completion: @escaping (Result<Void, Error>) -> ()) {
-        guard let url = URL(string: "http://10.20.229.55/api/patients/1/heartbeats/latest?size=1") else {
+        print("URLLLLLLLLLL http://10.20.229.55/api/patients/\(userId)/heartbeats/latest?size=1")
+        
+        guard let url = URL(string: "http://10.20.229.55/api/patients/\(userId)/heartbeats/latest?size=1") else {
             print("Invalid URL")
             return
         }
@@ -344,12 +428,13 @@ class APIHeartbeatGET: ObservableObject {
 
 class APITemperatureGETCareline: ObservableObject {
     var bearerToken: String = ""
+    var userId: String = ""
     var latestTemperatureSeverity: String?
     var latestTemperatureValue: Double?
     var latestTemperatureCreatedAt: String?
     
     func makeTemperatureGetRequest(completion: @escaping (Result<Void, Error>) -> ()) {
-        guard let url = URL(string: "http://10.20.229.55/api/patients/1/temperatures/latest?size=1") else {
+        guard let url = URL(string: "http://10.20.229.55/api/patients/\(userId)/temperatures/latest?size=1") else {
             print("Invalid URL")
             return
         }
@@ -398,9 +483,10 @@ class APITemperatureGETCareline: ObservableObject {
 
 class APITriagePOST: ObservableObject {
     var bearerToken: String = ""
+    var userId: String = ""
     
     func makeTriagePostRequest(symptoms: String,temperature: Double,heartbeat: Int, completion: @escaping (Error?) -> Void) {
-        guard let url = URL(string: "http://10.20.229.55/api/patients/1/triages") else {
+        guard let url = URL(string: "http://10.20.229.55/api/patients/\(userId)/triages") else {
             print("Invalid URL")
             return
         }

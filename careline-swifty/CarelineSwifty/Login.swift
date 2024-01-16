@@ -84,6 +84,7 @@ struct LoginView: View {
                 user.token = apiToken.bearerToken ?? ""
                 
                 isLoggedIn = true
+                
             }
         }
     }

@@ -13,6 +13,7 @@ class User: ObservableObject {
     @Published var nus: String
     @Published var name: String
     @Published var email: String
+    @Published var id: String
     var measures: [Measure]
     @Published var token: String 
     
@@ -20,6 +21,7 @@ class User: ObservableObject {
         self.nus = ""
         self.name = ""
         self.email = ""
+        self.id = ""
         self.measures = [
             Heartbeat(measured: false, value: -99),
             Temperature(measured: false, value: -99.99)

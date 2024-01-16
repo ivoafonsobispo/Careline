@@ -23,9 +23,10 @@ struct TriageTextView: View {
 struct TriageMeasureButtonView: View{
     var measure: Measure
     var token: String
+    var userId: String
     
     var body: some View {
-        NavigationLink(destination: MeasureView(measure: measure, token:token)) {
+        NavigationLink(destination: MeasureView(measure: measure, token:token, userId: userId)) {
             HStack{
                 Image(systemName: measure.symbol)
                     .resizable()
@@ -83,6 +84,7 @@ struct CompletedButtonView: View {
     
     var allMeasured: Bool
     var token: String
+    var userId: String
     var symptoms: String
     let apiGetLatestHeartbeat = APIHeartbeatGET()
     let apiGetLatestTemperature = APITemperatureGETCareline()
@@ -94,16 +96,20 @@ struct CompletedButtonView: View {
         HStack {
             Button(action: {
                 apiGetLatestHeartbeat.bearerToken = token
+                apiGetLatestHeartbeat.userId = userId
                 apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
                     switch result {
                     case .success:
                         print("Heartbeat request successful")
                         apiGetLatestTemperature.bearerToken = token
+                        apiGetLatestTemperature.userId = userId
                         apiGetLatestTemperature.makeTemperatureGetRequest { result in
                             switch result {
                             case .success:
                                 print("Temperature request successful")
                                 apiPost.bearerToken = token
+                                apiPost.userId = userId
+                                
                                 print("Temperature: \(apiGetLatestTemperature.latestTemperatureValue)")
                                 print("Heartbeat: \(apiGetLatestHeartbeat.latestHeartbeatValue)")
                                 print("Symptoms: \(symptoms)")
@@ -157,6 +163,8 @@ struct TriageView: View{
     
     var measures: [Measure]
     var token: String
+    var userId: String
+    
     @State private var symptoms: String = ""
     
     var allMeasured: Bool = false
@@ -174,9 +182,9 @@ struct TriageView: View{
                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 .frame(maxWidth: .infinity,alignment: .leading)
             ForEach(measures){measure in
-                TriageMeasureButtonView(measure: measure, token:token)
+                TriageMeasureButtonView(measure: measure, token:token, userId: userId)
             }
-            CompletedButtonView(allMeasured: allMeasured, token:token, symptoms:symptoms)
+            CompletedButtonView(allMeasured: allMeasured, token:token, userId: userId, symptoms:symptoms)
         }.frame(minWidth: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .navigationBarHidden(false)
             .navigationBarBackButtonHidden(true)

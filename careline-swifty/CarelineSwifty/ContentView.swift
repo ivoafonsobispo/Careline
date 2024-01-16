@@ -73,12 +73,13 @@ struct LastHeartbeatView: View {
 struct MeasureTextView: View {
     var measures: [Measure]
     var token: String
+    var userId: String
     
     var body: some View {
         HStack{
             Text("Measure")
                 .fontWeight(.bold)
-            NavigationLink(destination: ShowMoreView(measures: measures, token:token)){
+            NavigationLink(destination: ShowMoreView(measures: measures, token:token, userId: userId)){
                 Text("Show More")
             }.foregroundColor(.red)
                 .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, alignment: .trailing)
@@ -90,21 +91,23 @@ struct MeasureTextView: View {
 struct MeasureButtonsListView: View{
     var measures: [Measure]
     var token: String
+    var userId: String
     
     var body: some View {
         ForEach(measures){measure in
-            MeasureButtonView(measure: measure, token:token)
+            MeasureButtonView(measure: measure, token:token, userId: userId)
         }
-        TriageButtonView(measures: measures, token:token)
+        TriageButtonView(measures: measures, token:token, userId: userId)
     }
 }
 
 struct TriageButtonView: View{
     var measures: [Measure]
     var token: String
+    var userId: String
     
     var body: some View {
-        NavigationLink(destination: TriageView(measures: measures, token:token)) {
+        NavigationLink(destination: TriageView(measures: measures, token:token, userId: userId)) {
             HStack{
                 Image(systemName: "checkmark.square")
                     .resizable()
@@ -129,9 +132,10 @@ struct TriageButtonView: View{
 struct MeasureButtonView: View{
     var measure: Measure
     var token: String
+    var userId: String
     
     var body: some View {
-        NavigationLink(destination: MeasureView(measure: measure, token:token)) {
+        NavigationLink(destination: MeasureView(measure: measure, token:token, userId: userId)) {
             HStack{
                 Image(systemName: measure.symbol)
                     .resizable()
@@ -167,13 +171,24 @@ struct ContentView: View {
                 if isLoggedIn {
                     SummaryView(userName: user.name)
                         .onAppear{
-                            apiGetLatestHeartbeat.bearerToken = apiToken.bearerToken
-                            apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
-                                switch result {
-                                    case .success:
-                                        print("Heartbeat request successful")
-                                    case .failure(let error):
-                                        print("Heartbeat request failed with error: \(error)")
+                            apiToken.getPatient() { error in
+                                user.name = apiToken.userName
+                                print(apiToken.userName)
+                                user.email = apiToken.userEmail
+                                print(apiToken.userEmail)
+                                user.nus = apiToken.userNus
+                                print(apiToken.userId)
+                                user.id = apiToken.userId
+                                
+                                apiGetLatestHeartbeat.bearerToken = apiToken.bearerToken
+                                apiGetLatestHeartbeat.userId = user.id
+                                apiGetLatestHeartbeat.makeHeartbeatGetRequest { result in
+                                    switch result {
+                                        case .success:
+                                            print("Heartbeat request successful")
+                                        case .failure(let error):
+                                            print("Heartbeat request failed with error: \(error)")
+                                    }
                                 }
                             }
                         }
@@ -181,9 +196,12 @@ struct ContentView: View {
                         .font(.title3)
                         .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                         .frame(maxWidth: .infinity,alignment: .leading)
+                        .onAppear{
+                            
+                        }
                     LastHeartbeatView(latestHeartbeatValue:apiGetLatestHeartbeat.latestHeartbeatValue ?? 0, latestHeartbeatCreatedAt:apiGetLatestHeartbeat.latestHeartbeatCreatedAt ?? "")
-                    MeasureTextView(measures: user.measures, token:user.token)
-                    MeasureButtonsListView(measures: user.measures, token:user.token)
+                    MeasureTextView(measures: user.measures, token:user.token, userId: user.id)
+                    MeasureButtonsListView(measures: user.measures, token:user.token, userId: user.id)
                 } else {
                     LoginView(isLoggedIn: $isLoggedIn)
                         .environmentObject(apiToken)
