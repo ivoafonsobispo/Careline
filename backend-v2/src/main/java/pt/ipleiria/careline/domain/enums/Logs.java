@@ -1,6 +1,6 @@
 package pt.ipleiria.careline.domain.enums;
 
-public enum IoTLogs {
+public enum Logs {
     INFO,
     WARNING,
     ERROR

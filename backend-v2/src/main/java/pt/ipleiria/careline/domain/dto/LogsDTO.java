@@ -2,19 +2,19 @@ package pt.ipleiria.careline.domain.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import pt.ipleiria.careline.domain.enums.IoTLogs;
+import pt.ipleiria.careline.domain.enums.Logs;
 
 @Getter
 @Setter
-public class IoTLogsDTO {
+public class LogsDTO {
 
-    private IoTLogs type;
+    private Logs type;
     private String message;
 
-    public IoTLogsDTO() {
+    public LogsDTO() {
     }
 
-    public IoTLogsDTO(IoTLogs type, String message) {
+    public LogsDTO(Logs type, String message) {
         this.type = type;
         this.message = message;
     }
