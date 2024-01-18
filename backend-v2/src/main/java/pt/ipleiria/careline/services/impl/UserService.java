@@ -1,6 +1,7 @@
 package pt.ipleiria.careline.services.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
     private final PatientRepository patientRepository;
     private final ProfessionalRepository professionalRepository;
@@ -30,6 +32,7 @@ public class UserService {
                 if (professional.isPresent()) {
                     return professional.get();
                 }
+                log.atError().log("User not found - {}", username);
                 throw new UsernameNotFoundException("User not found");
             }
         };

@@ -89,10 +89,10 @@ public class ProfessionalController {
 
     @GetMapping("/nus/{nus}")
     @PreAuthorize("hasRole('PROFESSIONAL')")
-    public ResponseEntity<ProfessionalDTO> getProfessionalsById(@PathVariable("nus") String nus) {
+    public ResponseEntity<ProfessionalResponseDTO> getProfessionalsById(@PathVariable("nus") String nus) {
         Optional<ProfessionalEntity> professional = professionalService.getProfessionalByNus(nus);
         return professional.map(professionalEntity -> {
-            ProfessionalDTO professionalDTO = professionalMapper.mapToDTO(professionalEntity);
+            ProfessionalResponseDTO professionalDTO = professionalResponseMapper.mapToDTO(professionalEntity);
             return new ResponseEntity<>(professionalDTO, HttpStatus.OK);
         }).orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

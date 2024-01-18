@@ -28,10 +28,10 @@ public class HeartbeatController {
 
     private final Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper;
     private final Mapper<PatientEntity, PatientDTO> patientMapper;
-    private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
     private final HeartbeatService heartbeatService;
     private final PatientService patientService;
     private final SimpMessagingTemplate messagingTemplate;
+    private Mapper<PatientEntity, PatientResponseDTO> patientResponseDTOMapper;
 
     public HeartbeatController(Mapper<HeartbeatEntity, HeartbeatDTO> heartbeatMapper, HeartbeatService heartbeatService, PatientService patientService, Mapper<PatientEntity, PatientDTO> patientMapper, SimpMessagingTemplate messagingTemplate) {
         this.heartbeatMapper = heartbeatMapper;

@@ -30,6 +30,7 @@ public abstract class UserEntity implements UserDetails {
     @NotNull(message = "Email is required")
     @Email
     private String email;
+    @Size(min = 8, message = "Password must be at least 8 characters")
     @NotNull(message = "Password is required")
     private String password;
     @Column(unique = true, nullable = false)

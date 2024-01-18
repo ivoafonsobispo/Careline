@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Set variables
-api_url="http://10.20.229.55/api/patients/1/heartbeats"
-bearer_token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQiOjE3MDQ5ODczNzEsImV4cCI6MTcwNDk5MDk3MX0.m5Eb5OUla4bNaD7Yl2ZXYKjjOTj6WcTT8sgQlFD8rkk"
+api_url="http://localhost:8080/api/patients/1/heartbeats"
+bearer_token="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkiLCJpYXQiOjE3MDUyMzk4MTQsImV4cCI6MTcwNTI0MzQxNH0.mnQRFZfsC5pCdwDm3Hlhfifk6TxDNx2ioE2OMRdJLSs"
 
 # Loop for 20 POST requests with random heartbeat values ranging from 60 to 140
 for ((i = 0; i < 20; i++)); do
@@ -11,5 +11,7 @@ for ((i = 0; i < 20; i++)); do
     
     # Make POST request using curl
     curl -X POST -H "Authorization: Bearer $bearer_token" -H "Content-Type: application/json" -d "$json_body" "$api_url"
+
+    echo ""
 done
 

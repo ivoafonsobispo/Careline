@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/patients/*/deliveries/*/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/csv/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/api/signup/**", "/api/signin/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/logs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/websocket-endpoint/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
