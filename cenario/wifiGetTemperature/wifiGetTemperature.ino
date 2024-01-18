@@ -4,19 +4,72 @@
 #include <ESP8266mDNS.h>
 #include <umm_malloc/umm_malloc.h>
 #include <umm_malloc/umm_heap_select.h>
+#include <ESP8266HTTPClient.h>
 #include "Arduino.h"
 #include "OneWire.h"
 #include "DallasTemperature.h"
 
 #ifndef STASSID
-#define STASSID "SSID_NAME"
+#define STASSID "labs"
 #define STAPSK "PASSWORD"
 #endif
+
+class MyHTTPClient {
+public:
+  MyHTTPClient(); // Declarando o construtor
+  void makeHttpPost(String type, String message);
+  // Outros membros e métodos...
+};
+
+// Implementação do construtor
+MyHTTPClient::MyHTTPClient() {
+  // Implementação do construtor
+}
+
+void MyHTTPClient::makeHttpPost(String type, String message) {
+  // Define o endereço do servidor para onde você deseja fazer a solicitação POST
+  String serverAddress = "http://10.20.229.55/api/logs/iot";
+
+  // Cria uma instância HTTPClient
+  // Cria uma instância HTTPClient e um objeto WiFiClient
+  HTTPClient http;
+  WiFiClient wifiClient;
+
+  // Inicia a comunicação com o servidor usando o WiFiClient
+  http.begin(wifiClient, serverAddress);
+
+  // Configura o cabeçalho da solicitação
+  http.addHeader("Content-Type", "application/json");
+
+  // Cria um objeto JSON com os dados desejados
+  String jsonData = "{\"type\":\""+type+"\",\"message\":\""+message+"\"}";
+
+  // Exibe os dados JSON no console para fins de depuração
+  Serial.print("JSON Data: ");
+  Serial.println(jsonData);
+
+  // Realiza a solicitação POST com os dados fornecidos
+  int httpResponseCode = http.POST(jsonData);
+
+  // Verifica o código de resposta da solicitação
+  if (httpResponseCode > 0) {
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+  } else {
+    Serial.print("HTTP POST failed, error: ");
+    Serial.println(httpResponseCode);
+  }
+
+  // Fecha a conexão
+  http.end();
+}
+
 
 class Firewall {
 public:
   Firewall(); // Declarando o construtor
   int checkFirewall(String clientIP, String allowNet);
+  MyHTTPClient httpClient;
   // Outros membros e métodos...
 };
 
@@ -65,18 +118,16 @@ int Firewall::checkFirewall(String clientIP, String allowNet) {
   		clientSubnet = clientSubnet + "." + c4o;
   	}
 	//Troubleshooting
-	Serial.println("Firewall Allow: " + allowNet);
-	Serial.println("Client Subnet: " + clientSubnet);
+  httpClient.makeHttpPost("INFO","Firewall Allow: " + allowNet+"Client Subnet: " + clientSubnet);
 
 	if ( clientSubnet != allowNet ) {
-		//Troubleshooting
-		//Serial.println("Blocking Client");
+    httpClient.makeHttpPost("ERROR", "Firewall blocked client "+clientIP);
 		return 1;
 	} else {
+    httpClient.makeHttpPost("INFO", "Firewall allowed client "+clientIP);
 		return 0;
 	}
 }
-
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
@@ -90,6 +141,7 @@ BearSSL::ServerSessions serverCache(5);
 String bigChunk;
 
 Firewall firewall;
+MyHTTPClient httpClient;
 
 const int tempPin = A0;
 
@@ -125,11 +177,14 @@ String header;
 //Set the subnet you will ALLOW traffic from. 
 //Right now it just supports /24, /16 or /8 networks. 
 //i.e. allowNet="192.168.1"  | allowNet="172.16" | allowNet="10" 
-String allowNet = "10.20.229"; 
+String allowNet = "10.20.228"; 
 
 void handleRoot() {
+  // Restante do seu código existente
+  httpClient.makeHttpPost("INFO", "HTTP 200 OK");
   server.send(200, "text/plain", "Hello from esp8266 over HTTPS!");
 }
+
 
 void handleNotFound() {
   String message = "File Not Found\n\n";
@@ -141,6 +196,7 @@ void handleNotFound() {
   message += server.args();
   message += "\n";
   for (uint8_t i = 0; i < server.args(); i++) { message += " " + server.argName(i) + ": " + server.arg(i) + "\n"; }
+  httpClient.makeHttpPost("ERROR", "HTTP 404 Not Found");
   server.send(404, "text/plain", message);
 }
 
@@ -156,11 +212,12 @@ void handleChunked() {
 
 void setup(void) {
   Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  Serial.println("");
+
   if (!WiFi.config(ip, gateway, subnet, primaryDNS, secondaryDNS)) {
     Serial.println("STA Failed to configure");
   }
-  WiFi.begin(ssid, password);
-  Serial.println("");
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -188,28 +245,38 @@ void setup(void) {
   server.on("/temperature", []() {
     int firewallResponse = firewall.checkFirewall(server.client().remoteIP().toString(), allowNet);
     if (firewallResponse == 0) {
-      Serial.println("A new client arrived in /temperature route");
+      httpClient.makeHttpPost("INFO", "A new client arrived in temperature route");
       tempSensor.requestTemperaturesByIndex(0);
       temp = tempSensor.getTempCByIndex(0);
+      httpClient.makeHttpPost("INFO", "200, application/json, {value:"+String(temp)+"}");
       server.send(200, "application/json", "{\"value\":"+String(temp)+"}");
+      return;
     }
+    handleNotFound();
+
   });
 
   server.on("/status", []() {
     int firewallResponse = firewall.checkFirewall(server.client().remoteIP().toString(), allowNet);
     if (firewallResponse == 0) {
-      Serial.println("A new client arrived in /status route");
+      httpClient.makeHttpPost("INFO", "A new client arrived in /status route");
       if(tempSensor.getTempCByIndex(0) > temp){
         temp = tempSensor.getTempCByIndex(0);
+        httpClient.makeHttpPost("INFO", "200, application/json, {iotStatus:incrementing}");
         server.send(200, "application/json", "{\"iotStatus\":\"incrementing\"}");
+        return;
       } 
       if(tempSensor.getTempCByIndex(0) < temp){
         temp = tempSensor.getTempCByIndex(0);
+        httpClient.makeHttpPost("INFO", "200, application/json, {iotStatus:decrementing}");
         server.send(200, "application/json", "{\"iotStatus\":\"decrementing\"}");
+        return;
       } 
       if(tempSensor.getTempCByIndex(0) == temp) { 
-          temp = tempSensor.getTempCByIndex(0);
-          server.send(200, "application/json", "{\"iotStatus\":\"Stopped\"}");
+        temp = tempSensor.getTempCByIndex(0);
+        httpClient.makeHttpPost("INFO", "200, application/json, {iotStatus:Stopped}");
+        server.send(200, "application/json", "{\"iotStatus\":\"Stopped\"}");
+        return;
       }
       handleNotFound();
     }
