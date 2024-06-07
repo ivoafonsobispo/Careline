@@ -1,7 +1,7 @@
 # Careline
 **Transforming Healthcare with Technology**
 
-Careline is a pioneering remote health service platform that revolutionizes the way healthcare is delivered. By harnessing the power of advanced technologies, we provide daily health support, expedite triage processes, and enable efficient drone delivery of prescribed medication. Our goal is to improve patient outcomes, reduce healthcare costs, and enhance the overall quality of life.
+Careline is a pioneering remote health services platform that is revolutionizing the way healthcare is delivered. By harnessing the power of advanced technologies, we provide daily health support, expedite triage processes, and enable efficient drone delivery of prescribed medications. Our goal is to improve patient outcomes, reduce healthcare costs, and enhance overall quality of life.
 
 <img src="Assets/Simple-Workflow.png" alt="Simple Workflow" width="700">
 
