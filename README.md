@@ -1,5 +1,4 @@
 # Careline
-**Transforming Healthcare with Technology**
 
 Careline is a remote health services platform that is revolutionizing the way healthcare is delivered. We provide daily health support, expedite triage processes, and enable efficient drone delivery of prescribed medications. Our goal is to improve patient outcomes, reduce healthcare costs, and enhance overall quality of life.
 
